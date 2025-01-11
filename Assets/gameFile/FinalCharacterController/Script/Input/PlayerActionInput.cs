@@ -60,7 +60,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         }
     }
 
-    private void SetAttackPressedFalse()
+    public void SetAttackPressedFalse()
     {
         attackPressed = false;
     }
@@ -75,6 +75,5 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
             return;
         attackPressed = true;
     }
-
     #endregion
 }

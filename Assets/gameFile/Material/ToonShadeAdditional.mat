@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ToonShadeAdditional
-  m_Shader: {fileID: -6465566751694194690, guid: 1f60dd32a4e7e244490ba9826d6022cf, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ab4eebc06c7ad2644a0939269fc86df5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []

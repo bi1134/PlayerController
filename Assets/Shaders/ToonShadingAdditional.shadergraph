@@ -2798,8 +2798,8 @@
     "m_ObjectId": "38583c71c2c3404caf6a2edd181a7caa",
     "m_Title": "Diffuse Calculations (n · l)",
     "m_Position": {
-        "x": -3568.00048828125,
-        "y": 265.5999755859375
+        "x": -3568.0,
+        "y": 265.60003662109377
     }
 }
 

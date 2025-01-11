@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private LayerMask aimColliderMask = new LayerMask();
     [SerializeField] private Transform debugTransform;
+    [SerializeField] private Transform pfBulletProjectile;
+    [SerializeField] private Transform bulletSpawnPosition;
 
     public float rotationMismatch { get; private set; } = 0f;
     public bool isRotatingToTarget { get; private set; } = false;
@@ -43,6 +45,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
+    private PlayerActionInput playerActionInput;
 
     private Vector2 cameraRotation = Vector2.zero;
     private Vector2 playerTargetRotation = Vector2.zero;
@@ -61,6 +64,7 @@ public class PlayerController : MonoBehaviour
     {
         playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
         playerState = GetComponent<PlayerState>();
+        playerActionInput = GetComponent<PlayerActionInput>();
 
         antiBump = sprintSpeed;
         stepOffset = characterController.stepOffset;
@@ -70,9 +74,9 @@ public class PlayerController : MonoBehaviour
     #region Update Logic
     private void Update()
     {
+        HandleMovement();
         UpdateMovementState();
         HandleVerticalMovement();
-        HandleMovement();
         HandleShootPosition();
     }
 
@@ -191,11 +195,21 @@ public class PlayerController : MonoBehaviour
 
     private void HandleShootPosition()
     {
+        Vector3 mouseWorldPosition = Vector3.zero;
+
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
         if(Physics.Raycast(ray,out RaycastHit raycastHit, 999f, aimColliderMask))
         {
             debugTransform.position = raycastHit.point;
+            mouseWorldPosition = raycastHit.point;
+        }
+
+        if(playerActionInput.attackPressed)
+        {
+            Vector3 aimDir = (mouseWorldPosition - bulletSpawnPosition.position).normalized;
+            Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
+            playerActionInput.SetAttackPressedFalse();
         }
     }    
 
