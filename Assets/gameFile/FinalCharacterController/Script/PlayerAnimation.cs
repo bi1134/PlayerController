@@ -28,6 +28,7 @@ public class PlayerAnimation : MonoBehaviour
     private static int isAttackingHash = Animator.StringToHash("isAttacking");
     private static int isPlayingActionHash = Animator.StringToHash("isPlayingAction");
     private int[] actionHashes;
+    private static int isCombatHash = Animator.StringToHash("IsCombat");
 
     private Vector2 currentBlendInput = Vector2.zero;
     private float sprintMaxBlendValue = 1.5f;
@@ -58,6 +59,7 @@ public class PlayerAnimation : MonoBehaviour
         bool isFalling = playerState.currentPlayerMovementState == PlayerMovementState.Falling;
         bool isGrounded = playerState.InGroundedState();
         bool isPlayingAction = actionHashes.Any(hash => animator.GetBool(hash));
+        bool isInCombat = playerState.currentPlayerCombatState == PlayerCombatState.InCombat;
 
         bool isRunBlendValue = isRunning || isSprinting || isFalling;
         Vector2 inputTarget = isSprinting ? playerLocomotionInput.movementInput * sprintMaxBlendValue
@@ -70,8 +72,9 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetBool(isJumpingHash, isJumping);
         animator.SetBool(isFallingHash, isFalling);
         animator.SetBool(isRotatingToTargetHash, playerController.isRotatingToTarget);
-        animator.SetBool(isAttackingHash, playerActionInput.attackPressed);
+        animator.SetBool(isAttackingHash, playerActionInput.attackAnimation);
         animator.SetBool(isPlayingActionHash, isPlayingAction);
+        animator.SetBool(isCombatHash, isInCombat);
 
         animator.SetFloat(inputXHash, currentBlendInput.x);
         animator.SetFloat(inputYHash, currentBlendInput.y);

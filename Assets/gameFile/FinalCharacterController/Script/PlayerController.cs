@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private LayerMask aimColliderMask = new LayerMask();
-    [SerializeField] private Transform debugTransform;
+    [SerializeField] private Transform hitPoint;
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Transform bulletSpawnPosition;
 
@@ -199,17 +199,26 @@ public class PlayerController : MonoBehaviour
 
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+        Transform hitTransform = null;
         if(Physics.Raycast(ray,out RaycastHit raycastHit, 999f, aimColliderMask))
         {
-            debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
+            hitTransform = raycastHit.transform;
+            hitPoint.position = raycastHit.point;
         }
 
         if(playerActionInput.attackPressed)
         {
             Vector3 aimDir = (mouseWorldPosition - bulletSpawnPosition.position).normalized;
-            Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
-            playerActionInput.SetAttackPressedFalse();
+            Transform bulletTransform = Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
+            BulletProjectile bulletProjectile = bulletTransform.GetComponent<BulletProjectile>();
+            bulletProjectile.SetTarget(hitPoint.position);
+
+            bool hitTarget = hitTransform != null && hitTransform.GetComponent<BulletTarget>() != null;
+            bulletProjectile.HandleHit(hitPoint.position, hitTarget);
+
+            playerActionInput.IsAttackPressed(false);
+            playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
         }
     }    
 

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3407802143120184137}
-  - component: {fileID: 5965219581676592355}
   - component: {fileID: 3762100596867790423}
-  - component: {fileID: 6558927781406524180}
+  - component: {fileID: 5124674339132971724}
+  - component: {fileID: -8356869424485256966}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -35,7 +35,28 @@ Transform:
   - {fileID: 7044321066402547653}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &5965219581676592355
+--- !u!65 &3762100596867790423
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6407338185989330415}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.25, y: 0.25, z: 0.7}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &5124674339132971724
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -62,28 +83,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!65 &3762100596867790423
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6407338185989330415}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.25, y: 0.25, z: 0.7}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6558927781406524180
+--- !u!114 &-8356869424485256966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,7 +95,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e77494a4a3f707e4ab9c2adcac1f05d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 10
+  vfxHitBlue: {fileID: 2490837835551310434, guid: 5bc9a0bf98f67d240a936bf476ba2082, type: 3}
+  vfxHitRed: {fileID: 2378385045970906311, guid: 39f852c28f9c3fd45a427c24f3564ba7, type: 3}
+  bulletSpeed: 100
 --- !u!1 &7968922451461514095
 GameObject:
   m_ObjectHideFlags: 0

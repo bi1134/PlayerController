@@ -3,10 +3,16 @@ using UnityEngine;
 public class PlayerState : MonoBehaviour
 {
    [field: SerializeField] public PlayerMovementState currentPlayerMovementState { get; private set; } = PlayerMovementState.Idling;
+   [field: SerializeField] public PlayerCombatState currentPlayerCombatState { get; private set; } = PlayerCombatState.notInCombat;
    
     public void SetPlayerMovementState(PlayerMovementState playerMovementState)
     {
         currentPlayerMovementState = playerMovementState;
+    }
+
+    public void SetPlayerCombatState(PlayerCombatState playerCombatState)
+    {
+        currentPlayerCombatState = playerCombatState;
     }
 
     public bool InGroundedState()
@@ -32,5 +38,11 @@ public enum PlayerMovementState
         Sprinting,
         Jumping,
         Falling,
-        Strafing
+        Strafing,
+    }
+public enum PlayerCombatState
+    {
+        InCombat,
+        notInCombat
+
     }

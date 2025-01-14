@@ -1,15 +1,25 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 
 [DefaultExecutionOrder(-2)]
 public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapActions
 {
     #region Class Variables
+    [SerializeField] private Rig aimRig;
+
+
     public bool attackPressed { get; private set; }
+    public bool attackAnimation { get; private set; }
 
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
+
+    public float inCombatTimer = 5f;
+    public float maxInCombatTimer = 100f;
+
+    private float aimRigWeight;
 
     #endregion
 
@@ -52,17 +62,14 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
 
     private void Update()
     {
-        if( playerLocomotionInput.movementInput != Vector2.zero || 
-            playerState.currentPlayerMovementState == PlayerMovementState.Jumping ||
-            playerState.currentPlayerMovementState == PlayerMovementState.Falling)
-        {
+        OutOfCombatState();
 
-        }
+        aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
     }
 
     public void SetAttackPressedFalse()
     {
-        attackPressed = false;
+        attackAnimation = false;
     }
 
     #endregion
@@ -73,7 +80,33 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     {
         if(!context.performed)
             return;
-        attackPressed = true;
+        IsAttackPressed(context.performed);
+        inCombatTimer = maxInCombatTimer;
     }
+    #endregion
+
+    #region Functions
+
+    private void OutOfCombatState()
+    {
+        if (playerState.currentPlayerCombatState == PlayerCombatState.InCombat &&
+             !attackPressed)
+        {
+            inCombatTimer -= Time.deltaTime;
+            if (inCombatTimer < 0)
+            {
+                playerState.SetPlayerCombatState(PlayerCombatState.notInCombat);
+                aimRigWeight = 0f;
+            }
+        }
+    }
+
+    public void IsAttackPressed(bool attack)
+    {
+        attackPressed = attack;
+        attackAnimation = true;
+        aimRigWeight = 1f;
+    }
+
     #endregion
 }
