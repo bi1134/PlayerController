@@ -167,7 +167,7 @@
                 {
                     "name": "",
                     "id": "282931fd-4196-451a-bb36-07cf75c5fa22",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -228,6 +228,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Dodging",
+                    "type": "Button",
+                    "id": "1249f86c-cbaa-4afb-aad8-8e2c052940c7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -239,6 +248,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "881acfed-e4fc-4f1e-ad7a-1597261592bc",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dodging",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

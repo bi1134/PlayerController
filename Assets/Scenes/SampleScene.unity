@@ -4379,6 +4379,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4116102394643680777, guid: c382854a9dc8ea145a97f4a39e91db5c, type: 3}
+      propertyPath: holdToSprint
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4460489400148308187, guid: c382854a9dc8ea145a97f4a39e91db5c, type: 3}
       propertyPath: aimRig
       value: 

@@ -4,6 +4,7 @@ public class PlayerState : MonoBehaviour
 {
    [field: SerializeField] public PlayerMovementState currentPlayerMovementState { get; private set; } = PlayerMovementState.Idling;
    [field: SerializeField] public PlayerCombatState currentPlayerCombatState { get; private set; } = PlayerCombatState.notInCombat;
+   [field: SerializeField] public PlayerDodgeState currentPlayerDodgingState { get; private set; } = PlayerDodgeState.notDodging;
    
     public void SetPlayerMovementState(PlayerMovementState playerMovementState)
     {
@@ -13,6 +14,11 @@ public class PlayerState : MonoBehaviour
     public void SetPlayerCombatState(PlayerCombatState playerCombatState)
     {
         currentPlayerCombatState = playerCombatState;
+    }
+
+    public void SetPlayerDodgingState(PlayerDodgeState playerDodgingState)
+    {
+        currentPlayerDodgingState = playerDodgingState;
     }
 
     public bool InGroundedState()
@@ -38,11 +44,16 @@ public enum PlayerMovementState
         Sprinting,
         Jumping,
         Falling,
-        Strafing,
+        Strafing
     }
 public enum PlayerCombatState
     {
         InCombat,
         notInCombat
-
     }
+
+public enum PlayerDodgeState
+{
+    Dodging,
+    notDodging
+}

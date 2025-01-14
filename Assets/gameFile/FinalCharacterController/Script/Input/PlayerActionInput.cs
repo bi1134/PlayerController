@@ -13,11 +13,17 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     public bool attackPressed { get; private set; }
     public bool attackAnimation { get; private set; }
 
+    public bool dodgePressed { get; private set; }
+    public bool dodgeAnimation { get; private set; }
+
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
 
     public float inCombatTimer = 5f;
-    public float maxInCombatTimer = 100f;
+    public float maxInCombatTimer = 10f;
+
+    public float dodgeCooldown = 0f;
+    public float maxDodgeCooldown = 3f;
 
     private float aimRigWeight;
 
@@ -63,13 +69,9 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     private void Update()
     {
         OutOfCombatState();
+        DodgeCooldown();
 
         aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
-    }
-
-    public void SetAttackPressedFalse()
-    {
-        attackAnimation = false;
     }
 
     #endregion
@@ -83,6 +85,16 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         IsAttackPressed(context.performed);
         inCombatTimer = maxInCombatTimer;
     }
+
+    public void OnDodging(InputAction.CallbackContext context)
+    {
+        if (!context.performed || dodgeCooldown > 0)
+            return;
+
+        IsDodgePressed(context.performed);
+        dodgeCooldown = maxDodgeCooldown;
+    }
+  
     #endregion
 
     #region Functions
@@ -101,6 +113,18 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         }
     }
 
+    private void DodgeCooldown()
+    {
+        if (!dodgeAnimation)
+        {
+            dodgeCooldown -= Time.deltaTime;
+            if (dodgeCooldown <= 0)
+            {
+                dodgeCooldown = 0;
+            }
+        }
+    }
+
     public void IsAttackPressed(bool attack)
     {
         attackPressed = attack;
@@ -108,5 +132,20 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         aimRigWeight = 1f;
     }
 
+    public void SetAttackPressedFalse()
+    {
+        attackAnimation = false;
+    }
+
+    public void IsDodgePressed(bool dodge)
+    {
+        dodgePressed = dodge;
+        dodgeAnimation = true;
+    }
+
+    public void SetDodgePressedFalse()
+    {
+       dodgeAnimation = false;
+    }
     #endregion
 }

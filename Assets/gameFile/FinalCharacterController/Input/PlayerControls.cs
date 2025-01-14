@@ -189,7 +189,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""282931fd-4196-451a-bb36-07cf75c5fa22"",
-                    ""path"": ""<Keyboard>/leftShift"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -250,6 +250,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dodging"",
+                    ""type"": ""Button"",
+                    ""id"": ""1249f86c-cbaa-4afb-aad8-8e2c052940c7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -261,6 +270,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""881acfed-e4fc-4f1e-ad7a-1597261592bc"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dodging"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -281,6 +301,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // PlayerActionMap
         m_PlayerActionMap = asset.FindActionMap("PlayerActionMap", throwIfNotFound: true);
         m_PlayerActionMap_Attack = m_PlayerActionMap.FindAction("Attack", throwIfNotFound: true);
+        m_PlayerActionMap_Dodging = m_PlayerActionMap.FindAction("Dodging", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -466,11 +487,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlayerActionMap;
     private List<IPlayerActionMapActions> m_PlayerActionMapActionsCallbackInterfaces = new List<IPlayerActionMapActions>();
     private readonly InputAction m_PlayerActionMap_Attack;
+    private readonly InputAction m_PlayerActionMap_Dodging;
     public struct PlayerActionMapActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActionMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Attack => m_Wrapper.m_PlayerActionMap_Attack;
+        public InputAction @Dodging => m_Wrapper.m_PlayerActionMap_Dodging;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActionMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -483,6 +506,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @Dodging.started += instance.OnDodging;
+            @Dodging.performed += instance.OnDodging;
+            @Dodging.canceled += instance.OnDodging;
         }
 
         private void UnregisterCallbacks(IPlayerActionMapActions instance)
@@ -490,6 +516,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @Dodging.started -= instance.OnDodging;
+            @Dodging.performed -= instance.OnDodging;
+            @Dodging.canceled -= instance.OnDodging;
         }
 
         public void RemoveCallbacks(IPlayerActionMapActions instance)
@@ -521,5 +550,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     public interface IPlayerActionMapActions
     {
         void OnAttack(InputAction.CallbackContext context);
+        void OnDodging(InputAction.CallbackContext context);
     }
 }

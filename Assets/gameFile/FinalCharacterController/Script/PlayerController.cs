@@ -35,6 +35,10 @@ public class PlayerController : MonoBehaviour
     public float playerModelRotationSpeed = 10f;
     public float rotateTargetTime = 0.25f;
 
+    [Header("Dodging")]
+    public float dodgeSpeed = 10f;
+    private Vector3 dodgeDirection;
+    
     [Header("Camera Settings")]
     public float lookSenseH = 0.1f;
     public float lookSenseV = 0.1f;
@@ -42,6 +46,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Environmental Details")]
     [SerializeField] private LayerMask groundLayers;
+
 
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
@@ -78,6 +83,7 @@ public class PlayerController : MonoBehaviour
         UpdateMovementState();
         HandleVerticalMovement();
         HandleShootPosition();
+        HandleDodging();
     }
 
     private void UpdateMovementState()
@@ -146,6 +152,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void HandleMovement()
     {
         //create quick references for current state
@@ -192,6 +199,31 @@ public class PlayerController : MonoBehaviour
 
         return velocity;
     }
+
+    private void HandleDodging()
+    {
+
+
+        if (playerActionInput.dodgePressed && playerActionInput.dodgeAnimation)
+        {
+            // Determine dodge direction based on player input
+            Vector3 cameraForwardXZ = new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
+            Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z).normalized;
+            dodgeDirection = cameraRightXZ * playerLocomotionInput.movementInput.x + cameraForwardXZ * playerLocomotionInput.movementInput.y;
+
+            if (dodgeDirection == Vector3.zero)
+            {
+                dodgeDirection = transform.forward; // Default to forward dodge if no input
+            }
+
+            // Normalize dodge direction and apply dodge speed
+            dodgeDirection = dodgeDirection.normalized * dodgeSpeed;
+
+            // Perform the dodge movement
+            characterController.Move(dodgeDirection * Time.deltaTime);
+        }
+    }
+
 
     private void HandleShootPosition()
     {

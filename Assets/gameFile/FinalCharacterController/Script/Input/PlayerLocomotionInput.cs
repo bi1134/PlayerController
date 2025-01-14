@@ -77,5 +77,7 @@ public class PlayerLocomotionInput: MonoBehaviour, PlayerControls.IPlayerLocomot
 
         jumpPressed = true;
     }
+
     #endregion
+   
 }
