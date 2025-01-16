@@ -152,7 +152,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void HandleMovement()
     {
         //create quick references for current state
@@ -202,14 +201,12 @@ public class PlayerController : MonoBehaviour
 
     private void HandleDodging()
     {
-
-
         if (playerActionInput.dodgePressed && playerActionInput.dodgeAnimation)
         {
             // Determine dodge direction based on player input
             Vector3 cameraForwardXZ = new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
             Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z).normalized;
-            dodgeDirection = cameraRightXZ * playerLocomotionInput.movementInput.x + cameraForwardXZ * playerLocomotionInput.movementInput.y;
+            Vector3 dodgeDirection = cameraRightXZ * playerLocomotionInput.movementInput.x + cameraForwardXZ * playerLocomotionInput.movementInput.y;
 
             if (dodgeDirection == Vector3.zero)
             {
@@ -219,11 +216,17 @@ public class PlayerController : MonoBehaviour
             // Normalize dodge direction and apply dodge speed
             dodgeDirection = dodgeDirection.normalized * dodgeSpeed;
 
-            // Perform the dodge movement
-            characterController.Move(dodgeDirection * Time.deltaTime);
+            // Set vertical velocity to zero to ignore gravity during dodge
+            verticalVelocity = 0f;
+
+            // Apply dodge velocity
+            Vector3 newVelocity = dodgeDirection;
+            newVelocity.y = verticalVelocity;
+
+            // Move character
+            characterController.Move(newVelocity * Time.deltaTime);
         }
     }
-
 
     private void HandleShootPosition()
     {
