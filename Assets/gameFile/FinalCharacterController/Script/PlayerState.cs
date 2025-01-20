@@ -4,7 +4,7 @@ public class PlayerState : MonoBehaviour
 {
    [field: SerializeField] public PlayerMovementState currentPlayerMovementState { get; private set; } = PlayerMovementState.Idling;
    [field: SerializeField] public PlayerCombatState currentPlayerCombatState { get; private set; } = PlayerCombatState.notInCombat;
-   [field: SerializeField] public PlayerDodgeState currentPlayerDodgingState { get; private set; } = PlayerDodgeState.notDodging;
+   [field: SerializeField] public PlayerDashState currentPlayerDashingState { get; private set; } = PlayerDashState.notDashing;
    
     public void SetPlayerMovementState(PlayerMovementState playerMovementState)
     {
@@ -16,9 +16,9 @@ public class PlayerState : MonoBehaviour
         currentPlayerCombatState = playerCombatState;
     }
 
-    public void SetPlayerDodgingState(PlayerDodgeState playerDodgingState)
+    public void SetPlayerDashingState(PlayerDashState playerDashingState)
     {
-        currentPlayerDodgingState = playerDodgingState;
+        currentPlayerDashingState = playerDashingState;
     }
 
     public bool InGroundedState()
@@ -52,8 +52,8 @@ public enum PlayerCombatState
         notInCombat
     }
 
-public enum PlayerDodgeState
+public enum PlayerDashState
 {
-    Dodging,
-    notDodging
+    Dashing,
+    notDashing
 }

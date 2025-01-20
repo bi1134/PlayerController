@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEditorInternal.VersionControl.ListControl;
 
 [DefaultExecutionOrder(-1)]
 public class PlayerController : MonoBehaviour
@@ -35,10 +37,11 @@ public class PlayerController : MonoBehaviour
     public float playerModelRotationSpeed = 10f;
     public float rotateTargetTime = 0.25f;
 
-    [Header("Dodging")]
-    public float dodgeSpeed = 10f;
-    private Vector3 dodgeDirection;
-    
+    [Header("Dashing Settings")]
+    public float dashForce = 10f;
+    public float dashUpwardForce = 0f;
+    public float dashLerp = 0.5f;
+
     [Header("Camera Settings")]
     public float lookSenseH = 0.1f;
     public float lookSenseV = 0.1f;
@@ -47,7 +50,7 @@ public class PlayerController : MonoBehaviour
     [Header("Environmental Details")]
     [SerializeField] private LayerMask groundLayers;
 
-
+    //get components stuff
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
     private PlayerActionInput playerActionInput;
@@ -55,6 +58,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 cameraRotation = Vector2.zero;
     private Vector2 playerTargetRotation = Vector2.zero;
 
+    //rotate and jump
     private bool jumpLastFrame = false;
     private bool isRotatingClockwise = false;
     private float verticalVelocity = 0f;
@@ -62,6 +66,17 @@ public class PlayerController : MonoBehaviour
     private float antiBump;
     private float stepOffset;
     private PlayerMovementState lastMovementState = PlayerMovementState.Falling;
+
+    //dashing
+    private Vector3 dashDirection;
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+    private float speedChangeFactor;
+    private float dashSpeedChangeFactor;
+    private bool keepMomentum;
+    private float moveSpeed;
+    private PlayerDashState lastDashState = PlayerDashState.notDashing;
+
     #endregion
 
     #region Startup
@@ -82,8 +97,10 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         UpdateMovementState();
         HandleVerticalMovement();
+
+        //handle actions
         HandleShootPosition();
-        HandleDodging();
+        HandleDashing();
     }
 
     private void UpdateMovementState()
@@ -100,28 +117,53 @@ public class PlayerController : MonoBehaviour
                                         || isMovementInput ? PlayerMovementState.Running : PlayerMovementState.Idling;
         playerState.SetPlayerMovementState(lateralState);
 
+        //playerDashing
+        if (playerActionInput.dashPressed)
+        {
+            desiredMoveSpeed = dashForce;
+            speedChangeFactor = dashSpeedChangeFactor;
+        }
+
         //control airborn state
-        if(jumpLastFrame)
+        if (!isGrounded || jumpLastFrame)
         {
-            playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
-            jumpLastFrame = false;
-            characterController.stepOffset = 0f; 
-        }
-        else if(!isGrounded && characterController.velocity.y > 0f)
-        {
-            playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
-            characterController.stepOffset = 0f;
-        }
-        else if(!isGrounded && characterController.velocity.y <= 0f)
-        {
-            playerState.SetPlayerMovementState(PlayerMovementState.Falling);
-            characterController.stepOffset = 0f;
+            if (characterController.velocity.y > 0f)
+            {
+                playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
+                jumpLastFrame = false;
+                characterController.stepOffset = 0f;
+                desiredMoveSpeed = desiredMoveSpeed < sprintSpeed ? runSpeed : sprintSpeed;
+            }
+            else
+            {
+                playerState.SetPlayerMovementState(PlayerMovementState.Falling);
+                jumpLastFrame = false;
+                characterController.stepOffset = 0f;
+            }
         }
         else
         {
-            playerState.InGroundedState();
             characterController.stepOffset = stepOffset;
         }
+
+        bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
+        if (lastDashState == PlayerDashState.Dashing) keepMomentum = true;
+
+        if (desiredMoveSpeedHasChanged)
+        {
+            StopAllCoroutines();
+            if (keepMomentum)
+            {
+                StartCoroutine(SmoothlyLerpMoveSpeed());
+            }
+            else
+            {
+                moveSpeed = desiredMoveSpeed;
+            }
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+        lastDashState = playerState.currentPlayerDashingState;
     }
 
     private void HandleVerticalMovement()
@@ -158,17 +200,14 @@ public class PlayerController : MonoBehaviour
         bool isSprinting = playerState.currentPlayerMovementState == PlayerMovementState.Sprinting;
         bool isGrounded = playerState.InGroundedState();
 
-
         //state dependent acceleration and speed
         float lateralAcceleration = !isGrounded ? inAirAcceleration :
                                      isSprinting ? sprintAcceleration : runAcceleration;
-        float clampLateralMagnitude =   !isGrounded ? sprintSpeed :
+        desiredMoveSpeed =   !isGrounded ? sprintSpeed :
                                         isSprinting ? sprintSpeed : runSpeed;
 
         //the movement direction is relative to the camera's orientation
-        Vector3 cameraForwardXZ = new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
-        Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z).normalized;
-        Vector3 movementDirection = cameraRightXZ * playerLocomotionInput.movementInput.x + cameraForwardXZ * playerLocomotionInput.movementInput.y;
+        Vector3 movementDirection = GetCameraDirection();
 
         Vector3 movementDelta = movementDirection * lateralAcceleration * Time.deltaTime;
         //new velocity = current velocity + our movement delta
@@ -177,7 +216,7 @@ public class PlayerController : MonoBehaviour
         Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
         //use this so doesn't have to use a small if else statement
         newVelocity = (newVelocity.magnitude > drag * Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
-        newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), clampLateralMagnitude);
+        newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), moveSpeed);
         newVelocity.y += verticalVelocity;
         newVelocity = !isGrounded ? HandleSteepWalls(newVelocity) : newVelocity;
 
@@ -199,32 +238,25 @@ public class PlayerController : MonoBehaviour
         return velocity;
     }
 
-    private void HandleDodging()
+    private void HandleDashing()
     {
-        if (playerActionInput.dodgePressed && playerActionInput.dodgeAnimation)
+        // Determine dash direction based on player input
+        Vector3 dashDirection = GetCameraDirection();
+
+        if (dashDirection == Vector3.zero)
         {
-            // Determine dodge direction based on player input
-            Vector3 cameraForwardXZ = new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
-            Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z).normalized;
-            Vector3 dodgeDirection = cameraRightXZ * playerLocomotionInput.movementInput.x + cameraForwardXZ * playerLocomotionInput.movementInput.y;
+            dashDirection = transform.forward; // Default to forward dash if no input
+        }
 
-            if (dodgeDirection == Vector3.zero)
-            {
-                dodgeDirection = transform.forward; // Default to forward dodge if no input
-            }
+        // Normalize dash direction and apply dash speed
+        Vector3 forceToApply = dashDirection.normalized * (dashForce + moveSpeed) + transform.up * dashUpwardForce;
 
-            // Normalize dodge direction and apply dodge speed
-            dodgeDirection = dodgeDirection.normalized * dodgeSpeed;
-
-            // Set vertical velocity to zero to ignore gravity during dodge
+        if (playerActionInput.dashPressed && playerActionInput.dashAnimation)
+        {
+            // Set vertical velocity to zero to ignore gravity during dash
             verticalVelocity = 0f;
-
-            // Apply dodge velocity
-            Vector3 newVelocity = dodgeDirection;
-            newVelocity.y = verticalVelocity;
-
             // Move character
-            characterController.Move(newVelocity * Time.deltaTime);
+            characterController.Move(forceToApply * Time.deltaTime);
         }
     }
 
@@ -255,7 +287,37 @@ public class PlayerController : MonoBehaviour
             playerActionInput.IsAttackPressed(false);
             playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
         }
-    }    
+    }
+
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        float time = 0f;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed) + dashLerp;
+        float startValue = moveSpeed;
+
+        float boostFactor = speedChangeFactor;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+            time += Time.deltaTime * boostFactor;
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
+        speedChangeFactor = 1f;
+        keepMomentum = false;
+    }
+
+
+    private Vector3 GetCameraDirection()
+    {
+        Vector3 cameraForwardXZ = new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
+        Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z).normalized;
+        Vector3 cameraDirection = cameraRightXZ * playerLocomotionInput.movementInput.x + cameraForwardXZ * playerLocomotionInput.movementInput.y;
+
+        return cameraDirection;
+    }
 
     #endregion
 

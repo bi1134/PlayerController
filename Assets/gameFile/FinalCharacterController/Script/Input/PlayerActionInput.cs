@@ -7,25 +7,33 @@ using UnityEngine.InputSystem;
 public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapActions
 {
     #region Class Variables
+    [Header("References")]
     [SerializeField] private Rig aimRig;
 
+
+    [Header("Combat")]
+    public float inCombatTime = 5f;
+    private float inCombatTimeTimer = 0f;
+
+    [Header("Dash")]
+    public float dashCooldown = 3f;
+    private float dashCooldownTimer = 0f;
+    public float dashDuration = 0.25f;
+    private float dashDurationTimer = 0f;
+
+    //aim rig
+    private float aimRigWeight;
 
     public bool attackPressed { get; private set; }
     public bool attackAnimation { get; private set; }
 
-    public bool dodgePressed { get; private set; }
-    public bool dodgeAnimation { get; private set; }
+    public bool dashPressed { get; private set; }
+    public bool dashAnimation { get; private set; }
 
+    //get component stuff
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
 
-    public float inCombatTimer = 5f;
-    public float maxInCombatTimer = 10f;
-
-    public float dodgeCooldown = 0f;
-    public float maxDodgeCooldown = 3f;
-
-    private float aimRigWeight;
 
     #endregion
 
@@ -69,7 +77,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     private void Update()
     {
         OutOfCombatState();
-        DodgeCooldown();
+        DashCooldown();
 
         aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
     }
@@ -83,16 +91,17 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         if(!context.performed)
             return;
         IsAttackPressed(context.performed);
-        inCombatTimer = maxInCombatTimer;
+        inCombatTimeTimer = inCombatTime;
     }
 
     public void OnDodging(InputAction.CallbackContext context)
     {
-        if (!context.performed || dodgeCooldown > 0)
+        if (!context.performed || dashCooldownTimer > 0)
             return;
 
-        IsDodgePressed(context.performed);
-        dodgeCooldown = maxDodgeCooldown;
+        IsDashPressed(context.performed);
+        dashCooldownTimer = dashCooldown;
+        dashDurationTimer = dashDuration;
     }
   
     #endregion
@@ -104,8 +113,8 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         if (playerState.currentPlayerCombatState == PlayerCombatState.InCombat &&
              !attackPressed)
         {
-            inCombatTimer -= Time.deltaTime;
-            if (inCombatTimer < 0)
+            inCombatTimeTimer -= Time.deltaTime;
+            if (inCombatTimeTimer < 0)
             {
                 playerState.SetPlayerCombatState(PlayerCombatState.notInCombat);
                 aimRigWeight = 0f;
@@ -113,15 +122,22 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         }
     }
 
-    private void DodgeCooldown()
+    private void DashCooldown()
     {
-        if (!dodgeAnimation)
+        if (!dashAnimation)
         {
-            dodgeCooldown -= Time.deltaTime;
-            if (dodgeCooldown <= 0)
+            dashCooldownTimer -= Time.deltaTime;
+            if (dashCooldownTimer <= 0)
             {
-                dodgeCooldown = 0;
+                dashCooldownTimer = 0;
             }
+        }
+
+        dashDurationTimer -= Time.deltaTime;
+        if(dashDurationTimer <= 0)
+        {
+            dashDurationTimer = 0;
+            SetDashPressedFalse();
         }
     }
 
@@ -137,15 +153,18 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         attackAnimation = false;
     }
 
-    public void IsDodgePressed(bool dodge)
+    public void IsDashPressed(bool dash)
     {
-        dodgePressed = dodge;
-        dodgeAnimation = true;
+        dashPressed = dash;
+        dashAnimation = true;
+        playerState.SetPlayerDashingState(PlayerDashState.Dashing);
     }
 
-    public void SetDodgePressedFalse()
+    public void SetDashPressedFalse()
     {
-       dodgeAnimation = false;
+        dashAnimation = false;
+        dashPressed = false;
+        playerState.SetPlayerDashingState(PlayerDashState.notDashing);
     }
     #endregion
 }

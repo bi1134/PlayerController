@@ -11,9 +11,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: isJumping
     m_EventTreshold: 0
-  - m_ConditionMode: 2
-    m_ConditionEvent: isDodging
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7038572740149868641}
   m_Solo: 0
@@ -71,7 +68,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c91c33a353bbc934db0a47f52fd543aa, type: 2}
+  m_Motion: {fileID: 7400000, guid: 8fadd8d2fd7cbeb4f83de8d6ae8feb36, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: isIdling
@@ -271,7 +268,6 @@ AnimatorStateMachine:
   - {fileID: -240025251495260947}
   - {fileID: -8596030511476488723}
   - {fileID: -256301828179780742}
-  - {fileID: -314889649825985312}
   m_EntryTransitions:
   - {fileID: -2583280005011414187}
   m_StateMachineTransitions: {}
@@ -422,9 +418,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 2
     m_ConditionEvent: isPlayingAction
     m_EventTreshold: 0
-  - m_ConditionMode: 2
-    m_ConditionEvent: isDodging
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1526667741135742217}
   m_Solo: 0
@@ -466,31 +459,6 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1101 &-314889649825985312
-AnimatorStateTransition:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: isDodging
-    m_EventTreshold: 0
-  m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: 723570041436329740}
-  m_Solo: 0
-  m_Mute: 0
-  m_IsExit: 0
-  serializedVersion: 3
-  m_TransitionDuration: 0.25
-  m_TransitionOffset: 0
-  m_ExitTime: 0.75
-  m_HasExitTime: 0
-  m_HasFixedDuration: 1
-  m_InterruptionSource: 2
-  m_OrderedInterruption: 1
-  m_CanTransitionToSelf: 0
 --- !u!1101 &-256301828179780742
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -501,9 +469,6 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: isFalling
-    m_EventTreshold: 0
-  - m_ConditionMode: 2
-    m_ConditionEvent: isDodging
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3134817771654863945}
@@ -625,7 +590,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: isDodging
+  - m_Name: isDashing
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -832,7 +797,7 @@ AnimatorStateTransition:
     m_ConditionEvent: isPlayingAction
     m_EventTreshold: 0
   - m_ConditionMode: 2
-    m_ConditionEvent: isDodging
+    m_ConditionEvent: isDashing
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1526667741135742217}
