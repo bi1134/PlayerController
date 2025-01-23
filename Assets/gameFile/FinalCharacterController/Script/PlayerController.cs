@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private LayerMask aimColliderMask = new LayerMask();
     [SerializeField] private Transform hitPoint;
+    [SerializeField] private Transform aimPoint;
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Transform bulletSpawnPosition;
 
@@ -216,7 +217,7 @@ public class PlayerController : MonoBehaviour
         Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
         //use this so doesn't have to use a small if else statement
         newVelocity = (newVelocity.magnitude > drag * Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
-        newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), moveSpeed);
+        newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), desiredMoveSpeed);
         newVelocity.y += verticalVelocity;
         newVelocity = !isGrounded ? HandleSteepWalls(newVelocity) : newVelocity;
 
@@ -274,7 +275,10 @@ public class PlayerController : MonoBehaviour
             hitPoint.position = raycastHit.point;
         }
 
-        if(playerActionInput.attackPressed)
+        //lerp aim point to hit point
+        aimPoint.position = Vector3.Lerp(aimPoint.position, hitPoint.position, Time.deltaTime * playerModelRotationSpeed);
+
+        if (playerActionInput.attackPressed)
         {
             Vector3 aimDir = (mouseWorldPosition - bulletSpawnPosition.position).normalized;
             Transform bulletTransform = Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
