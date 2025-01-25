@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Body
+  m_Name: Body Variant
   m_Shader: {fileID: -6465566751694194690, guid: 1532302550da7ee4ca17136fafb02c70, type: 3}
-  m_Parent: {fileID: 2100000, guid: 09b6f50ad94bdac4a8b411e0c6236501, type: 2}
+  m_Parent: {fileID: 2100000, guid: 95fcf9331ca635c459a201f2c56f44dc, type: 2}
   m_ModifiedSerializedProperties: 4
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -40,7 +40,7 @@ Material:
     - _Specular_Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &7847647602179404857
+--- !u!114 &708121911840361752
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

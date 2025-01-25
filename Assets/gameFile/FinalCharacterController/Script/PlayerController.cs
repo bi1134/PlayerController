@@ -11,11 +11,6 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Camera playerCamera;
-    [SerializeField] private LayerMask aimColliderMask = new LayerMask();
-    [SerializeField] private Transform hitPoint;
-    [SerializeField] private Transform aimPoint;
-    [SerializeField] private Transform pfBulletProjectile;
-    [SerializeField] private Transform bulletSpawnPosition;
 
     public float rotationMismatch { get; private set; } = 0f;
     public bool isRotatingToTarget { get; private set; } = false;
@@ -100,7 +95,6 @@ public class PlayerController : MonoBehaviour
         HandleVerticalMovement();
 
         //handle actions
-        HandleShootPosition();
         HandleDashing();
     }
 
@@ -261,37 +255,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleShootPosition()
-    {
-        Vector3 mouseWorldPosition = Vector3.zero;
-
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-        Transform hitTransform = null;
-        if(Physics.Raycast(ray,out RaycastHit raycastHit, 999f, aimColliderMask))
-        {
-            mouseWorldPosition = raycastHit.point;
-            hitTransform = raycastHit.transform;
-            hitPoint.position = raycastHit.point;
-        }
-
-        //lerp aim point to hit point
-        aimPoint.position = Vector3.Lerp(aimPoint.position, hitPoint.position, Time.deltaTime * playerModelRotationSpeed);
-
-        if (playerActionInput.attackPressed)
-        {
-            Vector3 aimDir = (mouseWorldPosition - bulletSpawnPosition.position).normalized;
-            Transform bulletTransform = Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
-            BulletProjectile bulletProjectile = bulletTransform.GetComponent<BulletProjectile>();
-            bulletProjectile.SetTarget(hitPoint.position);
-
-            bool hitTarget = hitTransform != null && hitTransform.GetComponent<BulletTarget>() != null;
-            bulletProjectile.HandleHit(hitPoint.position, hitTarget);
-
-            playerActionInput.IsAttackPressed(false);
-            playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
-        }
-    }
 
     private IEnumerator SmoothlyLerpMoveSpeed()
     {

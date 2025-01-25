@@ -32,7 +32,6 @@ public class BulletProjectile : MonoBehaviour
     {
         Transform vfxPrefab = hitTarget ? vfxHitBlue : vfxHitRed;
         Instantiate(vfxPrefab, hitPosition, Quaternion.identity);
-
     }
 
     public void SetTarget(Vector3 target)
