@@ -16,7 +16,6 @@ public class HealthSystem : MonoBehaviour
     public float maxHealth;
     public float currentHealth;
 
-    public float ragdollForce;
 
     //hit blink
     public float blinkDuration = 0.2f;
@@ -26,7 +25,7 @@ public class HealthSystem : MonoBehaviour
 
     //get components stuff
     private SkinnedMeshRenderer[] skinnedMeshRenderer;
-    private Ragdoll ragdoll;
+    private Enemy enemy;
 
     #endregion
 
@@ -34,7 +33,8 @@ public class HealthSystem : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
-        ragdoll = GetComponent<Ragdoll>();
+        enemy = GetComponent<Enemy>();
+
         skinnedMeshRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
 
         //store original material values
@@ -113,9 +113,11 @@ public class HealthSystem : MonoBehaviour
 
     private void Die(Vector3 direction)
     {
-        ragdoll.ActivateRagdoll();
-        direction.y = 1;
-        ragdoll.ApplyForce(direction * ragdollForce);
+
+        EnemyDeathState deathState = enemy.stateMachine.GetEnemyState(EnemyStateID.Death) as EnemyDeathState;
+
+        deathState.direction = direction;
+        enemy.stateMachine.ChangeState(EnemyStateID.Death);
     }
 
     private void ApplyHitBlinkEffect()

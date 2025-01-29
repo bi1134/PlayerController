@@ -3951,6 +3951,7 @@ GameObject:
   - component: {fileID: 4984604710707117741}
   - component: {fileID: 203949410867794392}
   - component: {fileID: 4116102394643680777}
+  - component: {fileID: 3917229890046856311}
   - component: {fileID: 7551330759171104621}
   - component: {fileID: 2357759470286121862}
   - component: {fileID: 4139903647317258394}
@@ -4046,13 +4047,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 4984604710707117741}
   playerCamera: {fileID: 7458203035771680556}
-  aimColliderMask:
-    serializedVersion: 2
-    m_Bits: 1
-  hitPoint: {fileID: 0}
-  aimPoint: {fileID: 0}
-  pfBulletProjectile: {fileID: 3407802143120184137, guid: fef5a83b4cb43fe409cb38764ce75e2e, type: 3}
-  bulletSpawnPosition: {fileID: 7834255327717591480}
   runAcceleration: 25
   runSpeed: 4
   sprintAcceleration: 50
@@ -4088,6 +4082,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdToSprint: 0
+--- !u!114 &3917229890046856311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5142283830400874365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 782567da311675242aee8c9ff2e76386, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimPoint: {fileID: 0}
+  hitPoint: {fileID: 0}
+  pfBulletProjectile: {fileID: 3407802143120184137, guid: fef5a83b4cb43fe409cb38764ce75e2e, type: 3}
+  bulletSpawnPosition: {fileID: 7834255327717591480}
+  aimColliderMask:
+    serializedVersion: 2
+    m_Bits: 1
+  damage: 10
+  lerpRotationSpeed: 10
 --- !u!114 &7551330759171104621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4172,7 +4187,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5142283830400874365}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
   m_Name: 

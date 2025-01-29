@@ -59,10 +59,11 @@ public class PlayerAttack : MonoBehaviour
             bulletProjectile.HandleHit(hitPoint.position, hitTarget);
 
             var rb2d = hitTransform.GetComponent<Rigidbody>();
-            if(rb2d)
+            if (rb2d)
             {
                 rb2d.AddForceAtPosition(ray.direction * 20, hitPoint.position, ForceMode.Impulse);
             }
+
             var hitBox = hitTransform.GetComponent<HitBox>();
             if (hitBox)
             {
