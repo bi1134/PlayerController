@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EnemyShade
+  m_Name: EnemyShade 1
   m_Shader: {fileID: -6465566751694194690, guid: ab4eebc06c7ad2644a0939269fc86df5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -42,11 +42,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AmbientStrength: -0.37
+    - _AmbientStrength: 0.25
     - _Ambient_Strength: 0.25
     - _FalloffAmount: 0.05
     - _Falloff_Amount: 0.05
-    - _FresnelSize: 0.1
+    - _FresnelSize: 0.63
     - _Fresnel_Size: 0.1
     - _LightingCutoff: 0
     - _Lighting_Cutoff: 0
@@ -54,11 +54,11 @@ Material:
     - _QueueOffset: 1
     - _Smoothness: 10000
     m_Colors:
-    - _DiffuseColor: {r: 0.7490196, g: 0.043137256, b: 0.40392157, a: 0}
+    - _DiffuseColor: {r: 0.7490196, g: 0.30080962, b: 0.043137252, a: 0}
     - _Diffuse_Color: {r: 0.7509433, g: 0.04392306, b: 0.40386805, a: 0}
-    - _FresnelColor: {r: 0.81886786, g: 0.21475962, b: 0.21475962, a: 1}
+    - _FresnelColor: {r: 0.6150943, g: 0.29594156, b: 0.29594156, a: 1}
     - _Fresnel_Color: {r: 0.7584905, g: 0.3191384, b: 0.3191384, a: 0}
-    - _SpecularColor: {r: 0.7433963, g: 0.43175316, b: 0.049092103, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _Specular_Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
