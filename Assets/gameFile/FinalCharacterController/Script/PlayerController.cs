@@ -85,6 +85,11 @@ public class PlayerController : MonoBehaviour
         antiBump = sprintSpeed;
         stepOffset = characterController.stepOffset;
     }
+
+    private void OnAnimatorMove()
+    {
+        //empty function to use the existing movement func because multi parent constrain forces the animator to half use the rootmotion
+    }
     #endregion
 
     #region Update Logic

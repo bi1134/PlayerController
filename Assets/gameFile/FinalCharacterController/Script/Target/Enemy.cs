@@ -4,6 +4,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    #region Variables
     [Header("Compoments")]
     [SerializeField] public EnemyConfig config;
     [SerializeField] public EnemyStateID initialState;
@@ -16,6 +17,9 @@ public class Enemy : MonoBehaviour
     public Ragdoll ragdoll;
     public Transform playerTransform;
 
+    #endregion
+
+    #region Start Up
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -31,9 +35,12 @@ public class Enemy : MonoBehaviour
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
     }
+    #endregion
 
+    #region Update 
     private void Update()
     {
         stateMachine.Update();
     }
+    #endregion
 }

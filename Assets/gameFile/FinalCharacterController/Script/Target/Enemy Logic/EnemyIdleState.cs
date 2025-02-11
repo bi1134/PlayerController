@@ -12,8 +12,6 @@ public class EnemyIdleState : EnemyState
     {
     }
 
-
-
     public void Update(Enemy enemy)
     {
         Vector3 playerDirection = enemy.playerTransform.position - enemy.transform.position;

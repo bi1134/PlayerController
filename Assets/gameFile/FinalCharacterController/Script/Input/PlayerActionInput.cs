@@ -24,6 +24,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     //aim rig
     private float aimRigWeight;
 
+    [SerializeField] public bool holdToShoot = true;
     public bool attackPressed { get; private set; }
     public bool attackAnimation { get; private set; }
 
@@ -88,10 +89,15 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     #region Input Callback
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if(!context.performed)
-            return;
-        IsAttackPressed(context.performed);
-        inCombatTimeTimer = inCombatTime;
+        if (context.performed)
+        {
+            IsAttackPressed(true);
+            inCombatTimeTimer = inCombatTime;
+        }
+        else if (context.canceled)
+        {
+            IsAttackPressed(false);
+        }
     }
 
     public void OnDodging(InputAction.CallbackContext context)
@@ -143,9 +149,23 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
 
     public void IsAttackPressed(bool attack)
     {
-        attackPressed = attack;
-        attackAnimation = true;
-        aimRigWeight = 1f;
+        if (holdToShoot)
+        {
+            // Automatic Mode: Hold to shoot, stop when released
+            attackPressed = attack;  // Directly assign true on press, false on release
+        }
+        else
+        {
+            // Semi-Auto Mode: Fire only one bullet per button press
+            if (attack)
+            {
+                attackPressed = true;  // Fire one bullet when pressed
+            }
+            else
+            {
+                attackPressed = false; // Prevent continuous firing
+            }
+        }
     }
 
     public void SetAttackPressedFalse()

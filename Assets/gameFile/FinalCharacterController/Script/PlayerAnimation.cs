@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
 {
+    #region Variables
     [SerializeField] private Animator animator;
     [SerializeField] private float locomotionBlendSpeed = 0.02f;
 
@@ -36,6 +37,9 @@ public class PlayerAnimation : MonoBehaviour
     private float runMaxBlendValue = 1f;
     private float walkMaxBlendValue = 0.5f;
 
+    #endregion
+
+    #region StartUp
     private void Awake()
     {
         playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
@@ -46,6 +50,9 @@ public class PlayerAnimation : MonoBehaviour
         actionHashes = new int[] { };
     }
 
+    #endregion
+
+    #region Update Logic
     private void Update()
     {
         UpdateAnimationState();
@@ -84,5 +91,5 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetFloat(inputMagnitudeHash, currentBlendInput.magnitude);
         animator.SetFloat(rotationMismatchHash, playerController.rotationMismatch);
     }
-
+    #endregion
 }

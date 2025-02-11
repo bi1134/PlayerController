@@ -2,10 +2,16 @@ using UnityEngine;
 
 public class EnemyStateMachine
 {
+    #region Variables
+
     public EnemyState[] states;
     public Enemy enemy;
     public EnemyStateID currentState;
 
+
+    #endregion
+
+    #region State Logic
     public EnemyStateMachine(Enemy enemy)
     {
         this.enemy = enemy;
@@ -26,10 +32,6 @@ public class EnemyStateMachine
         return states[index]; //return state to that pecific index
     }
 
-    public void Update()
-    {
-        GetEnemyState(currentState)?.Update(enemy);
-    }
 
     public void ChangeState(EnemyStateID newState)
     {
@@ -37,4 +39,13 @@ public class EnemyStateMachine
         currentState = newState;
         GetEnemyState(currentState)?.Enter(enemy);
     }
+    #endregion
+
+    #region Update
+    public void Update()
+    {
+        GetEnemyState(currentState)?.Update(enemy);
+    }
+    #endregion
+
 }
