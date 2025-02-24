@@ -5,11 +5,8 @@ public class WeaponRaycast : MonoBehaviour
 {
     #region Variables
     [Header("Components")]
-    [SerializeField] private Transform aimPoint;
-    [SerializeField] private Transform hitPoint;
     [SerializeField] private Transform pfBulletProjectile;
-    [SerializeField] private Transform bulletSpawnPosition;
-    [SerializeField] private LayerMask aimColliderMask = new LayerMask();
+    [SerializeField] public AnimationClip weaponAnimation;
 
     [Header("Stats")]
     public float damage = 10f;
@@ -20,21 +17,35 @@ public class WeaponRaycast : MonoBehaviour
     public bool isFiring = false;
     private float accumulatedTime;
     private float fireInterval;
-    private Vector3 mouseWorldPosition;
-    private Ray ray;
-    private Transform hitTransform = null;
-    private float lerpRotationSpeed = 10f;
+    public Transform bulletSpawnPosition;
+
 
     //get components stuff
+    private ActiveWeapon activeWeapon;
     private PlayerState playerState;
 
     #endregion
 
     #region Startup
-    private void Awake()
+    private void Start()
     {
+        // Initial setup
         playerState = GetComponentInParent<PlayerState>();
+        activeWeapon = GetComponentInParent<ActiveWeapon>();
         fireInterval = 1.0f / fireRate;
+        bulletSpawnPosition = activeWeapon.bulletSpawnPosition;
+    }
+
+    public void Initialize()
+    {
+        activeWeapon = GetComponentInParent<ActiveWeapon>();
+        if (activeWeapon == null)
+        {
+            Debug.LogWarning("[WeaponRaycast] ActiveWeapon not found! Is the weapon parented correctly?");
+            return;
+        }
+
+        bulletSpawnPosition = activeWeapon.bulletSpawnPosition;
     }
 
     #endregion
@@ -42,28 +53,10 @@ public class WeaponRaycast : MonoBehaviour
     #region Update
     private void Update()
     {
-        HandleShootPosition();
     }
     #endregion
 
     #region Shooting Logic
-    private void HandleShootPosition()
-    {
-        mouseWorldPosition = Vector3.zero;
-
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
-        {
-            mouseWorldPosition = raycastHit.point;
-            hitTransform = raycastHit.transform;
-            hitPoint.position = raycastHit.point;
-        }
-
-        //lerp aim point to hit point
-        aimPoint.position = Vector3.Lerp(aimPoint.position, hitPoint.position, Time.deltaTime * lerpRotationSpeed);
-
-    }
 
     public void StartFiring()
     {
@@ -100,7 +93,7 @@ public class WeaponRaycast : MonoBehaviour
             return;
         }
 
-        Vector3 aimDir = (mouseWorldPosition - bulletSpawnPosition.position).normalized;
+        Vector3 aimDir = (activeWeapon.GetAimPosition() - bulletSpawnPosition.position).normalized;
         Transform bulletTransform = Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
 
         if (bulletTransform == null)
@@ -112,28 +105,30 @@ public class WeaponRaycast : MonoBehaviour
         BulletProjectile bulletProjectile = bulletTransform.GetComponent<BulletProjectile>();
         if (bulletProjectile != null)
         {
-            bulletProjectile.SetTarget(hitPoint.position);
+            bulletProjectile.SetTarget(activeWeapon.GetHitPoint().position);
         }
         else
         {
             Debug.LogWarning("[WeaponRaycast] BulletProjectile script is missing!");
         }
 
+        Transform hitTransform = activeWeapon.GetHitTransform();
+
         if (hitTransform != null)
         {
             bool hitTarget = hitTransform.GetComponent<BulletTarget>() != null;
-            bulletProjectile?.HandleHit(hitPoint.position, hitTarget);
+            bulletProjectile?.HandleHit(activeWeapon.GetHitPoint().position, hitTarget);
 
             Rigidbody rb2d = hitTransform.GetComponent<Rigidbody>();
             if (rb2d != null)
             {
-                rb2d.AddForceAtPosition(ray.direction * 20, hitPoint.position, ForceMode.Impulse);
+                rb2d.AddForceAtPosition(activeWeapon.GetRay().direction * 20, activeWeapon.GetHitPoint().position, ForceMode.Impulse);
             }
 
             HitBox hitBox = hitTransform.GetComponent<HitBox>();
             if (hitBox != null)
             {
-                hitBox.OnRaycastHit(this, ray.direction);
+                hitBox.OnRaycastHit(this, activeWeapon.GetRay().direction);
             }
         }
 

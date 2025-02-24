@@ -13,7 +13,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
 
     [Header("Combat")]
     public float inCombatTime = 5f;
-    private float inCombatTimeTimer = 0f;
+    public float inCombatTimeTimer = 0f;
 
     [Header("Dash")]
     public float dashCooldown = 3f;
@@ -80,7 +80,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         OutOfCombatState();
         DashCooldown();
 
-        aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
+        //aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
     }
 
     #endregion
@@ -123,7 +123,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
             if (inCombatTimeTimer < 0)
             {
                 playerState.SetPlayerCombatState(PlayerCombatState.notInCombat);
-                aimRigWeight = 0f;
+                //aimRigWeight = 0f;
             }
         }
     }
@@ -149,6 +149,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
 
     public void IsAttackPressed(bool attack)
     {
+        //aimRigWeight = 1;
         if (holdToShoot)
         {
             // Automatic Mode: Hold to shoot, stop when released
