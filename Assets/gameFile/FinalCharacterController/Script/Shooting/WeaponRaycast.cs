@@ -6,7 +6,8 @@ public class WeaponRaycast : MonoBehaviour
     #region Variables
     [Header("Components")]
     [SerializeField] private Transform pfBulletProjectile;
-    [SerializeField] public AnimationClip weaponAnimation;
+    [SerializeField] public string weaponName;
+    [SerializeField] private Transform bulletSpawnPosition;
 
     [Header("Stats")]
     public float damage = 10f;
@@ -17,7 +18,6 @@ public class WeaponRaycast : MonoBehaviour
     public bool isFiring = false;
     private float accumulatedTime;
     private float fireInterval;
-    public Transform bulletSpawnPosition;
 
 
     //get components stuff
@@ -33,7 +33,6 @@ public class WeaponRaycast : MonoBehaviour
         playerState = GetComponentInParent<PlayerState>();
         activeWeapon = GetComponentInParent<ActiveWeapon>();
         fireInterval = 1.0f / fireRate;
-        bulletSpawnPosition = activeWeapon.bulletSpawnPosition;
     }
 
     public void Initialize()
@@ -44,8 +43,6 @@ public class WeaponRaycast : MonoBehaviour
             Debug.LogWarning("[WeaponRaycast] ActiveWeapon not found! Is the weapon parented correctly?");
             return;
         }
-
-        bulletSpawnPosition = activeWeapon.bulletSpawnPosition;
     }
 
     #endregion

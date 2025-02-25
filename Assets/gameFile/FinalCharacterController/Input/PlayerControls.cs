@@ -259,6 +259,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HolsterWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""7028e625-d1eb-438a-b514-37342cc53131"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -283,6 +292,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Dodging"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b81540d1-5248-40b4-98f7-8710959a5236"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HolsterWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -302,6 +322,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerActionMap = asset.FindActionMap("PlayerActionMap", throwIfNotFound: true);
         m_PlayerActionMap_Attack = m_PlayerActionMap.FindAction("Attack", throwIfNotFound: true);
         m_PlayerActionMap_Dodging = m_PlayerActionMap.FindAction("Dodging", throwIfNotFound: true);
+        m_PlayerActionMap_HolsterWeapon = m_PlayerActionMap.FindAction("HolsterWeapon", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -488,12 +509,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<IPlayerActionMapActions> m_PlayerActionMapActionsCallbackInterfaces = new List<IPlayerActionMapActions>();
     private readonly InputAction m_PlayerActionMap_Attack;
     private readonly InputAction m_PlayerActionMap_Dodging;
+    private readonly InputAction m_PlayerActionMap_HolsterWeapon;
     public struct PlayerActionMapActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActionMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Attack => m_Wrapper.m_PlayerActionMap_Attack;
         public InputAction @Dodging => m_Wrapper.m_PlayerActionMap_Dodging;
+        public InputAction @HolsterWeapon => m_Wrapper.m_PlayerActionMap_HolsterWeapon;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActionMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -509,6 +532,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Dodging.started += instance.OnDodging;
             @Dodging.performed += instance.OnDodging;
             @Dodging.canceled += instance.OnDodging;
+            @HolsterWeapon.started += instance.OnHolsterWeapon;
+            @HolsterWeapon.performed += instance.OnHolsterWeapon;
+            @HolsterWeapon.canceled += instance.OnHolsterWeapon;
         }
 
         private void UnregisterCallbacks(IPlayerActionMapActions instance)
@@ -519,6 +545,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Dodging.started -= instance.OnDodging;
             @Dodging.performed -= instance.OnDodging;
             @Dodging.canceled -= instance.OnDodging;
+            @HolsterWeapon.started -= instance.OnHolsterWeapon;
+            @HolsterWeapon.performed -= instance.OnHolsterWeapon;
+            @HolsterWeapon.canceled -= instance.OnHolsterWeapon;
         }
 
         public void RemoveCallbacks(IPlayerActionMapActions instance)
@@ -551,5 +580,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnAttack(InputAction.CallbackContext context);
         void OnDodging(InputAction.CallbackContext context);
+        void OnHolsterWeapon(InputAction.CallbackContext context);
     }
 }

@@ -2367,7 +2367,6 @@ Transform:
   - {fileID: 834632616431597060}
   - {fileID: 1631792859467172644}
   - {fileID: 4849796057990582559}
-  - {fileID: 7933335850303712409}
   - {fileID: 1875892408063823413}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2542,13 +2541,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a715114b2420ce4a9b3355993cf944f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponParent: {fileID: 0}
+  bulletSpawnPosition: {fileID: 4849796057990582559}
   aimTarget: {fileID: 0}
   hitPoint: {fileID: 0}
   aimColliderMask:
     serializedVersion: 2
     m_Bits: 1
-  bulletSpawnPosition: {fileID: 4849796057990582559}
   handIK: {fileID: 2457273946056888512}
+  leftGrip: {fileID: 0}
+  rightGrip: {fileID: 0}
+  rigController: {fileID: 0}
   lerpRotationSpeed: 10
 --- !u!114 &6691389518569345937
 MonoBehaviour:
@@ -3980,7 +3983,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5783535219538447766}
-  m_Father: {fileID: 1313094156677184676}
+  m_Father: {fileID: 1875892408063823413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &4724435600018905280
 GameObject:
@@ -6640,6 +6643,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7933335850303712409}
   - {fileID: 5334529452316934039}
   - {fileID: 7864333837654162789}
   - {fileID: 8246432296013577664}

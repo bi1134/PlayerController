@@ -31,6 +31,8 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     public bool dashPressed { get; private set; }
     public bool dashAnimation { get; private set; }
 
+    public bool holsterPressed { get; private set; }
+
     //get component stuff
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
@@ -83,6 +85,11 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         //aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
     }
 
+    private void LateUpdate()
+    {
+        holsterPressed = false;
+    }
+
     #endregion
 
 
@@ -109,7 +116,16 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         dashCooldownTimer = dashCooldown;
         dashDurationTimer = dashDuration;
     }
-  
+
+    public void OnHolsterWeapon(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+
+        holsterPressed = true;
+      
+    }
+
     #endregion
 
     #region Functions
@@ -187,5 +203,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         dashPressed = false;
         playerState.SetPlayerDashingState(PlayerDashState.notDashing);
     }
+
+
     #endregion
 }

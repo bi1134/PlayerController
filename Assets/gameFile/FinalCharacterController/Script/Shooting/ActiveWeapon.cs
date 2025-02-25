@@ -7,7 +7,6 @@ public class ActiveWeapon : MonoBehaviour
     #region Variables
     [Header("References")]
     [SerializeField] public Transform weaponParent;
-    [SerializeField] public Transform bulletSpawnPosition;
     [SerializeField] private Transform aimTarget;
     [SerializeField] private Transform hitPoint;
     [SerializeField] private LayerMask aimColliderMask;
@@ -15,12 +14,11 @@ public class ActiveWeapon : MonoBehaviour
 
     [SerializeField] private Transform leftGrip;
     [SerializeField] private Transform rightGrip;
+    [SerializeField]private Animator rigController;
 
     //references
     private PlayerActionInput playerActionInput;
     private WeaponRaycast weapon;
-    private Animator anim;
-    private AnimatorOverrideController overrides;
 
 
     //aiming
@@ -34,8 +32,6 @@ public class ActiveWeapon : MonoBehaviour
     #region Start
     private void Start()
     {
-        anim = GetComponent<Animator>();
-        overrides = anim.runtimeAnimatorController as AnimatorOverrideController;
 
         playerActionInput = GetComponent<PlayerActionInput>();
 
@@ -70,11 +66,14 @@ public class ActiveWeapon : MonoBehaviour
             {
                 weapon.StopFiring();
             }
+
+            if(playerActionInput.holsterPressed)
+            {
+                bool isHolster = rigController.GetBool("isHolster");
+                rigController.SetBool("isHolster", !isHolster);
+            }
         }
-        else
-        {
-            handIK.weight = 0.0f;
-        }
+       
     }
     #endregion
 
@@ -111,32 +110,15 @@ public class ActiveWeapon : MonoBehaviour
         weapon.transform.SetParent(weaponParent);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
+        rigController.Play("Equip" + weapon.weaponName);
+
 
         weapon.gameObject.SetActive(true);
         weapon.Initialize();
 
-        handIK.weight = 1.0f;
-        anim.SetLayerWeight(1, 1.0f);
-        Invoke(nameof(SetAnimationDelayed), 0.01f);
+      
     }
 
-    private void SetAnimationDelayed()
-    {
-        overrides["WeaponAnimEmpty"] = weapon.weaponAnimation;
-    }
-
-    [ContextMenu("Save weapon pose")]
-    private void SaveWeaponPose()
-    {
-        GameObjectRecorder recorder = new GameObjectRecorder(gameObject);
-        recorder.BindComponentsOfType<Transform>(weaponParent.gameObject, false);
-        recorder.BindComponentsOfType<Transform>(leftGrip.gameObject, false);
-        recorder.BindComponentsOfType<Transform>(rightGrip.gameObject, false);
-
-        recorder.TakeSnapshot(0.0f);
-        recorder.SaveToClip(weapon.weaponAnimation);
-
-    }
 
     #endregion
 
