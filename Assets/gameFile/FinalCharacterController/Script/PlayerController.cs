@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UnityEditorInternal.VersionControl.ListControl;
 
 [DefaultExecutionOrder(-1)]
 public class PlayerController : MonoBehaviour
@@ -42,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public float lookSenseH = 0.1f;
     public float lookSenseV = 0.1f;
     public float lookLimitV = 90f;
+    public float rotationLimit = 45f;
 
     [Header("Environmental Details")]
     [SerializeField] private LayerMask groundLayers;
@@ -310,7 +310,6 @@ public class PlayerController : MonoBehaviour
 
         playerTargetRotation.x += transform.eulerAngles.x + lookSenseH * playerLocomotionInput.lookInput.x;
         
-        float rotationTolerance = 90f;
         bool isIdling = playerState.currentPlayerMovementState == PlayerMovementState.Idling;
         isRotatingToTarget = rotatingToTargetTimer > 0;
 
@@ -320,9 +319,9 @@ public class PlayerController : MonoBehaviour
             RotatePlayerToTarget();
         }
         //if rotation mismatch is not within tolerance, or rotating to target is true then rotate
-        else if(Mathf.Abs(rotationMismatch) > rotationTolerance || isRotatingToTarget)
+        else if(Mathf.Abs(rotationMismatch) > rotationLimit || isRotatingToTarget)
         {
-            UpdateIdleRotation(rotationTolerance);
+            UpdateIdleRotation(rotationLimit);
         }
 
 
