@@ -18,6 +18,7 @@ public class WeaponRaycast : MonoBehaviour
     public bool isFiring = false;
     private float accumulatedTime;
     private float fireInterval;
+    public WeaponSlot weaponSlot;
 
 
     //get components stuff

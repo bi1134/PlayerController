@@ -48,10 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pfBulletProjectile: {fileID: 3407802143120184137, guid: fef5a83b4cb43fe409cb38764ce75e2e, type: 3}
   weaponName: Pistol
+  bulletSpawnPosition: {fileID: 8061397527282291445}
   damage: 10
   fireRate: 25
   isFiring: 0
-  bulletSpawnPosition: {fileID: 8061397527282291445}
+  weaponSlot: 1
 --- !u!1 &7854343253915369494
 GameObject:
   m_ObjectHideFlags: 0

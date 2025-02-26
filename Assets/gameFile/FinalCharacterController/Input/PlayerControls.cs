@@ -268,6 +268,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipWeapon"",
+                    ""type"": ""Value"",
+                    ""id"": ""70265c89-336d-4258-881f-ff7e7aa33dc5"",
+                    ""expectedControlType"": ""Integer"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -303,6 +312,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""HolsterWeapon"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""00cf25bb-4461-4e6e-9b1e-e077201f9922"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""17c3fc02-4ba7-4d95-95c8-94effb16578a"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -323,6 +354,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerActionMap_Attack = m_PlayerActionMap.FindAction("Attack", throwIfNotFound: true);
         m_PlayerActionMap_Dodging = m_PlayerActionMap.FindAction("Dodging", throwIfNotFound: true);
         m_PlayerActionMap_HolsterWeapon = m_PlayerActionMap.FindAction("HolsterWeapon", throwIfNotFound: true);
+        m_PlayerActionMap_EquipWeapon = m_PlayerActionMap.FindAction("EquipWeapon", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -510,6 +542,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActionMap_Attack;
     private readonly InputAction m_PlayerActionMap_Dodging;
     private readonly InputAction m_PlayerActionMap_HolsterWeapon;
+    private readonly InputAction m_PlayerActionMap_EquipWeapon;
     public struct PlayerActionMapActions
     {
         private @PlayerControls m_Wrapper;
@@ -517,6 +550,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_PlayerActionMap_Attack;
         public InputAction @Dodging => m_Wrapper.m_PlayerActionMap_Dodging;
         public InputAction @HolsterWeapon => m_Wrapper.m_PlayerActionMap_HolsterWeapon;
+        public InputAction @EquipWeapon => m_Wrapper.m_PlayerActionMap_EquipWeapon;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActionMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -535,6 +569,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @HolsterWeapon.started += instance.OnHolsterWeapon;
             @HolsterWeapon.performed += instance.OnHolsterWeapon;
             @HolsterWeapon.canceled += instance.OnHolsterWeapon;
+            @EquipWeapon.started += instance.OnEquipWeapon;
+            @EquipWeapon.performed += instance.OnEquipWeapon;
+            @EquipWeapon.canceled += instance.OnEquipWeapon;
         }
 
         private void UnregisterCallbacks(IPlayerActionMapActions instance)
@@ -548,6 +585,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @HolsterWeapon.started -= instance.OnHolsterWeapon;
             @HolsterWeapon.performed -= instance.OnHolsterWeapon;
             @HolsterWeapon.canceled -= instance.OnHolsterWeapon;
+            @EquipWeapon.started -= instance.OnEquipWeapon;
+            @EquipWeapon.performed -= instance.OnEquipWeapon;
+            @EquipWeapon.canceled -= instance.OnEquipWeapon;
         }
 
         public void RemoveCallbacks(IPlayerActionMapActions instance)
@@ -581,5 +621,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnDodging(InputAction.CallbackContext context);
         void OnHolsterWeapon(InputAction.CallbackContext context);
+        void OnEquipWeapon(InputAction.CallbackContext context);
     }
 }

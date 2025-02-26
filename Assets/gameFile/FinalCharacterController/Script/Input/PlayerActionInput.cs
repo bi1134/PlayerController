@@ -27,11 +27,10 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     [SerializeField] public bool holdToShoot = true;
     public bool attackPressed { get; private set; }
     public bool attackAnimation { get; private set; }
-
     public bool dashPressed { get; private set; }
     public bool dashAnimation { get; private set; }
-
     public bool holsterPressed { get; private set; }
+    public float weaponButton { get; private set; }
 
     //get component stuff
     private PlayerLocomotionInput playerLocomotionInput;
@@ -88,10 +87,10 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     private void LateUpdate()
     {
         holsterPressed = false;
+        weaponButton = -1;
     }
 
     #endregion
-
 
     #region Input Callback
     public void OnAttack(InputAction.CallbackContext context)
@@ -126,6 +125,25 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
       
     }
 
+    public void OnEquipWeapon(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+        string keyName = context.control.name;
+
+        if (keyName == "1")
+        {
+            weaponButton = 1;
+        }
+        else if (keyName == "2")
+        {
+            weaponButton = 2;
+        }
+        else
+        {
+            weaponButton = -1;
+        }
+    }
     #endregion
 
     #region Functions
@@ -203,6 +221,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         dashPressed = false;
         playerState.SetPlayerDashingState(PlayerDashState.notDashing);
     }
+
 
 
     #endregion
