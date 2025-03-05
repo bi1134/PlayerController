@@ -56,8 +56,8 @@ MonoBehaviour:
   - {fileID: 7968859370474990350}
   damage: 10
   fireRate: 10
-  bulletSpeed: 5
-  bulletLifeTime: 10
+  bulletSpeed: 100
+  bulletProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
   isFiring: 0
   weaponSlot: 1
 --- !u!1 &7854343253915369494
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 2432757809106309215}
   - component: {fileID: 8587923369491989386}
   - component: {fileID: 8218558132018793765}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: bananaMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,9 +198,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7956855249182706837}
     m_Modifications:
+    - target: {fileID: 2921355990941460613, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3201934302386869381, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_Name
       value: vfx_MuzzleFlash_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201934302386869381, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3801444843582215580, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3889199375615793011, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalPosition.x
@@ -241,6 +257,10 @@ PrefabInstance:
     - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8969297016324619907, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

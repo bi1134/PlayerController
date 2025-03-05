@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3407802143120184137}
-  - component: {fileID: 3762100596867790423}
+  - component: {fileID: 7518113749810776919}
   - component: {fileID: 5124674339132971724}
   - component: {fileID: -8356869424485256966}
   m_Layer: 9
@@ -36,27 +36,27 @@ Transform:
   - {fileID: 1936366477301046082}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3762100596867790423
-BoxCollider:
+--- !u!135 &7518113749810776919
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6407338185989330415}
-  m_Material: {fileID: 13400000, guid: 4a7457c40e52b844a86d99beb87c3180, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 800
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.01, y: 0.01, z: 0.1}
-  m_Center: {x: 0, y: 0, z: 0.05}
+  m_Radius: 0.01
+  m_Center: {x: 0, y: 0, z: 0.08}
 --- !u!54 &5124674339132971724
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -76,14 +76,14 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 800
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!114 &-8356869424485256966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,7 +97,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tracer: {fileID: 3360089140807687159}
-  bulletDrop: 9.81
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  defaultProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
+  time: 0
+  bounce: 0
 --- !u!1001 &1766429758461194725
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -201,6 +206,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6664255368603846989, guid: 2fd582e44e115764784b924cf6578086, type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6664255368603846989, guid: 2fd582e44e115764784b924cf6578086, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].time
       value: 0
       objectReference: {fileID: 0}
@@ -218,7 +227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7494557930363210232, guid: 2fd582e44e115764784b924cf6578086, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.062
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7494557930363210232, guid: 2fd582e44e115764784b924cf6578086, type: 3}
       propertyPath: m_LocalRotation.w

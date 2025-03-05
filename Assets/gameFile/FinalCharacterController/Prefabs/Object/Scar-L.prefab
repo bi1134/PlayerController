@@ -434,10 +434,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782567da311675242aee8c9ff2e76386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pfBulletProjectile: {fileID: 3407802143120184137, guid: fef5a83b4cb43fe409cb38764ce75e2e, type: 3}
   weaponName: Rifle
   bulletSpawnPosition: {fileID: 6006478351284377774}
-  tracerEffect: {fileID: 6664255368603846989, guid: 2fd582e44e115764784b924cf6578086, type: 3}
   muzzleFlash:
   - {fileID: 4891114216208772589}
   - {fileID: 8386083720668889865}
@@ -445,6 +443,8 @@ MonoBehaviour:
   - {fileID: 277753675735843195}
   damage: 15
   fireRate: 25
+  bulletSpeed: 100
+  bulletProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
   isFiring: 0
   weaponSlot: 0
 --- !u!1 &2322580872444634526

@@ -15,7 +15,7 @@ public class WeaponRaycast : MonoBehaviour
     public float damage = 10f;
     public int fireRate = 25;
     public int bulletSpeed = 100;
-    public float bulletLifeTime = 3.0f;
+    public BulletPropertiesSO bulletProperties;
 
 
     //Shooting variables
@@ -108,10 +108,10 @@ public class WeaponRaycast : MonoBehaviour
             return;
         }
 
-        BulletProjectile bulletProjectile = bulletObject.GetComponent<BulletProjectile>();
-        if (bulletProjectile != null)
+        BulletProjectile bullet = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.identity).GetComponent<BulletProjectile>();
+        if (bullet != null)
         {
-            bulletProjectile.Initialize(bulletSpawnPosition.position, velocity, GetComponent<Collider>(), bulletLifeTime);
+            bullet.Initialize(bulletSpawnPosition.position, bulletSpawnPosition.forward * bulletSpeed, bulletProperties);
         }
         else
         {
