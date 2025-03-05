@@ -1,42 +1,79 @@
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Splines;
 
 public class BulletProjectile : MonoBehaviour
 {
-    [SerializeField] private Transform vfxHitBlue;
-    [SerializeField] private Transform vfxHitRed;
+    [SerializeField] private TrailRenderer tracer;
 
     private Rigidbody bulletRigidbody;
-    public float bulletSpeed = 10f;
+    private Vector3 initialPosition;
+    private Vector3 initialVelocity;
+    private float time;
+    private bool isActive = false;
 
-    private Vector3 targetPoint;
+    public float bulletDrop = 9.81f; // Simulating gravity
 
     private void Awake()
     {
         bulletRigidbody = GetComponent<Rigidbody>();
     }
 
-    private void Start()
+    public void Initialize(Vector3 position, Vector3 velocity, Collider shooterCollider, float maxLifeTime)
     {
-        Vector3 direction = (targetPoint - transform.position).normalized;
-        bulletRigidbody.linearVelocity = direction * bulletSpeed ;
+        initialPosition = position;
+        initialVelocity = velocity;
+        time = 0f;
+        isActive = true;
+
+        transform.position = position;
+        bulletRigidbody.linearVelocity = velocity;
+
+        if (tracer != null)
+        {
+            tracer.Clear();
+            tracer.transform.position = position;
+        }
+        StartCoroutine(DeactivateAfterTime(maxLifeTime)); // Bullet auto-deactivates
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void FixedUpdate()
     {
-        Destroy(gameObject);
+        if (!isActive) return;
+
+        time += Time.fixedDeltaTime;
+
+        // Apply Gravity: s = ut + 0.5 * at²
+        Vector3 gravity = Vector3.down * bulletDrop;
+        Vector3 displacement = (initialVelocity * time) + (0.5f * gravity * time * time);
+        transform.position = initialPosition + displacement;
+
+        // Update tracer effect position
+        if (tracer != null)
+        {
+            tracer.transform.position = transform.position;
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            Vector3 pushDirection = collision.relativeVelocity.normalized;
+            bulletRigidbody.AddForce(pushDirection * 0.1f, ForceMode.Impulse);
+        }
+
+        isActive = false;
+        gameObject.SetActive(false);
+
+        // Spawn bullet hit effect
+        ObjectPooler.SpawnFromPool("BulletHit", transform.position, Quaternion.identity);
     }
 
-    public void HandleHit(Vector3 hitPosition, bool hitTarget)
-    {
-        Transform vfxPrefab = hitTarget ? vfxHitBlue : vfxHitRed;
-        Instantiate(vfxPrefab, hitPosition, Quaternion.identity);
-    }
 
-    public void SetTarget(Vector3 target)
+    private IEnumerator DeactivateAfterTime(float time)
     {
-        targetPoint = target;
+        yield return new WaitForSeconds(time);
+        isActive = false;
+        gameObject.SetActive(false);
     }
 
 }

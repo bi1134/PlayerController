@@ -1,17 +1,21 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Splines;
 
 public class WeaponRaycast : MonoBehaviour
 {
     #region Variables
     [Header("Components")]
-    [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] public string weaponName;
     [SerializeField] private Transform bulletSpawnPosition;
+    [SerializeField] private ParticleSystem[] muzzleFlash;
 
     [Header("Stats")]
     public float damage = 10f;
     public int fireRate = 25;
+    public int bulletSpeed = 100;
+    public float bulletLifeTime = 3.0f;
 
 
     //Shooting variables
@@ -60,6 +64,10 @@ public class WeaponRaycast : MonoBehaviour
     {
         isFiring = true;
         accumulatedTime = 0.0f;
+        foreach(var particle in muzzleFlash)
+        {
+            particle.Emit(1);
+        }
         FireBullet();
     }
 
@@ -85,25 +93,25 @@ public class WeaponRaycast : MonoBehaviour
 
     private void FireBullet()
     {
-        if (bulletSpawnPosition == null || pfBulletProjectile == null)
+        if (bulletSpawnPosition == null)
         {
-            Debug.LogWarning("[WeaponRaycast] Bullet spawn position or projectile prefab is missing!");
+            Debug.LogWarning("[WeaponRaycast] Bullet spawn position is missing!");
             return;
         }
-
         Vector3 aimDir = (activeWeapon.GetAimPosition() - bulletSpawnPosition.position).normalized;
-        Transform bulletTransform = Instantiate(pfBulletProjectile, bulletSpawnPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
+        Vector3 velocity = aimDir * bulletSpeed;
 
-        if (bulletTransform == null)
+        GameObject bulletObject = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.LookRotation(aimDir));
+        if (bulletObject == null)
         {
-            Debug.LogWarning("[WeaponRaycast] Bullet instantiation failed!");
+            Debug.LogWarning("[WeaponRaycast] Bullet pooling failed!");
             return;
         }
 
-        BulletProjectile bulletProjectile = bulletTransform.GetComponent<BulletProjectile>();
+        BulletProjectile bulletProjectile = bulletObject.GetComponent<BulletProjectile>();
         if (bulletProjectile != null)
         {
-            bulletProjectile.SetTarget(activeWeapon.GetHitPoint().position);
+            bulletProjectile.Initialize(bulletSpawnPosition.position, velocity, GetComponent<Collider>(), bulletLifeTime);
         }
         else
         {
@@ -115,7 +123,6 @@ public class WeaponRaycast : MonoBehaviour
         if (hitTransform != null)
         {
             bool hitTarget = hitTransform.GetComponent<BulletTarget>() != null;
-            bulletProjectile?.HandleHit(activeWeapon.GetHitPoint().position, hitTarget);
 
             Rigidbody rb2d = hitTransform.GetComponent<Rigidbody>();
             if (rb2d != null)
@@ -131,6 +138,12 @@ public class WeaponRaycast : MonoBehaviour
         }
 
         playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
+    }
+
+    private IEnumerator ReturnEffectToPool(GameObject effect, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        effect.SetActive(false);
     }
     #endregion
 }

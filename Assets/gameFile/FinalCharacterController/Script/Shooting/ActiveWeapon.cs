@@ -107,6 +107,7 @@ public class ActiveWeapon : MonoBehaviour
             mouseWorldPosition = raycastHit.point;
             hitTransform = raycastHit.transform;
             hitPoint.position = raycastHit.point;
+            hitPoint.forward = raycastHit.normal;
         }
 
         // Smoothly move the aim point to follow the hit point
