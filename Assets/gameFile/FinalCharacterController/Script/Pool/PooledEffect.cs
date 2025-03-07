@@ -19,6 +19,6 @@ public class PooledEffect : MonoBehaviour, IPooledObject
     private IEnumerator DisableAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
-        gameObject.SetActive(false);
+        ObjectPooler.ReturnToPool("BulletHit", gameObject);
     }
 }

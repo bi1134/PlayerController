@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af0e9d8d6b4c7084f874cfa877f35fdf, type: 3}
-  m_Name: BulletPropertiesSO
+  m_Script: {fileID: 11500000, guid: 9a2d97092e3732a40ad0f0651b3e00fc, type: 3}
+  m_Name: PistolProperiesSO
   m_EditorClassIdentifier: 
-  bulletDrop: 9.81
-  maxBounces: 100
-  maxLifeTime: 10
+  weaponName: Pistol
+  damage: 5
+  fireRate: 5
+  bulletSpeed: 100
+  weaponSlot: 1

@@ -13,14 +13,17 @@ public static class ObjectPooler
 {
     private static Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
     private static Dictionary<string, GameObject> poolPrefabs = new Dictionary<string, GameObject>();
+    private static Dictionary<string, Transform> poolParents = new Dictionary<string, Transform>();
 
     /// <summary>
     /// Initializes the object pools.
     /// </summary>
-    public static void InitializePools(List<Pool> pools)
+    public static void InitializePools(List<Pool> pools, Dictionary<string, Transform> parents)
     {
+        poolParents = parents;
         foreach (Pool pool in pools)
         {
+
             if (poolDictionary.ContainsKey(pool.tag))
             {
                 Debug.LogWarning($"[ObjectPooler] Pool with tag '{pool.tag}' already exists!");
@@ -33,6 +36,12 @@ public static class ObjectPooler
             {
                 GameObject obj = Object.Instantiate(pool.prefab);
                 obj.SetActive(false);
+
+                if (poolParents.ContainsKey(pool.tag))
+                {
+                    obj.transform.SetParent(poolParents[pool.tag]);
+                }
+
                 objectPool.Enqueue(obj);
             }
 
@@ -71,10 +80,28 @@ public static class ObjectPooler
             pooledObj.OnObjectSpawn();
         }
 
-        objectPool.Enqueue(objectToSpawn); // Re-enqueue for reuse
-
         return objectToSpawn;
     }
+
+
+    /// <summary>
+    /// Returns an object back to the pool.
+    /// </summary>
+    public static void ReturnToPool(string tag, GameObject obj)
+    {
+        if (!poolDictionary.ContainsKey(tag))
+        {
+            Debug.LogWarning($"[ObjectPooler] Pool with tag '{tag}' does not exist!");
+            return;
+        }
+
+        obj.SetActive(false);
+
+        // Don't reparent to the pool parent, just keep it inside
+        poolDictionary[tag].Enqueue(obj);
+    }
+
+
 
     /// <summary>
     /// Expands the pool dynamically if needed.
@@ -88,6 +115,12 @@ public static class ObjectPooler
 
         GameObject obj = Object.Instantiate(poolPrefabs[tag]);
         obj.SetActive(false);
+
+        if (poolParents.ContainsKey(tag))
+        {
+            obj.transform.SetParent(poolParents[tag]);
+        }
+
         poolDictionary[tag].Enqueue(obj);
 
         Debug.Log($"[ObjectPooler] Pool with tag '{tag}' expanded!");

@@ -207,7 +207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6664255368603846989, guid: 2fd582e44e115764784b924cf6578086, type: 3}
       propertyPath: m_Parameters.widthMultiplier
-      value: 5
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 6664255368603846989, guid: 2fd582e44e115764784b924cf6578086, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].time

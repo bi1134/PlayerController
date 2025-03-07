@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4719784059108408706}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GunParts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ GameObject:
   - component: {fileID: 4760542701502532825}
   - component: {fileID: 5756701244662804866}
   - component: {fileID: 6537555582053948000}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 2678597013365478645}
   - component: {fileID: 1563909238041818263}
   - component: {fileID: 4992907632942190249}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Mag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 344990844209233548}
   - component: {fileID: 3218827157760601699}
   - component: {fileID: 4182124598679815161}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Sight_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 7302440232261833228}
   - component: {fileID: 6811267923745698074}
   - component: {fileID: 1586261375062950958}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Grip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +397,7 @@ GameObject:
   m_Component:
   - component: {fileID: 14595734648878163}
   - component: {fileID: 8739530731420917841}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Scar-L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -419,7 +419,7 @@ Transform:
   m_Children:
   - {fileID: 4719784059108408706}
   - {fileID: 6006478351284377774}
-  - {fileID: 5030584491137615400}
+  - {fileID: 7327576048844166848}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8739530731420917841
@@ -434,19 +434,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782567da311675242aee8c9ff2e76386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: Rifle
   bulletSpawnPosition: {fileID: 6006478351284377774}
   muzzleFlash:
-  - {fileID: 4891114216208772589}
-  - {fileID: 8386083720668889865}
-  - {fileID: 3949898412376990888}
-  - {fileID: 277753675735843195}
-  damage: 15
+  - {fileID: 7169805449835855109}
+  - {fileID: 6053300589804868577}
+  - {fileID: 1634848220125377600}
+  - {fileID: 2574432920820765075}
+  weaponProperties: {fileID: 11400000, guid: 6e440c36f1666a944b599f12c44943bf, type: 2}
+  weaponName: Rifle
+  damage: 10
   fireRate: 25
   bulletSpeed: 100
+  weaponSlot: 0
   bulletProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
   isFiring: 0
-  weaponSlot: 0
 --- !u!1 &2322580872444634526
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,7 +459,7 @@ GameObject:
   - component: {fileID: 1883874150533405932}
   - component: {fileID: 8314383371160819064}
   - component: {fileID: 6341319913115148748}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Receiver_Up
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -544,7 +545,7 @@ GameObject:
   - component: {fileID: 6960186385523301357}
   - component: {fileID: 1059626843757782442}
   - component: {fileID: 5478903508275215593}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -630,7 +631,7 @@ GameObject:
   - component: {fileID: 2912756614495838446}
   - component: {fileID: 5777212584700340496}
   - component: {fileID: 6294497232095639351}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Stock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -717,7 +718,7 @@ GameObject:
   - component: {fileID: 345103047925884190}
   - component: {fileID: 6075809627878887990}
   - component: {fileID: 3777132970854625258}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -803,7 +804,7 @@ GameObject:
   - component: {fileID: 8834794504754211424}
   - component: {fileID: 1586054218235858782}
   - component: {fileID: 2393967479502834512}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Stock_Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -889,7 +890,7 @@ GameObject:
   - component: {fileID: 3757037026956886075}
   - component: {fileID: 3193877407411458010}
   - component: {fileID: 3244583523075116677}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Sight_Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -975,7 +976,7 @@ GameObject:
   - component: {fileID: 4050686134804611709}
   - component: {fileID: 5568997903894373066}
   - component: {fileID: 8597928058695629950}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Rail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1061,7 +1062,7 @@ GameObject:
   - component: {fileID: 5441677574391991918}
   - component: {fileID: 7568313914639499035}
   - component: {fileID: 8076686927896440042}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Sight_Back_Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1145,7 +1146,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6006478351284377774}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: bulletSpawnPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1178,7 +1179,7 @@ GameObject:
   - component: {fileID: 6693031205043974853}
   - component: {fileID: 4466645429202919871}
   - component: {fileID: 1012637878207726038}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR_C_Receiver_Down
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1253,7 +1254,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1001 &1314705765819893061
+--- !u!1001 &8071529610965819515
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1261,77 +1262,97 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 14595734648878163}
     m_Modifications:
-    - target: {fileID: 3201934302386869381, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
-      propertyPath: m_Name
-      value: vfx_MuzzleFlash_01
+    - target: {fileID: 1406127467571846526, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: playOnAwake
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.002
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.894
+      value: 1.005
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+    - target: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2594761379438228378, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6033113156253774312, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6940749937775508302, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7400523190367851579, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940515373403906387, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+      propertyPath: m_Name
+      value: vfx_MuzzleFlash_01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
---- !u!198 &277753675735843195 stripped
+--- !u!198 &1634848220125377600 stripped
 ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 1289158222419133502, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
-  m_PrefabInstance: {fileID: 1314705765819893061}
+  m_CorrespondingSourceObject: {fileID: 7400523190367851579, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+  m_PrefabInstance: {fileID: 8071529610965819515}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &3949898412376990888 stripped
+--- !u!198 &2574432920820765075 stripped
 ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 2661097690372661741, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
-  m_PrefabInstance: {fileID: 1314705765819893061}
+  m_CorrespondingSourceObject: {fileID: 6033113156253774312, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+  m_PrefabInstance: {fileID: 8071529610965819515}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &4891114216208772589 stripped
+--- !u!198 &6053300589804868577 stripped
 ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 5899292863705311400, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
-  m_PrefabInstance: {fileID: 1314705765819893061}
+  m_CorrespondingSourceObject: {fileID: 2594761379438228378, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+  m_PrefabInstance: {fileID: 8071529610965819515}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5030584491137615400 stripped
+--- !u!198 &7169805449835855109 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1406127467571846526, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+  m_PrefabInstance: {fileID: 8071529610965819515}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7327576048844166848 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 6336278925848773485, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
-  m_PrefabInstance: {fileID: 1314705765819893061}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &8386083720668889865 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 7376789931084842572, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
-  m_PrefabInstance: {fileID: 1314705765819893061}
+  m_CorrespondingSourceObject: {fileID: 1563614375471642299, guid: d325589ac1954ee4a81d4bed5e03fafe, type: 3}
+  m_PrefabInstance: {fileID: 8071529610965819515}
   m_PrefabAsset: {fileID: 0}

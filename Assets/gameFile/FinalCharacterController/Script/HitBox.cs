@@ -6,7 +6,10 @@ public class HitBox : MonoBehaviour
     
     public void OnRaycastHit(WeaponRaycast playerAttack, Vector3 direction)
     {
-        healthSystem.TakeDamage(playerAttack.damage, direction);
+        if (playerAttack == null) return;
+
+        float damage = playerAttack.GetWeaponDamage();
+        healthSystem.TakeDamage(damage, direction);
     }
 
 }

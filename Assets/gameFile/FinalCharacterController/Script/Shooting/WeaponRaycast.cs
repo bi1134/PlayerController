@@ -1,20 +1,24 @@
 using System.Collections;
+using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Playables;
-using UnityEngine.Splines;
 
 public class WeaponRaycast : MonoBehaviour
 {
     #region Variables
     [Header("Components")]
-    [SerializeField] public string weaponName;
     [SerializeField] private Transform bulletSpawnPosition;
     [SerializeField] private ParticleSystem[] muzzleFlash;
 
     [Header("Stats")]
-    public float damage = 10f;
-    public int fireRate = 25;
-    public int bulletSpeed = 100;
+    [SerializeField] private WeaponPropertiesSO weaponProperties;
+
+    [Header("Weapon Info (Read-Only)")]
+    [ReadOnly] public string weaponName;
+    [ReadOnly] public float damage;
+    [ReadOnly] public int fireRate;
+    [ReadOnly] public int bulletSpeed;
+    [ReadOnly] public WeaponSlot weaponSlot;
+
     public BulletPropertiesSO bulletProperties;
 
 
@@ -22,7 +26,6 @@ public class WeaponRaycast : MonoBehaviour
     public bool isFiring = false;
     private float accumulatedTime;
     private float fireInterval;
-    public WeaponSlot weaponSlot;
 
 
     //get components stuff
@@ -37,8 +40,21 @@ public class WeaponRaycast : MonoBehaviour
         // Initial setup
         playerState = GetComponentInParent<PlayerState>();
         activeWeapon = GetComponentInParent<ActiveWeapon>();
-        fireInterval = 1.0f / fireRate;
     }
+
+    private void OnValidate()
+    {
+        if (weaponProperties != null)
+        {
+            weaponName = weaponProperties.weaponName;
+            damage = weaponProperties.damage;
+            fireRate = weaponProperties.fireRate;
+            bulletSpeed = weaponProperties.bulletSpeed;
+            weaponSlot = weaponProperties.weaponSlot;
+        }
+    }
+
+
 
     public void Initialize()
     {
@@ -63,11 +79,17 @@ public class WeaponRaycast : MonoBehaviour
     public void StartFiring()
     {
         isFiring = true;
+        fireInterval = 1.0f / weaponProperties.fireRate;
         accumulatedTime = 0.0f;
-        foreach(var particle in muzzleFlash)
+
+        foreach (var particle in muzzleFlash)
         {
-            particle.Emit(1);
+            if (!particle.isPlaying)
+            {
+                particle.Emit(1);
+            }
         }
+
         FireBullet();
     }
 
@@ -76,13 +98,20 @@ public class WeaponRaycast : MonoBehaviour
         if (!isFiring) 
             return;
 
-
         accumulatedTime += deltaTime;
         while(accumulatedTime >= fireInterval)
         {
+            foreach (var particle in muzzleFlash)
+            {
+                if (!particle.isPlaying)
+                {
+                    particle.Emit(1);
+                }
+            }
             FireBullet();
             accumulatedTime -= fireInterval;
         }
+        
     }
 
     public void StopFiring()
@@ -93,13 +122,14 @@ public class WeaponRaycast : MonoBehaviour
 
     private void FireBullet()
     {
+    
         if (bulletSpawnPosition == null)
         {
             Debug.LogWarning("[WeaponRaycast] Bullet spawn position is missing!");
             return;
         }
         Vector3 aimDir = (activeWeapon.GetAimPosition() - bulletSpawnPosition.position).normalized;
-        Vector3 velocity = aimDir * bulletSpeed;
+        Vector3 velocity = aimDir * weaponProperties.bulletSpeed;
 
         GameObject bulletObject = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.LookRotation(aimDir));
         if (bulletObject == null)
@@ -108,10 +138,10 @@ public class WeaponRaycast : MonoBehaviour
             return;
         }
 
-        BulletProjectile bullet = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.identity).GetComponent<BulletProjectile>();
+        BulletProjectile bullet = bulletObject.GetComponent<BulletProjectile>();
         if (bullet != null)
         {
-            bullet.Initialize(bulletSpawnPosition.position, bulletSpawnPosition.forward * bulletSpeed, bulletProperties);
+            bullet.Initialize(bulletSpawnPosition.position, velocity, bulletProperties);
         }
         else
         {
@@ -145,5 +175,23 @@ public class WeaponRaycast : MonoBehaviour
         yield return new WaitForSeconds(delay);
         effect.SetActive(false);
     }
+
+    public float GetWeaponDamage()
+    {
+        return weaponProperties != null ? weaponProperties.damage : 0f;
+    }
+
+    private void UpdateStats()
+    {
+        weaponName = weaponProperties.weaponName;
+        damage = weaponProperties.damage;
+        fireRate = weaponProperties.fireRate;
+        bulletSpeed = weaponProperties.bulletSpeed;
+        weaponSlot = weaponProperties.weaponSlot;
+    }
+
     #endregion
+
+
+
 }

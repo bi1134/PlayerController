@@ -1,7 +1,4 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Splines;
 
 public class BulletProjectile : MonoBehaviour, IPooledObject
 {
@@ -17,7 +14,6 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
 
     public float time;
     public int bounce;
-    private float maxLifeTime;
 
     private void Awake()
     {
@@ -34,6 +30,9 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
         isActive = true;
 
         transform.position = position;
+        bulletRigidbody.rotation = Quaternion.LookRotation(velocity.normalized);
+
+        bulletRigidbody.angularVelocity = Vector3.zero;
         bulletRigidbody.linearVelocity = velocity;
 
         if (tracer != null)
@@ -43,9 +42,6 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
         }
 
         bounce = bulletProperties.maxBounces;
-        maxLifeTime = bulletProperties.maxLifeTime;
-
-        StartCoroutine(DeactivateAfterTime(maxLifeTime)); // Bullet auto-deactivates
     }
 
     public void OnObjectSpawn()
@@ -56,7 +52,7 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
         if (bulletProperties != null)
         {
             bounce = bulletProperties.maxBounces;
-            maxLifeTime = bulletProperties.maxLifeTime;
+            time = bulletProperties.maxLifeTime;
         }
 
         // Ensure it's visible and properly positioned
@@ -69,10 +65,10 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
 
         time += Time.fixedDeltaTime;
 
-        if (time >= maxLifeTime) // bullet expired
+        if (time >= bulletProperties.maxLifeTime) // bullet expired
         {
             isActive = false;
-            gameObject.SetActive(false);
+            ObjectPooler.ReturnToPool("Bullet", gameObject);
             return;
         }
 
@@ -86,20 +82,20 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
 
         if (Physics.Raycast(transform.position, moveDirection.normalized, out RaycastHit hit, moveDistance, collisionMask))
         {
+            ObjectPooler.SpawnFromPool("BulletHit", hit.point, Quaternion.identity);
             // If bullet still has bounces left, reflect and continue
             if (bounce > 0)
             {
                 bounce--;
                 time = 0;
-                initialPosition = hit.point;
+                initialPosition = hit.point + hit.normal * 0.01f;
                 initialVelocity = Vector3.Reflect(initialVelocity, hit.normal);
             }
             else
             {
                 // If no bounces left, destroy bullet
                 isActive = false;
-                gameObject.SetActive(false);
-                ObjectPooler.SpawnFromPool("BulletHit", hit.point, Quaternion.identity);
+                ObjectPooler.ReturnToPool("Bullet", gameObject);
             }
         }
         else
@@ -112,16 +108,6 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
         if (tracer != null)
         {
             tracer.transform.position = transform.position;
-        }
-    }
-    private IEnumerator DeactivateAfterTime(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        if (isActive) // prevents reactivating after bouncing
-        {
-            isActive = false;
-            gameObject.SetActive(false);
         }
     }
 
