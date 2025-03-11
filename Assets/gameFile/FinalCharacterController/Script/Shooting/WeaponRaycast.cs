@@ -20,6 +20,7 @@ public class WeaponRaycast : MonoBehaviour
     [ReadOnly] public WeaponSlot weaponSlot;
 
     public BulletPropertiesSO bulletProperties;
+    public WeaponRecoil recoil;
 
 
     //Shooting variables
@@ -35,6 +36,11 @@ public class WeaponRaycast : MonoBehaviour
     #endregion
 
     #region Startup
+    private void Awake()
+    {
+        recoil = GetComponentInParent<WeaponRecoil>();
+    }
+
     private void Start()
     {
         // Initial setup
@@ -82,14 +88,6 @@ public class WeaponRaycast : MonoBehaviour
         fireInterval = 1.0f / weaponProperties.fireRate;
         accumulatedTime = 0.0f;
 
-        foreach (var particle in muzzleFlash)
-        {
-            if (!particle.isPlaying)
-            {
-                particle.Emit(1);
-            }
-        }
-
         FireBullet();
     }
 
@@ -101,13 +99,7 @@ public class WeaponRaycast : MonoBehaviour
         accumulatedTime += deltaTime;
         while(accumulatedTime >= fireInterval)
         {
-            foreach (var particle in muzzleFlash)
-            {
-                if (!particle.isPlaying)
-                {
-                    particle.Emit(1);
-                }
-            }
+            
             FireBullet();
             accumulatedTime -= fireInterval;
         }
@@ -166,7 +158,14 @@ public class WeaponRaycast : MonoBehaviour
                 hitBox.OnRaycastHit(this, activeWeapon.GetRay().direction);
             }
         }
-
+        recoil.GenerateRecoil(weaponName);
+        foreach (var particle in muzzleFlash)
+        {
+            if (!particle.isPlaying)
+            {
+                particle.Emit(1);
+            }
+        }
         playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
     }
 

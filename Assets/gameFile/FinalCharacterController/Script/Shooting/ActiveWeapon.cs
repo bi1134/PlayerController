@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] private Transform hitPoint;
     [SerializeField] private LayerMask aimColliderMask;
     [SerializeField] private Rig handIK;
+    [SerializeField] private Camera playerCamera;
 
     [SerializeField] private Transform leftGrip;
     [SerializeField] private Transform rightGrip;
@@ -128,6 +130,8 @@ public class ActiveWeapon : MonoBehaviour
 
         //equip the new weapon
         weapon = newWeapon;
+        weapon.recoil.cameraTransform = playerCamera.transform;
+        weapon.recoil.rigController = rigController;
         weapon.transform.SetParent(weaponSlots[weaponSlotIndex], false);
         equippedWeapon[weaponSlotIndex] = weapon;
 

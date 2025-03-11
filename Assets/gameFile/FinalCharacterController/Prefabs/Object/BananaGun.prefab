@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7956855249182706837}
   - component: {fileID: 4666879667660296252}
+  - component: {fileID: 2748112697102879219}
   m_Layer: 8
   m_Name: BananaGun
   m_TagString: Untagged
@@ -56,11 +57,31 @@ MonoBehaviour:
   weaponProperties: {fileID: 11400000, guid: e94352f0febe4b0489064171428b2fe5, type: 2}
   weaponName: Pistol
   damage: 5
-  fireRate: 3
+  fireRate: 5
   bulletSpeed: 100
   weaponSlot: 1
   bulletProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
+  recoil: {fileID: 0}
   isFiring: 0
+--- !u!114 &2748112697102879219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2461294233747802360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9af6c7bdd2335504bbe3e6371a778e01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recoilX: 0
+  recoilY: 0
+  recoilZ: 0
+  snappiness: 6
+  returnSpeed: 10
+  cameraTransform: {fileID: 0}
+  rigController: {fileID: 0}
 --- !u!1 &7854343253915369494
 GameObject:
   m_ObjectHideFlags: 0
