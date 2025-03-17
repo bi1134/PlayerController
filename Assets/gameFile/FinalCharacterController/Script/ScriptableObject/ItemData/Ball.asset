@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
+  m_Name: Ball
+  m_EditorClassIdentifier: 
+  ID: 1
+  ItemType: 0
+  ItemName: Ball
+  Description: 'just an item
+
+'
+  Icon: {fileID: 0}
+  MaxStackSize: 5
+  Prefab: {fileID: 3027310757728184972, guid: dd34fecab41c38a4fbf63c3950b255d7, type: 3}

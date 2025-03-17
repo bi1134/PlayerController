@@ -24,7 +24,8 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     //aim rig
     private float aimRigWeight;
 
-    [SerializeField] public bool holdToShoot = true;
+    public bool holdToShoot = true;
+    public bool isInteracting { get; private set; }
     public bool attackPressed { get; private set; }
     public bool attackAnimation { get; private set; }
     public bool dashPressed { get; private set; }
@@ -122,7 +123,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
             return;
 
         holsterPressed = true;
-      
+
     }
 
     public void OnEquipWeapon(InputAction.CallbackContext context)
@@ -174,7 +175,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         }
 
         dashDurationTimer -= Time.deltaTime;
-        if(dashDurationTimer <= 0)
+        if (dashDurationTimer <= 0)
         {
             dashDurationTimer = 0;
             SetDashPressedFalse();
@@ -222,7 +223,13 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         playerState.SetPlayerDashingState(PlayerDashState.notDashing);
     }
 
-
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            isInteracting = true;
+        else if (context.canceled)
+            isInteracting = false;
+    }
 
     #endregion
 }

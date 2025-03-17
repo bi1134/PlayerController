@@ -16,6 +16,7 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] private Rig handIK;
     [SerializeField] private Camera playerCamera;
 
+    [Header("Rigs")]
     [SerializeField] private Transform leftGrip;
     [SerializeField] private Transform rightGrip;
     [SerializeField] private Animator rigController;
@@ -24,6 +25,7 @@ public class ActiveWeapon : MonoBehaviour
     private PlayerActionInput playerActionInput;
     private WeaponRaycast[] equippedWeapon = new WeaponRaycast[2];
     private int activeWeaponIndex;
+    private InventoryHolder inventoryHolder;
 
     //aiming
     public float lerpRotationSpeed = 10f;
@@ -33,6 +35,7 @@ public class ActiveWeapon : MonoBehaviour
 
     //holster Weapon
     public bool isHolstered;
+    private bool isSwitching = false;
 
     #endregion
 
@@ -40,6 +43,7 @@ public class ActiveWeapon : MonoBehaviour
     private void Start()
     {
         playerActionInput = GetComponent<PlayerActionInput>();
+        inventoryHolder = GetComponent<InventoryHolder>();
 
         //check if the player already has a weapon and equip it
         WeaponRaycast existingWeapon = GetComponentInChildren<WeaponRaycast>();
@@ -54,7 +58,13 @@ public class ActiveWeapon : MonoBehaviour
     private void Update()
     {
         HandleAiming();
+        HandleWeaponActions();
+    }
+    #endregion
 
+    #region Weapon Handling
+    private void HandleWeaponActions()
+    {
         var weapon = GetWeaponIndex(activeWeaponIndex);
 
         //if having weapon and NOT holstered (Im not putting the !before isholstered because its working mamamia)
@@ -85,35 +95,43 @@ public class ActiveWeapon : MonoBehaviour
 
         if (playerActionInput.weaponButton == 1)
         {
-            SetActiveWeapon(WeaponSlot.Primary);
+            if (inventoryHolder.weaponSlot1)
+            {
+                EquipWeaponFromInventory(inventoryHolder.weaponSlot1);
+            }
         }
-        else if(playerActionInput.weaponButton == 2)
+        else if (playerActionInput.weaponButton == 2)
         {
-            SetActiveWeapon(WeaponSlot.Secondary);
+            if (inventoryHolder.weaponSlot2)
+            {
+                EquipWeaponFromInventory(inventoryHolder.weaponSlot2);
+            }
         }
     }
-    #endregion
-
-    #region Func
-
-    private void HandleAiming()
+    public void EquipWeaponFromInventory(InventoryItemData weaponData)
     {
-        if (Camera.main == null) return;
+        if (weaponData == null || weaponData.ItemType != ItemType.Weapon)
+            return; //not valid weapon then return
 
-        // Get the center of the screen as the aiming direction
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+        GameObject weaponPrefab = weaponData.Prefab;
+        if (weaponPrefab == null)
+            return; //prevent null reference exception
 
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
+        int weaponSlotIndex = inventoryHolder.weaponSlot1 == weaponData ? 0 :
+                          inventoryHolder.weaponSlot2 == weaponData ? 1 : -1;
+
+        if (weaponSlotIndex == -1 || weaponSlotIndex >= weaponSlots.Length)
         {
-            mouseWorldPosition = raycastHit.point;
-            hitTransform = raycastHit.transform;
-            hitPoint.position = raycastHit.point;
-            hitPoint.forward = raycastHit.normal;
+            Debug.LogError("Invalid weapon slot index: " + weaponSlotIndex);
+            return;
         }
 
-        // Smoothly move the aim point to follow the hit point
-        aimTarget.position = Vector3.Lerp(aimTarget.position, hitPoint.position, Time.deltaTime * lerpRotationSpeed);
+        WeaponRaycast newWeapon = Instantiate(weaponPrefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponRaycast>();
+
+        if (newWeapon)
+        {
+            EquipWeapon(newWeapon);
+        }
     }
 
     public void EquipWeapon(WeaponRaycast newWeapon)
@@ -144,6 +162,8 @@ public class ActiveWeapon : MonoBehaviour
 
     private void ToggleActiveWeapon()
     {
+        if (equippedWeapon[activeWeaponIndex] == null) return;
+
         //get current holster state
         isHolstered = rigController.GetBool("isHolster");
 
@@ -160,10 +180,13 @@ public class ActiveWeapon : MonoBehaviour
 
     private void SetActiveWeapon(WeaponSlot weaponSlot)
     {
+        if (isSwitching)
+            return;
+        isSwitching = true;
         int holsterIndex = activeWeaponIndex;
         int activateIndex = (int)weaponSlot;
 
-        if(holsterIndex == activateIndex)
+        if (holsterIndex == activateIndex)
         {
             holsterIndex = -1;
         }
@@ -182,6 +205,7 @@ public class ActiveWeapon : MonoBehaviour
 
         //update active weapon index
         activeWeaponIndex = activateIndex;
+        isSwitching = false;
     }
 
     private IEnumerator HolsterWeapon(int index)
@@ -225,31 +249,35 @@ public class ActiveWeapon : MonoBehaviour
         return equippedWeapon[index];
     }
 
-
     #endregion
 
-    #region Return Values
-    public Vector3 GetAimPosition()
+    #region Aiming
+    private void HandleAiming()
     {
-        return mouseWorldPosition;
+        if (Camera.main == null) return;
+
+        // Get the center of the screen as the aiming direction
+        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
+        ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
+        {
+            mouseWorldPosition = raycastHit.point;
+            hitTransform = raycastHit.transform;
+            hitPoint.position = raycastHit.point;
+            hitPoint.forward = raycastHit.normal;
+        }
+
+        // Smoothly move the aim point to follow the hit point
+        aimTarget.position = Vector3.Lerp(aimTarget.position, hitPoint.position, Time.deltaTime * lerpRotationSpeed);
     }
+    public Vector3 GetAimPosition() => mouseWorldPosition;
+    public Transform GetHitTransform() => hitTransform;
 
-    public Transform GetHitTransform()
-    {
-        return hitTransform;
-    }
+    public Ray GetRay() => ray;
 
-    public Ray GetRay()
-    {
-        return ray;
-    }
-
-    public Transform GetHitPoint()
-    {
-        return hitPoint;
-    }
-
-
+    public Transform GetHitPoint() => hitPoint;
     #endregion
 }
 

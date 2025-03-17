@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
+  m_Name: Scar-L
+  m_EditorClassIdentifier: 
+  ID: 0
+  ItemType: 2
+  ItemName: Scar-L
+  Description: 'A Good gun
+
+'
+  Icon: {fileID: 0}
+  MaxStackSize: 1
+  Prefab: {fileID: 2217381360920502919, guid: 826da1e8828290c47adc45765739ee90, type: 3}
