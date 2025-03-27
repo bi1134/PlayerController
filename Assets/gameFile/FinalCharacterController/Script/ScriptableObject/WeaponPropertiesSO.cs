@@ -9,5 +9,4 @@ public class WeaponPropertiesSO : ScriptableObject
     public int fireRate;
     public int bulletSpeed;
     public WeaponSlot weaponSlot;
-
 }

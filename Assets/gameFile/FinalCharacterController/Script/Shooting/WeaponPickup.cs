@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using System;
 using UnityEngine;
 
@@ -11,7 +12,16 @@ public class WeaponPickup : MonoBehaviour
         if (activeWeapon)
         {
             WeaponRaycast newWeapon = Instantiate(weaponPrefab);
-            activeWeapon.EquipWeapon(newWeapon); 
+            activeWeapon.EquipWeapon(newWeapon);
+            Destroy(gameObject);
+        }
+
+        EnemyWeapon enemyWeapon = other.gameObject.GetComponent<EnemyWeapon>();
+        if (enemyWeapon)
+        {
+            WeaponRaycast newWeapon = Instantiate(weaponPrefab);
+            enemyWeapon.Equip(newWeapon);
+            Destroy(gameObject);
         }
     }
 }

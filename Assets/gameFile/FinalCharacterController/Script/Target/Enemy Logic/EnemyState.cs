@@ -4,7 +4,8 @@ public enum EnemyStateID
 {
     ChasePlayer,
     Death,
-    Idle
+    Idle,
+    FindWeapon,
 }
 
 public interface EnemyState

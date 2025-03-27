@@ -18,14 +18,31 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var inventory = other.transform.GetComponent<InventoryHolder>();
-        if (!inventory)
-            return; //if null then return
-
-        if (inventory.PickUpItem(ItemData))
+        Debug.Log($"{gameObject.name}: {other.name} entered the trigger.");
+        //player pick up
+        var inventory = other.GetComponent<InventoryHolder>();
+        if (inventory) // if inventory = true
         {
-            Destroy(this.gameObject);
+            if (inventory.PickUpItem(ItemData))
+            {
+                Destroy(gameObject);
+                return; 
+            }
         }
 
+        //enemy pick up
+        EnemyWeapon enemyWeapon = other.GetComponentInChildren<EnemyWeapon>();
+       
+        if (enemyWeapon && ItemData.ItemType == ItemType.Weapon)
+        {
+            Debug.Log("Enemy picked up weapon!");
+
+            WeaponRaycast newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponRaycast>();
+
+            // Equip the weapon
+            enemyWeapon.Equip(newWeapon);
+
+            Destroy(gameObject); // Destroy the pickup
+        }
     }
 }

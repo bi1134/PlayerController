@@ -14,6 +14,7 @@ public class EnemyDeathState : EnemyState
         enemy.ragdoll.ActivateRagdoll();
         direction.y = 1;
         enemy.ragdoll.ApplyForce(direction * enemy.config.ragdollForce);
+        enemy.weapons.DropWeapon();
     }
 
     public void Update(Enemy enemy)

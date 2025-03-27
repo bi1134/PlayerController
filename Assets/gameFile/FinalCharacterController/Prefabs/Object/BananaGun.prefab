@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7956855249182706837}
   - component: {fileID: 4666879667660296252}
   - component: {fileID: 2748112697102879219}
+  - component: {fileID: 2442134141123711649}
   m_Layer: 8
   m_Name: BananaGun
   m_TagString: Untagged
@@ -82,6 +83,27 @@ MonoBehaviour:
   returnSpeed: 10
   cameraTransform: {fileID: 0}
   rigController: {fileID: 0}
+--- !u!65 &2442134141123711649
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2461294233747802360}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.088020824, y: 0.15704416, z: 0.23606293}
+  m_Center: {x: 0, y: -0.09, z: 0.09}
 --- !u!1 &7854343253915369494
 GameObject:
   m_ObjectHideFlags: 0

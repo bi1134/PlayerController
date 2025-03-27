@@ -18,9 +18,12 @@ public class WeaponRecoil : MonoBehaviour
 
     private void Start()
     {
-        if (cameraTransform == null)
+        if (rigController)
         {
-            Debug.LogError("[WeaponRecoil] Camera reference is missing!");
+            if (cameraTransform == null)
+            {   
+                Debug.LogError("[WeaponRecoil] Camera reference is missing!");
+            }
         }
     }
 
@@ -31,7 +34,7 @@ public class WeaponRecoil : MonoBehaviour
             Random.Range(-recoilY, recoilY),
             0f // Keep Z-axis zero to avoid unnecessary tilt
         );
-        rigController.Play("WeaponRecoil" + weaponName, 1, 0.0f);
+        rigController?.Play("WeaponRecoil" + weaponName, 1, 0.0f);
     }
 
     private void LateUpdate()
@@ -45,4 +48,5 @@ public class WeaponRecoil : MonoBehaviour
         // Gradually reset recoil to zero
         targetRecoil = Vector3.Lerp(targetRecoil, Vector3.zero, returnSpeed * Time.deltaTime);
     }
+
 }

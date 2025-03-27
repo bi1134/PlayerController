@@ -97,6 +97,7 @@ public class ActiveWeapon : MonoBehaviour
         {
             if (inventoryHolder.weaponSlot1)
             {
+                isHolstered = true;
                 EquipWeaponFromInventory(inventoryHolder.weaponSlot1);
             }
         }
@@ -104,6 +105,7 @@ public class ActiveWeapon : MonoBehaviour
         {
             if (inventoryHolder.weaponSlot2)
             {
+                isHolstered = true;
                 EquipWeaponFromInventory(inventoryHolder.weaponSlot2);
             }
         }
@@ -111,14 +113,17 @@ public class ActiveWeapon : MonoBehaviour
     public void EquipWeaponFromInventory(InventoryItemData weaponData)
     {
         if (weaponData == null || weaponData.ItemType != ItemType.Weapon)
-            return; //not valid weapon then return
+            return; // Not a valid weapon
 
-        GameObject weaponPrefab = weaponData.Prefab;
+        WeaponRaycast weaponPrefab = weaponData.Prefab.GetComponent<WeaponRaycast>();
         if (weaponPrefab == null)
-            return; //prevent null reference exception
+        {
+            Debug.LogError($"Weapon prefab for {weaponData} is missing WeaponRaycast component!");
+            return;
+        }
 
-        int weaponSlotIndex = inventoryHolder.weaponSlot1 == weaponData ? 0 :
-                          inventoryHolder.weaponSlot2 == weaponData ? 1 : -1;
+        int weaponSlotIndex = (weaponPrefab.weaponSlot == WeaponSlot.Primary) ? 0 :
+                                (weaponPrefab.weaponSlot == WeaponSlot.Secondary) ? 1 : -1;
 
         if (weaponSlotIndex == -1 || weaponSlotIndex >= weaponSlots.Length)
         {
@@ -126,12 +131,27 @@ public class ActiveWeapon : MonoBehaviour
             return;
         }
 
-        WeaponRaycast newWeapon = Instantiate(weaponPrefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponRaycast>();
-
-        if (newWeapon)
+        // Check if weapon is already equipped
+        if (equippedWeapon[weaponSlotIndex] != null)
         {
-            EquipWeapon(newWeapon);
+            SetActiveWeapon((WeaponSlot)weaponSlotIndex);
+            return;
         }
+
+        // Instantiate only if weapon is not already stored
+        WeaponRaycast newWeapon = Instantiate(weaponData.Prefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponRaycast>();
+        equippedWeapon[weaponSlotIndex] = newWeapon;
+
+        newWeapon.weaponSlot = weaponPrefab.weaponSlot;
+
+        // Assign references
+        newWeapon.recoil.cameraTransform = playerCamera.transform;
+        newWeapon.recoil.rigController = rigController;
+        isHolstered = true;
+
+        // Set active weapon
+        SetActiveWeapon((WeaponSlot)weaponSlotIndex);
+        newWeapon.Initialize();
     }
 
     public void EquipWeapon(WeaponRaycast newWeapon)

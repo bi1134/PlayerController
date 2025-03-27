@@ -14,7 +14,7 @@ public class HealthBarUI : MonoBehaviour
     {
         healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
         barImage.fillAmount = 1;
-        this.gameObject.SetActive(false);
+        //this.gameObject.SetActive(false);
     }
 
     #endregion
