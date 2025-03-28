@@ -6,7 +6,7 @@ public class WeaponRaycast : MonoBehaviour
 {
     #region Variables
     [Header("Components")]
-    [SerializeField] private Transform bulletSpawnPosition;
+    [SerializeField] public Transform bulletSpawnPosition;
     [SerializeField] private ParticleSystem[] muzzleFlash;
 
     [Header("Stats")]

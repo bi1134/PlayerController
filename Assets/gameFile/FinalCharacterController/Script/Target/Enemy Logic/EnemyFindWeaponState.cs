@@ -27,15 +27,15 @@ public class EnemyFindWeaponState : EnemyState
     {
         if(enemy.weapons.HasWeapon())
         {
-            enemy.weapons.ActivateWeapon();
+            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
         }
     }
 
     private ItemPickup FindClosestWeapon(Enemy enemy)
     {
-        ItemPickup[] weapons = GameObject.FindObjectsByType<ItemPickup>(FindObjectsSortMode.None);
+        ItemPickup[] items = GameObject.FindObjectsByType<ItemPickup>(FindObjectsSortMode.None);
 
-        if (weapons.Length == 0)
+        if (items.Length == 0)
         {
             Debug.Log("No weapons found!");
             return null;
@@ -44,13 +44,16 @@ public class EnemyFindWeaponState : EnemyState
         ItemPickup closestWeapon = null;
         float closestDistance = float.MaxValue;
 
-        foreach (var weapon in weapons)
+        foreach (var item in items)
         {
-            float distanceToWeapon = Vector3.Distance(enemy.transform.position, weapon.transform.position);
+            if (item.ItemData == null || item.ItemData.ItemType != ItemType.Weapon)
+                continue;  // Skip non-weapons
+
+            float distanceToWeapon = Vector3.Distance(enemy.transform.position, item.transform.position);
             if (distanceToWeapon < closestDistance)
             {
                 closestDistance = distanceToWeapon;
-                closestWeapon = weapon;
+                closestWeapon = item;
             }
         }
 

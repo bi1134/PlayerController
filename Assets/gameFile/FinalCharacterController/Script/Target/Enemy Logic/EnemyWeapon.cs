@@ -1,15 +1,19 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyWeapon : MonoBehaviour
 {
-    WeaponRaycast currentWeapon;
-    Animator animator;
-    MeshSockets sockets;
+    private WeaponRaycast currentWeapon;
+    private Animator animator;
+    private MeshSockets sockets;
+    private WeaponIK weaponIK;
+    private Transform currentTarget;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         sockets = GetComponent<MeshSockets>();
+        weaponIK = GetComponent<WeaponIK>();
     }
 
     public void Equip(WeaponRaycast weapon)
@@ -20,7 +24,19 @@ public class EnemyWeapon : MonoBehaviour
 
     public void ActivateWeapon()
     {
+        StartCoroutine(EquipWeapon());
+    }
+
+    IEnumerator EquipWeapon()
+    {
         animator.SetBool("Equip", true);
+        yield return new WaitForSeconds(0.5f);
+        while(animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
+
+        weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
     }
 
     public void DropWeapon()
@@ -45,6 +61,12 @@ public class EnemyWeapon : MonoBehaviour
         {
             sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.RightHand);
         }
+    }
+
+    public void SetTarget(Transform target)
+    {
+        weaponIK.SetTargetTransform(target);
+        currentTarget = target;
     }
 
 }

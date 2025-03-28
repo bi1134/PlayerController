@@ -34,6 +34,7 @@ public class Enemy : MonoBehaviour
         stateMachine.RegisterState(new EnemyDeathState());
         stateMachine.RegisterState(new EnemyIdleState());
         stateMachine.RegisterState(new EnemyFindWeaponState());
+        stateMachine.RegisterState(new EnemyAttackPlayerState());
         stateMachine.ChangeState(initialState);
         ragdoll = GetComponent<Ragdoll>();
 
