@@ -2,6 +2,13 @@ using System.Collections;
 using Unity.Collections;
 using UnityEngine;
 
+public enum WeaponDamageType
+{
+    Raycast,
+    BulletCollision
+}
+
+
 public class WeaponRaycast : MonoBehaviour
 {
     #region Variables
@@ -18,15 +25,21 @@ public class WeaponRaycast : MonoBehaviour
     [ReadOnly] public int fireRate;
     [ReadOnly] public int bulletSpeed;
     [ReadOnly] public WeaponSlot weaponSlot;
+    [ReadOnly] public WeaponDamageType damageType;
 
     public BulletPropertiesSO bulletProperties;
     public WeaponRecoil recoil;
-
 
     //Shooting variables
     public bool isFiring = false;
     private float accumulatedTime;
     private float fireInterval;
+
+
+    //weapon raycasting
+    private Ray ray;
+    private RaycastHit hit;
+    public LayerMask aimMask;
 
 
     //get components stuff
@@ -57,6 +70,7 @@ public class WeaponRaycast : MonoBehaviour
             fireRate = weaponProperties.fireRate;
             bulletSpeed = weaponProperties.bulletSpeed;
             weaponSlot = weaponProperties.weaponSlot;
+            damageType = weaponProperties.damageType;
         }
     }
 
@@ -82,16 +96,16 @@ public class WeaponRaycast : MonoBehaviour
 
     #region Shooting Logic
 
-    public void StartFiring()
+    public void StartFiring(Vector3 target)
     {
         isFiring = true;
         fireInterval = 1.0f / weaponProperties.fireRate;
         accumulatedTime = 0.0f;
 
-        FireBullet();
+        FireBullet(target);
     }
 
-    public void UpdateFiring(float deltaTime)
+    public void UpdateFiring(float deltaTime, Vector3 target)
     {
         if (!isFiring) 
             return;
@@ -100,7 +114,7 @@ public class WeaponRaycast : MonoBehaviour
         while(accumulatedTime >= fireInterval)
         {
             
-            FireBullet();
+            FireBullet(target);
             accumulatedTime -= fireInterval;
         }
         
@@ -112,18 +126,19 @@ public class WeaponRaycast : MonoBehaviour
         accumulatedTime = 0f;
     }
 
-    private void FireBullet()
+    private void FireBullet(Vector3 target)
     {
-    
         if (bulletSpawnPosition == null)
         {
             Debug.LogWarning("[WeaponRaycast] Bullet spawn position is missing!");
             return;
         }
-        Vector3 aimDir = (activeWeapon.GetAimPosition() - bulletSpawnPosition.position).normalized;
-        Vector3 velocity = aimDir * weaponProperties.bulletSpeed;
 
-        GameObject bulletObject = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.LookRotation(aimDir));
+        Vector3 aimDir = (target - bulletSpawnPosition.position).normalized;
+        Vector3 velocity = aimDir * weaponProperties.bulletSpeed;
+        Vector3 spawnPosition = bulletSpawnPosition.position + aimDir * 0.1f;
+
+        GameObject bulletObject = ObjectPooler.SpawnFromPool("Bullet", spawnPosition, Quaternion.LookRotation(aimDir));
         if (bulletObject == null)
         {
             Debug.LogWarning("[WeaponRaycast] Bullet pooling failed!");
@@ -134,39 +149,39 @@ public class WeaponRaycast : MonoBehaviour
         if (bullet != null)
         {
             bullet.Initialize(bulletSpawnPosition.position, velocity, bulletProperties);
-        }
-        else
-        {
-            Debug.LogWarning("[WeaponRaycast] BulletProjectile script is missing!");
+
+            bullet.SetDamageInfo(weaponProperties.damage, weaponProperties.damageType);
         }
 
-        Transform hitTransform = activeWeapon.GetHitTransform();
 
-        if (hitTransform != null)
+        // AI and Player handle hit detection differently
+        if (weaponProperties.damageType == WeaponDamageType.Raycast)
         {
-            bool hitTarget = hitTransform.GetComponent<BulletTarget>() != null;
-
-            Rigidbody rb2d = hitTransform.GetComponent<Rigidbody>();
-            if (rb2d != null)
+            if (Physics.Raycast(bulletSpawnPosition.position, aimDir, out hit, 999f,aimMask))
             {
-                rb2d.AddForceAtPosition(activeWeapon.GetRay().direction * 20, activeWeapon.GetHitPoint().position, ForceMode.Impulse);
-            }
-
-            HitBox hitBox = hitTransform.GetComponent<HitBox>();
-            if (hitBox != null)
-            {
-                hitBox.OnRaycastHit(this, activeWeapon.GetRay().direction);
+                Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.AddForceAtPosition(aimDir * 20, hit.point, ForceMode.Impulse);
+                }
+                HitBox hitBox = hit.collider.GetComponent<HitBox>();
+                if (hitBox != null)
+                {
+                    hitBox.OnRaycastHit(this, aimDir);
+                }
             }
         }
-        recoil.GenerateRecoil(weaponName);
-        foreach (var particle in muzzleFlash)
+
+        if (recoil && recoil.rigController != null)
         {
-            if (!particle.isPlaying)
-            {
-                particle.Emit(1);
-            }
+            recoil.GenerateRecoil(weaponName);
         }
-        playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
+
+        //AI shouldn't use player state (Fix)
+        if (playerState != null)
+        {
+            playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
+        }
     }
 
     private IEnumerator ReturnEffectToPool(GameObject effect, float delay)
@@ -190,7 +205,4 @@ public class WeaponRaycast : MonoBehaviour
     }
 
     #endregion
-
-
-
 }

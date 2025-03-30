@@ -2535,13 +2535,13 @@ GameObject:
   - component: {fileID: 5015096315165476493}
   - component: {fileID: 6529031452440848048}
   - component: {fileID: 6845475634244533877}
-  - component: {fileID: 3078957633375641279}
   - component: {fileID: 8189593306507631656}
   - component: {fileID: 4991232131577574366}
   - component: {fileID: 6995399539300422863}
   - component: {fileID: 4581781348678166899}
   - component: {fileID: 356823622682801069}
   - component: {fileID: 8140496791718557534}
+  - component: {fileID: 7374149785138967885}
   m_Layer: 7
   m_Name: AIAgent
   m_TagString: Untagged
@@ -2652,21 +2652,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbda3d91db40e414d89c2c014704a301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3078957633375641279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3446328349848550656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4a63425557899428065becefe310aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
-  blinkDuration: 0.2
 --- !u!114 &8189593306507631656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2696,6 +2681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12f53cc421ada43419bf7adda6041f8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inacuracy: 0.4
 --- !u!54 &6995399539300422863
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2782,6 +2768,21 @@ MonoBehaviour:
     weight: 0.5
   - bone: 54
     weight: 1
+--- !u!114 &7374149785138967885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446328349848550656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 599ade2c0aacc4e4cacc8c345af348cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 200
+  currentHealth: 0
+  blinkDuration: 0.2
 --- !u!1 &3455802336500001156
 GameObject:
   m_ObjectHideFlags: 0
@@ -4753,7 +4754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3667068c220f8fe42b3443555a8238d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthSystem: {fileID: 3078957633375641279}
+  healthSystem: {fileID: 7374149785138967885}
   barImage: {fileID: 7000180630792097496}
 --- !u!114 &3304814634115296054
 MonoBehaviour:

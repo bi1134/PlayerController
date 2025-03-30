@@ -46,7 +46,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 800
@@ -55,8 +55,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.01
-  m_Center: {x: 0, y: 0, z: 0.08}
+  m_Radius: 0.015
+  m_Center: {x: 0, y: 0, z: 0.085}
 --- !u!54 &5124674339132971724
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -73,7 +73,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 800
@@ -99,7 +99,7 @@ MonoBehaviour:
   tracer: {fileID: 3360089140807687159}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 4097
   defaultProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
   time: 0
   bounce: 0

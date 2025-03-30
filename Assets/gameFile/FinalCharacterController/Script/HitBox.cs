@@ -12,4 +12,8 @@ public class HitBox : MonoBehaviour
         healthSystem.TakeDamage(damage, direction);
     }
 
+    public void OnBulletHit(float damage, Vector3 direction)
+    {
+        healthSystem.TakeDamage(damage, direction);
+    }
 }

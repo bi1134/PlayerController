@@ -17,3 +17,4 @@ MonoBehaviour:
   fireRate: 25
   bulletSpeed: 100
   weaponSlot: 0
+  damageType: 1

@@ -18,7 +18,6 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"{gameObject.name}: {other.name} entered the trigger.");
         //player pick up
         var inventory = other.GetComponent<InventoryHolder>();
         if (inventory) // if inventory = true

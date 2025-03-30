@@ -15,6 +15,9 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
     public float time;
     public int bounce;
 
+    private float bulletDamage;
+    private WeaponDamageType damageType;
+
     private void Awake()
     {
         bulletRigidbody = GetComponent<Rigidbody>();
@@ -82,6 +85,12 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
 
         if (Physics.Raycast(transform.position, moveDirection.normalized, out RaycastHit hit, moveDistance, collisionMask))
         {
+            HitBox hitBox = hit.collider.GetComponent<HitBox>();
+            if (hitBox != null && damageType == WeaponDamageType.BulletCollision)
+            {
+                hitBox.OnBulletHit(bulletDamage, initialVelocity.normalized);
+            }
+
             ObjectPooler.SpawnFromPool("BulletHit", hit.point, Quaternion.identity);
             // If bullet still has bounces left, reflect and continue
             if (bounce > 0)
@@ -89,7 +98,11 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
                 bounce--;
                 time = 0;
                 initialPosition = hit.point + hit.normal * 0.01f;
-                initialVelocity = Vector3.Reflect(initialVelocity, hit.normal);
+                Vector3 reflectedVelocity = Vector3.Reflect(initialVelocity, hit.normal);
+                if (Vector3.Dot(reflectedVelocity, initialVelocity) < 0) // Ensures it doesn't bounce backward
+                {
+                    initialVelocity = reflectedVelocity;
+                }
             }
             else
             {
@@ -109,6 +122,12 @@ public class BulletProjectile : MonoBehaviour, IPooledObject
         {
             tracer.transform.position = transform.position;
         }
+    }
+
+    public void SetDamageInfo(float damage, WeaponDamageType type)
+    {
+        bulletDamage = damage;
+        damageType = type;
     }
 
 }

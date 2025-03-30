@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: humanShade
-  m_Shader: {fileID: -6465566751694194690, guid: 68a9e96fb4fbf114d9f3a95f1645e982, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ab4eebc06c7ad2644a0939269fc86df5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,6 +37,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Diffuse_Texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -55,12 +59,27 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AmbientStrength: 0.25
+    - _Ambient_Strength: 0.25
+    - _FalloffAmount: 0.05
+    - _Falloff_Amount: 0.05
+    - _FresnelSize: 0.1
+    - _Fresnel_Size: 0.1
+    - _LightingCutoff: 0.025
+    - _Lighting_Cutoff: 0
     - _Max: 1.41
     - _Min: 0.55
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Shades: 0.57
+    - _Smoothness: 2
     m_Colors:
     - _Color: {r: 0.5686275, g: 0.35686272, b: 0.2745098, a: 0}
+    - _DiffuseColor: {r: 0.5686275, g: 0.35686275, b: 0.27450982, a: 1}
+    - _Diffuse_Color: {r: 0.5686275, g: 0.35686275, b: 0.27450982, a: 0}
+    - _FresnelColor: {r: 0.4490565, g: 0.26665482, b: 0.19572084, a: 1}
+    - _Fresnel_Color: {r: 0.4716981, g: 0.28266284, b: 0.20914915, a: 0}
+    - _SpecularColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Specular_Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
