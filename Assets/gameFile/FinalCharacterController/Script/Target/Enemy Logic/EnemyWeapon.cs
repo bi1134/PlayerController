@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyWeapon : MonoBehaviour
 {
-    private WeaponRaycast currentWeapon;
+    private WeaponBase currentWeapon;
     private Animator animator;
     private MeshSockets sockets;
     private WeaponIK weaponIK;
@@ -16,7 +16,7 @@ public class EnemyWeapon : MonoBehaviour
         weaponIK = GetComponent<WeaponIK>();
     }
 
-    public void Equip(WeaponRaycast weapon)
+    public void Equip(WeaponBase weapon)
     {
         currentWeapon = weapon;
         sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.Spine);

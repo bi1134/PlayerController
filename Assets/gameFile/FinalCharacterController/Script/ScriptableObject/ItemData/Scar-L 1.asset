@@ -9,16 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a2d97092e3732a40ad0f0651b3e00fc, type: 3}
-  m_Name: RiflePropertiesSO
+  m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
+  m_Name: Scar-L 1
   m_EditorClassIdentifier: 
-  weaponName: 1
-  damage: 10
-  fireRate: 10
-  reloadTime: 3
-  magazineSize: 25
-  bulletsPerTap: 1
-  bulletSpeed: 50
-  bulletLifetime: 3
-  spread: 0.1
-  upwardForce: 0
+  ID: 0
+  ItemType: 2
+  ItemName: test un
+  Description: 'a test gun
+
+'
+  Icon: {fileID: 0}
+  MaxStackSize: 1
+  Prefab: {fileID: 2217381360920502919, guid: c5110558843fc934f9c7ba9ba9036366, type: 3}

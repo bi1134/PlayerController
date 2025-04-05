@@ -24,13 +24,13 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     //aim rig
     private float aimRigWeight;
 
-    public bool holdToShoot = true;
     public bool isInteracting { get; private set; }
-    public bool attackPressed { get; private set; }
+    [field: SerializeField]public bool attackPressed { get; private set; }
     public bool attackAnimation { get; private set; }
     public bool dashPressed { get; private set; }
     public bool dashAnimation { get; private set; }
     public bool holsterPressed { get; private set; }
+    public bool reloadPressed { get; private set; }
     public float weaponButton { get; private set; }
 
     //get component stuff
@@ -88,6 +88,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     private void LateUpdate()
     {
         holsterPressed = false;
+        reloadPressed = false;
         weaponButton = -1;
     }
 
@@ -184,24 +185,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
 
     public void IsAttackPressed(bool attack)
     {
-        //aimRigWeight = 1;
-        if (holdToShoot)
-        {
-            // Automatic Mode: Hold to shoot, stop when released
-            attackPressed = attack;  // Directly assign true on press, false on release
-        }
-        else
-        {
-            // Semi-Auto Mode: Fire only one bullet per button press
-            if (attack)
-            {
-                attackPressed = true;  // Fire one bullet when pressed
-            }
-            else
-            {
-                attackPressed = false; // Prevent continuous firing
-            }
-        }
+        attackPressed = attack;   
     }
 
     public void SetAttackPressedFalse()
@@ -229,6 +213,13 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
             isInteracting = true;
         else if (context.canceled)
             isInteracting = false;
+    }
+
+    public void OnReload(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        reloadPressed = true;
     }
 
     #endregion

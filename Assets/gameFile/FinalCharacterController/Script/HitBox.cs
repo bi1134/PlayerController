@@ -4,11 +4,11 @@ public class HitBox : MonoBehaviour
 {
     public HealthSystem healthSystem;
     
-    public void OnRaycastHit(WeaponRaycast playerAttack, Vector3 direction)
+    public void TakeDamage(WeaponBase weapon, Vector3 direction)
     {
-        if (playerAttack == null) return;
+        if (weapon == null || healthSystem == null) return;
 
-        float damage = playerAttack.GetWeaponDamage();
+        float damage = weapon.GetWeaponDamage();
         healthSystem.TakeDamage(damage, direction);
     }
 

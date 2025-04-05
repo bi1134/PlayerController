@@ -1,68 +1,42 @@
 using System.Collections;
+using System.Xml.Serialization;
+using TMPro;
 using Unity.Collections;
 using UnityEngine;
 
-public class WeaponRaycast : MonoBehaviour
+public class WeaponRaycast : WeaponBase
 {
     #region Variables
     [Header("Components")]
-    [SerializeField] public Transform bulletSpawnPosition;
-    [SerializeField] private ParticleSystem[] muzzleFlash;
+    [SerializeField] private ParticleSystem muzzleFlash;
 
-    [Header("Stats")]
-    [SerializeField] private WeaponPropertiesSO weaponProperties;
-
-    [Header("Weapon Info (Read-Only)")]
-    [ReadOnly] public string weaponName;
-    [ReadOnly] public float damage;
-    [ReadOnly] public int fireRate;
-    [ReadOnly] public int bulletSpeed;
-    [ReadOnly] public WeaponSlot weaponSlot;
-
-    public BulletPropertiesSO bulletProperties;
-    public WeaponRecoil recoil;
-
+    //bullets
+    public int bulletCount;
 
     //Shooting variables
-    public bool isFiring = false;
     private float accumulatedTime;
     private float fireInterval;
 
-
     //get components stuff
     private ActiveWeapon activeWeapon;
-    private PlayerState playerState;
+    public TextMeshProUGUI ammunitionDisplay;
 
     #endregion
 
     #region Startup
     private void Awake()
     {
-        recoil = GetComponentInParent<WeaponRecoil>();
+        recoil = GetComponent<WeaponRecoil>();
+        bulletCount = weaponProperties.magazineSize; //make sure magazine is full
     }
 
     private void Start()
     {
         // Initial setup
-        playerState = GetComponentInParent<PlayerState>();
         activeWeapon = GetComponentInParent<ActiveWeapon>();
     }
 
-    private void OnValidate()
-    {
-        if (weaponProperties != null)
-        {
-            weaponName = weaponProperties.weaponName;
-            damage = weaponProperties.damage;
-            fireRate = weaponProperties.fireRate;
-            bulletSpeed = weaponProperties.bulletSpeed;
-            weaponSlot = weaponProperties.weaponSlot;
-        }
-    }
-
-
-
-    public void Initialize()
+    public override void Initialize()
     {
         activeWeapon = GetComponentInParent<ActiveWeapon>();
         if (activeWeapon == null)
@@ -77,21 +51,29 @@ public class WeaponRaycast : MonoBehaviour
     #region Update
     private void Update()
     {
+        ammunitionDisplay = GameObject.Find("AmmoDisplay").GetComponent<TextMeshProUGUI>(); //find ammo display in scene
+        //set ammo display, if it exists
+        if (ammunitionDisplay != null)
+        {
+            ammunitionDisplay.SetText(bulletCount / weaponProperties.bulletsPerTap + " / " + weaponProperties.magazineSize / weaponProperties.bulletsPerTap); //for shot gun
+        }
     }
     #endregion
 
     #region Shooting Logic
 
-    public void StartFiring()
+    public override void StartFiring(Vector3 aimPosition)
     {
+        if (weaponProperties == null) return;
+
         isFiring = true;
         fireInterval = 1.0f / weaponProperties.fireRate;
         accumulatedTime = 0.0f;
 
-        FireBullet();
+        FireRaycastBullet(aimPosition);
     }
 
-    public void UpdateFiring(float deltaTime)
+    public override void UpdateFiring(float deltaTime, Vector3 aimPosition, bool isShooting)
     {
         if (!isFiring) 
             return;
@@ -99,74 +81,45 @@ public class WeaponRaycast : MonoBehaviour
         accumulatedTime += deltaTime;
         while(accumulatedTime >= fireInterval)
         {
-            
-            FireBullet();
+            FireRaycastBullet(aimPosition);
             accumulatedTime -= fireInterval;
         }
         
     }
-
-    public void StopFiring()
+    public override void StopFiring()
     {
         isFiring = false;
         accumulatedTime = 0f;
     }
 
-    private void FireBullet()
+    private void FireRaycastBullet(Vector3 aimPosition)
     {
-    
-        if (bulletSpawnPosition == null)
-        {
-            Debug.LogWarning("[WeaponRaycast] Bullet spawn position is missing!");
+        if (bulletSpawnPosition == null) return;
+
+        if (bulletCount <= 0)
             return;
-        }
-        Vector3 aimDir = (activeWeapon.GetAimPosition() - bulletSpawnPosition.position).normalized;
-        Vector3 velocity = aimDir * weaponProperties.bulletSpeed;
 
-        GameObject bulletObject = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.LookRotation(aimDir));
-        if (bulletObject == null)
+        bulletCount--;
+
+        Vector3 aimDir = (aimPosition - bulletSpawnPosition.position).normalized;
+
+        // Raycast logic
+        if (Physics.Raycast(bulletSpawnPosition.position, aimDir, out RaycastHit hit, Mathf.Infinity))
         {
-            Debug.LogWarning("[WeaponRaycast] Bullet pooling failed!");
-            return;
-        }
-
-        BulletProjectile bullet = bulletObject.GetComponent<BulletProjectile>();
-        if (bullet != null)
-        {
-            bullet.Initialize(bulletSpawnPosition.position, velocity, bulletProperties);
-        }
-        else
-        {
-            Debug.LogWarning("[WeaponRaycast] BulletProjectile script is missing!");
-        }
-
-        Transform hitTransform = activeWeapon.GetHitTransform();
-
-        if (hitTransform != null)
-        {
-            bool hitTarget = hitTransform.GetComponent<BulletTarget>() != null;
-
-            Rigidbody rb2d = hitTransform.GetComponent<Rigidbody>();
-            if (rb2d != null)
+            // Check if the hit object has a HitBox component
+            if (hit.transform.TryGetComponent(out HitBox hitBox))
             {
-                rb2d.AddForceAtPosition(activeWeapon.GetRay().direction * 20, activeWeapon.GetHitPoint().position, ForceMode.Impulse);
+                hitBox.TakeDamage(this, aimDir); //apply damage
             }
 
-            HitBox hitBox = hitTransform.GetComponent<HitBox>();
-            if (hitBox != null)
+            if (hit.rigidbody != null)
             {
-                hitBox.OnRaycastHit(this, activeWeapon.GetRay().direction);
+                hit.rigidbody.AddForceAtPosition(aimDir * 20, hit.point, ForceMode.Impulse);
             }
         }
-        recoil.GenerateRecoil(weaponName);
-        foreach (var particle in muzzleFlash)
-        {
-            if (!particle.isPlaying)
-            {
-                particle.Emit(1);
-            }
-        }
-        playerState.SetPlayerCombatState(PlayerCombatState.InCombat);
+
+        recoil.GenerateRecoil(weaponProperties.weaponName.ToString());
+        muzzleFlash?.Play();
     }
 
     private IEnumerator ReturnEffectToPool(GameObject effect, float delay)
@@ -175,22 +128,9 @@ public class WeaponRaycast : MonoBehaviour
         effect.SetActive(false);
     }
 
-    public float GetWeaponDamage()
+    public override void Reload()
     {
-        return weaponProperties != null ? weaponProperties.damage : 0f;
+        bulletCount = weaponProperties.magazineSize;
     }
-
-    private void UpdateStats()
-    {
-        weaponName = weaponProperties.weaponName;
-        damage = weaponProperties.damage;
-        fireRate = weaponProperties.fireRate;
-        bulletSpeed = weaponProperties.bulletSpeed;
-        weaponSlot = weaponProperties.weaponSlot;
-    }
-
     #endregion
-
-
-
 }

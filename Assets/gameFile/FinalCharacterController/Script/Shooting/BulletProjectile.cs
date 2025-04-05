@@ -1,114 +1,72 @@
+using System.Collections;
 using UnityEngine;
 
-public class BulletProjectile : MonoBehaviour, IPooledObject
+public class BulletProjectile : MonoBehaviour
 {
-    [SerializeField] private TrailRenderer tracer;
-    [SerializeField] private LayerMask collisionMask;
-    [SerializeField] private BulletPropertiesSO defaultProperties;
+    [SerializeField] public GameObject tracer;
+    public BulletPropertiesSO settings;
 
-    private Rigidbody bulletRigidbody;
-    private Vector3 initialPosition;
-    private Vector3 initialVelocity;
-    private bool isActive = false;
-    private BulletPropertiesSO bulletProperties;
+    private WeaponProjectile shooter;
+    public bool isActive;
+    private Rigidbody rb;
 
-    public float time;
-    public int bounce;
-
-    private void Awake()
+    private void OnEnable()
     {
-        bulletRigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
     }
 
-    public void Initialize(Vector3 position, Vector3 velocity, BulletPropertiesSO properties)
-    {
-        bulletProperties = properties ?? defaultProperties;
-
-        initialPosition = position;
-        initialVelocity = velocity;
-        time = 0f;
-        isActive = true;
-
-        transform.position = position;
-        bulletRigidbody.rotation = Quaternion.LookRotation(velocity.normalized);
-
-        bulletRigidbody.angularVelocity = Vector3.zero;
-        bulletRigidbody.linearVelocity = velocity;
-
-        if (tracer != null)
-        {
-            tracer.Clear();
-            tracer.transform.position = position;
-        }
-
-        bounce = bulletProperties.maxBounces;
-    }
-
-    public void OnObjectSpawn()
+    public void Initialize(Vector3 direction, float bulletSpeed, float upwardForce, float lifeTime)
     {
         isActive = true;
-        time = 0f;
+        tracer?.SetActive(true);
 
-        if (bulletProperties != null)
-        {
-            bounce = bulletProperties.maxBounces;
-            time = bulletProperties.maxLifeTime;
-        }
+        rb.linearVelocity = Vector3.zero;
+        rb.AddForce(direction.normalized * bulletSpeed, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * upwardForce, ForceMode.Impulse);
 
-        // Ensure it's visible and properly positioned
-        gameObject.SetActive(true);
+        StartCoroutine(DestroySelf(lifeTime));
     }
 
-    private void FixedUpdate()
+    private void OnDisable()
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        isActive = false;
+    }
+
+    IEnumerator DestroySelf(float delay)
+    {
+        yield return Helpers.GetWaitForSecond(delay);
+        Deactivate();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isActive) return;
+        if (other.TryGetComponent(out HitBox target))
+        {
+            target.TakeDamage(shooter, rb.linearVelocity.normalized);
+        }
+
+        Deactivate();
+    }
+
+    public void Deactivate()
     {
         if (!isActive) return;
 
-        time += Time.fixedDeltaTime;
+        isActive = false;
 
-        if (time >= bulletProperties.maxLifeTime) // bullet expired
-        {
-            isActive = false;
-            ObjectPooler.ReturnToPool("Bullet", gameObject);
-            return;
-        }
+        // Reset tracer (if using)
+        if (tracer != null) tracer.SetActive(false);
 
-        // Apply Gravity: s = ut + 0.5 * at²
-        Vector3 gravity = Vector3.down * bulletProperties.bulletDrop;
-        Vector3 displacement = (initialVelocity * time) + (0.5f * gravity * time * time);
-        Vector3 nextPosition = initialPosition + displacement;
-
-        Vector3 moveDirection = nextPosition - transform.position;
-        float moveDistance = moveDirection.magnitude;
-
-        if (Physics.Raycast(transform.position, moveDirection.normalized, out RaycastHit hit, moveDistance, collisionMask))
-        {
-            ObjectPooler.SpawnFromPool("BulletHit", hit.point, Quaternion.identity);
-            // If bullet still has bounces left, reflect and continue
-            if (bounce > 0)
-            {
-                bounce--;
-                time = 0;
-                initialPosition = hit.point + hit.normal * 0.01f;
-                initialVelocity = Vector3.Reflect(initialVelocity, hit.normal);
-            }
-            else
-            {
-                // If no bounces left, destroy bullet
-                isActive = false;
-                ObjectPooler.ReturnToPool("Bullet", gameObject);
-            }
-        }
-        else
-        {
-            // Move normally if no hit
-            transform.position = nextPosition;
-        }
-
-        // Update tracer effect position
-        if (tracer != null)
-        {
-            tracer.transform.position = transform.position;
-        }
+        StopAllCoroutines();
+        ObjectPooler.ReturnToPool("Bullet", gameObject);
     }
 
 }
+
+

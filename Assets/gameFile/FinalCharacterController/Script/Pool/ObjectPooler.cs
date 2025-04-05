@@ -69,9 +69,9 @@ public static class ObjectPooler
         }
 
         GameObject objectToSpawn = objectPool.Dequeue();
-        objectToSpawn.SetActive(true);
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
+        objectToSpawn.SetActive(true);
 
         // Call OnObjectSpawn() if the object implements IPooledObject
         IPooledObject pooledObj = objectToSpawn.GetComponent<IPooledObject>();
@@ -95,9 +95,22 @@ public static class ObjectPooler
             return;
         }
 
-        obj.SetActive(false);
+        // Reset Rigidbody
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
 
-        // Don't reparent to the pool parent, just keep it inside
+        // Reset Particle Systems
+        foreach (var ps in obj.GetComponentsInChildren<ParticleSystem>())
+        {
+            ps.Clear();
+            ps.Stop();
+        }
+
+        obj.SetActive(false);
         poolDictionary[tag].Enqueue(obj);
     }
 

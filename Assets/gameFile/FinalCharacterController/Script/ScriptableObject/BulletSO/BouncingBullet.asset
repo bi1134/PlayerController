@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af0e9d8d6b4c7084f874cfa877f35fdf, type: 3}
-  m_Name: BulletPropertiesSO
+  m_Name: BouncingBullet
   m_EditorClassIdentifier: 
+  bulletType: 0
+  bulletPrefab: {fileID: 0}
   bulletDrop: 9.81
-  maxBounces: 0
+  maxBounces: 3
   maxLifeTime: 3

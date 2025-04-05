@@ -12,8 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2d97092e3732a40ad0f0651b3e00fc, type: 3}
   m_Name: PistolProperiesSO
   m_EditorClassIdentifier: 
-  weaponName: Pistol
+  weaponName: 0
   damage: 5
   fireRate: 5
+  reloadTime: 1
+  magazineSize: 15
+  bulletsPerTap: 1
+  allowButtonHold: 0
   bulletSpeed: 100
-  weaponSlot: 1
+  bulletLifetime: 3
+  spread: 0.1
+  upwardForce: 0

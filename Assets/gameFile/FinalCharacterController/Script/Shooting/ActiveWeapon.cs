@@ -23,19 +23,21 @@ public class ActiveWeapon : MonoBehaviour
 
     //references
     private PlayerActionInput playerActionInput;
-    private WeaponRaycast[] equippedWeapon = new WeaponRaycast[2];
+    private WeaponBase[] equippedWeapon = new WeaponBase[2];
     private int activeWeaponIndex;
     private InventoryHolder inventoryHolder;
 
     //aiming
     public float lerpRotationSpeed = 10f;
+    public bool canAim = true;
     private Vector3 mouseWorldPosition;
     private Ray ray;
-    private Transform hitTransform;
+    private RaycastHit hitRaycast;
 
     //holster Weapon
     public bool isHolstered;
     private bool isSwitching = false;
+
 
     #endregion
 
@@ -65,7 +67,7 @@ public class ActiveWeapon : MonoBehaviour
     #region Weapon Handling
     private void HandleWeaponActions()
     {
-        var weapon = GetWeaponIndex(activeWeaponIndex);
+        WeaponBase weapon = GetWeaponIndex(activeWeaponIndex);
 
         //if having weapon and NOT holstered (Im not putting the !before isholstered because its working mamamia)
         if (weapon && isHolstered)
@@ -74,23 +76,26 @@ public class ActiveWeapon : MonoBehaviour
             {
                 if (!weapon.isFiring) // Start firing only once
                 {
-                    weapon.StartFiring();
+                    weapon.StartFiring(mouseWorldPosition);
                 }
-
-                if (playerActionInput.holdToShoot) // Auto-fire mode
-                {
-                    weapon.UpdateFiring(Time.deltaTime);
-                }
+                weapon.UpdateFiring(Time.deltaTime, mouseWorldPosition, playerActionInput.attackPressed);
             }
-            else if (weapon.isFiring) // Stop firing when button is released
+            else // Stop firing when button is released
             {
                 weapon.StopFiring();
             }
-
         }
         if (playerActionInput.holsterPressed)
         {
             ToggleActiveWeapon();
+        }
+
+        if (playerActionInput.reloadPressed)
+        {
+            if (weapon)
+            {
+                weapon.Reload();
+            }
         }
 
         if (playerActionInput.weaponButton == 1)
@@ -115,7 +120,7 @@ public class ActiveWeapon : MonoBehaviour
         if (weaponData == null || weaponData.ItemType != ItemType.Weapon)
             return; // Not a valid weapon
 
-        WeaponRaycast weaponPrefab = weaponData.Prefab.GetComponent<WeaponRaycast>();
+        WeaponBase weaponPrefab = weaponData.Prefab.GetComponent<WeaponBase>();
         if (weaponPrefab == null)
         {
             Debug.LogError($"Weapon prefab for {weaponData} is missing WeaponRaycast component!");
@@ -139,7 +144,7 @@ public class ActiveWeapon : MonoBehaviour
         }
 
         // Instantiate only if weapon is not already stored
-        WeaponRaycast newWeapon = Instantiate(weaponData.Prefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponRaycast>();
+        WeaponBase newWeapon = Instantiate(weaponData.Prefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponBase>();
         equippedWeapon[weaponSlotIndex] = newWeapon;
 
         newWeapon.weaponSlot = weaponPrefab.weaponSlot;
@@ -154,7 +159,7 @@ public class ActiveWeapon : MonoBehaviour
         newWeapon.Initialize();
     }
 
-    public void EquipWeapon(WeaponRaycast newWeapon)
+    public void EquipWeapon(WeaponBase newWeapon)
     {
         int weaponSlotIndex = (int)newWeapon.weaponSlot;
         var weapon = GetWeaponIndex(weaponSlotIndex);
@@ -253,7 +258,7 @@ public class ActiveWeapon : MonoBehaviour
             rigController.SetBool("isHolster", false);
 
             //wait for equip animation to finish
-            rigController.Play("Equip" + weapon.weaponName);
+            rigController.Play("Equip" + weapon.weaponProperties.weaponName);
             do
             {
                 yield return new WaitForEndOfFrame();
@@ -261,7 +266,12 @@ public class ActiveWeapon : MonoBehaviour
         }
     }
 
-    private WeaponRaycast GetWeaponIndex(int index)
+    public WeaponBase GetActiveWeapon()
+    {
+        return GetWeaponIndex(activeWeaponIndex);
+    }
+
+    private WeaponBase GetWeaponIndex(int index)
     {
         if (index < 0 || index >= equippedWeapon.Length)
             return null;
@@ -269,12 +279,24 @@ public class ActiveWeapon : MonoBehaviour
         return equippedWeapon[index];
     }
 
+    public void DropWeapon()
+    {
+        var currentWeapon = GetActiveWeapon();
+        if (currentWeapon)
+        {
+            currentWeapon.transform.SetParent(null);
+            currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
+            currentWeapon.gameObject.AddComponent<Rigidbody>();
+            equippedWeapon[activeWeaponIndex] = null;
+        }
+    }
+
     #endregion
 
     #region Aiming
     private void HandleAiming()
     {
-        if (Camera.main == null) return;
+        if (!canAim || Camera.main == null) return;
 
         // Get the center of the screen as the aiming direction
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
@@ -284,7 +306,7 @@ public class ActiveWeapon : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
         {
             mouseWorldPosition = raycastHit.point;
-            hitTransform = raycastHit.transform;
+            hitRaycast = raycastHit;
             hitPoint.position = raycastHit.point;
             hitPoint.forward = raycastHit.normal;
         }
@@ -292,12 +314,11 @@ public class ActiveWeapon : MonoBehaviour
         // Smoothly move the aim point to follow the hit point
         aimTarget.position = Vector3.Lerp(aimTarget.position, hitPoint.position, Time.deltaTime * lerpRotationSpeed);
     }
-    public Vector3 GetAimPosition() => mouseWorldPosition;
-    public Transform GetHitTransform() => hitTransform;
 
-    public Ray GetRay() => ray;
-
-    public Transform GetHitPoint() => hitPoint;
+    public void DisableAiming()
+    {
+        canAim = false;
+    }
     #endregion
 }
 

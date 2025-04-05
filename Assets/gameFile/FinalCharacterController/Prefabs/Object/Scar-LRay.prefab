@@ -396,11 +396,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 14595734648878163}
+  - component: {fileID: 5665591525914322413}
   - component: {fileID: 1861675841834062155}
-  - component: {fileID: 5324284763237850747}
   - component: {fileID: 7760084554392261195}
   m_Layer: 8
-  m_Name: Scar-L
+  m_Name: Scar-LRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -424,6 +424,23 @@ Transform:
   - {fileID: 7327576048844166848}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5665591525914322413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217381360920502919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 782567da311675242aee8c9ff2e76386, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponProperties: {fileID: 11400000, guid: 6e440c36f1666a944b599f12c44943bf, type: 2}
+  weaponSlot: 0
+  bulletSpawnPosition: {fileID: 6006478351284377774}
+  recoil: {fileID: 0}
+  muzzleFlash: {fileID: 1175908040260868917}
 --- !u!114 &1861675841834062155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,36 +460,6 @@ MonoBehaviour:
   returnSpeed: 10
   cameraTransform: {fileID: 0}
   rigController: {fileID: 0}
---- !u!114 &5324284763237850747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2217381360920502919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 150ef5970f5aa0449a552188669c9b98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponProperties: {fileID: 11400000, guid: 6e440c36f1666a944b599f12c44943bf, type: 2}
-  weaponSlot: 0
-  bulletSpawnPosition: {fileID: 6006478351284377774}
-  recoil: {fileID: 0}
-  <isFiring>k__BackingField: 0
-  muzzleFlash: {fileID: 1175908040260868917}
-  accumulatedTime: 0
-  fireInterval: 0
-  timeBetweenShooting: 0.1
-  timeBetweenShots: 0
-  magazineSize: 0
-  allowButtonHold: 1
-  readyToShoot: 1
-  reloading: 0
-  playerCamera: {fileID: 0}
-  ammunitionDisplay: {fileID: 0}
-  allowInvoke: 1
-  lastAimPosition: {x: 0, y: 0, z: 0}
 --- !u!65 &7760084554392261195
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1208,7 +1195,7 @@ Transform:
   m_GameObject: {fileID: 8290248936283986597}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.005, z: 1.12}
+  m_LocalPosition: {x: 0, y: 0.038, z: 1.032}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

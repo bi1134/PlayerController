@@ -24,14 +24,32 @@ public class InventoryHolder : MonoBehaviour
 
     public static UnityAction<InventorySystem> OnDynamicInventoryDisplayRequested;
 
+
+    private ActiveWeapon activeWeapon;
     private void Awake()
     {
+        activeWeapon = GetComponent<ActiveWeapon>();
+
+        if (activeWeapon == null)
+        {
+            Debug.LogError("InventoryHolder: activeWeapon is NULL during Awake!");
+        }
+        else
+        {
+            Debug.Log("InventoryHolder: activeWeapon is set to " + activeWeapon.name);
+        }
         inventorySystem = new InventorySystem(inventorySize);
         passiveItemInventory = new InventorySystem(passiveInventorySize);
     }
 
     public bool PickUpItem(InventoryItemData itemData)
     {
+        if (itemData == null)
+        {
+            Debug.LogError("InventoryHolder: Tried to pick up a NULL item!");
+            return false;
+        }
+
         switch (itemData.ItemType)
         {
             case ItemType.Passive:
@@ -62,10 +80,12 @@ public class InventoryHolder : MonoBehaviour
 
     private void EquipWeaponImmediately(InventoryItemData weaponData)
     {
-        ActiveWeapon activeWeapon = GetComponent<ActiveWeapon>();
-        if (activeWeapon != null)
+        Debug.Log("EquipWeaponImmediately: Called with " + weaponData);
+        if (activeWeapon == null)
         {
-            activeWeapon.EquipWeaponFromInventory(weaponData);
+            Debug.LogError("InventoryHolder: activeWeapon is NULL!"); // <== THIS should show up
+            return;
         }
+            activeWeapon.EquipWeaponFromInventory(weaponData);
     }
 }

@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -18,16 +19,27 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"{gameObject.name}: {other.name} entered the trigger.");
+        Debug.Log("ItemPickup: Triggered by " + other.name);
+
         //player pick up
         var inventory = other.GetComponent<InventoryHolder>();
         if (inventory) // if inventory = true
         {
-            if (inventory.PickUpItem(ItemData))
+            Debug.Log("ItemPickup: Found InventoryHolder on " + other.name);
+            if (ItemData == null)
             {
-                Destroy(gameObject);
-                return; 
+                Debug.LogError("ItemPickup: itemData is NULL!");
+                return;
             }
+
+            inventory.PickUpItem(ItemData);
+            
+            Destroy(gameObject);
+            
+        }
+        else
+        {
+            Debug.LogError("ItemPickup: InventoryHolder NOT found on " + other.name);
         }
 
         //enemy pick up
@@ -35,9 +47,7 @@ public class ItemPickup : MonoBehaviour
        
         if (enemyWeapon && ItemData.ItemType == ItemType.Weapon)
         {
-            Debug.Log("Enemy picked up weapon!");
-
-            WeaponRaycast newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponRaycast>();
+            WeaponBase newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponBase>();
 
             // Equip the weapon
             enemyWeapon.Equip(newWeapon);
