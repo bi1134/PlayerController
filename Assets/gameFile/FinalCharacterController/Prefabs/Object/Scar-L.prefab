@@ -461,18 +461,15 @@ MonoBehaviour:
   recoil: {fileID: 0}
   <isFiring>k__BackingField: 0
   muzzleFlash: {fileID: 1175908040260868917}
-  accumulatedTime: 0
-  fireInterval: 0
+  bulletProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}
   timeBetweenShooting: 0.1
   timeBetweenShots: 0
-  magazineSize: 0
   allowButtonHold: 1
   readyToShoot: 1
   reloading: 0
   playerCamera: {fileID: 0}
   ammunitionDisplay: {fileID: 0}
   allowInvoke: 1
-  lastAimPosition: {x: 0, y: 0, z: 0}
 --- !u!65 &7760084554392261195
 BoxCollider:
   m_ObjectHideFlags: 0

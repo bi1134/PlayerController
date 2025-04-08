@@ -6,13 +6,13 @@ public class WeaponProjectile : WeaponBase
 {
     //Bullet
     [SerializeField] public ParticleSystem muzzleFlash;
+    [SerializeField] private BulletPropertiesSO bulletProperties;
 
     //bullet force
     private int bulletsLeft, bulletsShot;
 
     //Gun stats
     public float timeBetweenShooting, timeBetweenShots;
-    public int magazineSize;
     public bool allowButtonHold;
 
     //bools
@@ -25,7 +25,7 @@ public class WeaponProjectile : WeaponBase
 
     //bug fix
     public bool allowInvoke = true;
-    public Vector3 lastAimPosition;
+    private Vector3 lastAimPosition;
 
     private void Awake()
     {
@@ -114,16 +114,20 @@ public class WeaponProjectile : WeaponBase
         float y = Random.Range(-weaponProperties.spread, weaponProperties.spread);
         Vector3 directionWithSpread = directionWithoutSpread + new Vector3(x, y, 0);
 
-        GameObject bulletObject = ObjectPooler.SpawnFromPool("Bullet", bulletSpawnPosition.position, Quaternion.LookRotation(directionWithSpread.normalized));
+        string bulletTag = bulletProperties.bulletPoolTag;
+
+        GameObject bulletObject = ObjectPooler.SpawnFromPool(bulletTag, bulletSpawnPosition.position, Quaternion.LookRotation(directionWithSpread.normalized));
         if (bulletObject != null)
         {
             BulletProjectile bullet = bulletObject.GetComponent<BulletProjectile>();
+            bullet.settings = bulletProperties;
             bullet.Initialize(
             directionWithSpread,
             weaponProperties.bulletSpeed,
             weaponProperties.upwardForce,
             weaponProperties.bulletLifetime
             );
+            bullet.SetShooter(this);
         }
 
         recoil.GenerateRecoil(weaponProperties.weaponName.ToString());

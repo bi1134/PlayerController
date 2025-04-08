@@ -12158,8 +12158,14 @@ MonoBehaviour:
   - tag: BulletHit
     prefab: {fileID: 6417050806360344522, guid: 44c78e55215584f41b1ff4eed166e9e4, type: 3}
     size: 35
+  - tag: Explosion
+    prefab: {fileID: 2277642106109632012, guid: f807908d613a667499c8b773f23a5cd7, type: 3}
+    size: 35
   - tag: Bullet
     prefab: {fileID: 6407338185989330415, guid: fef5a83b4cb43fe409cb38764ce75e2e, type: 3}
+    size: 20
+  - tag: ExplosiveBullet
+    prefab: {fileID: 6407338185989330415, guid: 14e0e0eb0b7132a47824d83e94d76217, type: 3}
     size: 20
 --- !u!1001 &927831655
 PrefabInstance:
@@ -15243,7 +15249,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1261322744}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LeftHandIK_hint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22894,7 +22900,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1992697536}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RightHandIK_hint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24515,6 +24521,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 410447159225172559, guid: e225a0484abe43847a318b21a232e50a, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 463067520996503793, guid: e225a0484abe43847a318b21a232e50a, type: 3}
       propertyPath: m_TagString
       value: Untagged
@@ -24743,6 +24753,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -2
       objectReference: {fileID: 0}
+    - target: {fileID: 3129734639219344521, guid: e225a0484abe43847a318b21a232e50a, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3492246738342206240, guid: e225a0484abe43847a318b21a232e50a, type: 3}
       propertyPath: m_Weight
       value: 1
@@ -24766,6 +24780,18 @@ PrefabInstance:
     - target: {fileID: 4184968493838596778, guid: e225a0484abe43847a318b21a232e50a, type: 3}
       propertyPath: m_projectionMatrixMode
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4509694067234743358, guid: e225a0484abe43847a318b21a232e50a, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576473957150387402, guid: e225a0484abe43847a318b21a232e50a, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090773416667121558, guid: e225a0484abe43847a318b21a232e50a, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5783535219538447766, guid: e225a0484abe43847a318b21a232e50a, type: 3}
       propertyPath: m_LocalPosition.x

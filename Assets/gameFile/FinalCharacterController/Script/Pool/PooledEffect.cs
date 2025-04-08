@@ -4,10 +4,16 @@ using UnityEngine;
 public class PooledEffect : MonoBehaviour, IPooledObject
 {
     private ParticleSystem effect;
+    private string poolTag;
 
     private void Awake()
     {
         effect = GetComponent<ParticleSystem>();
+    }
+
+    public void SetPoolTag(string tag)
+    {
+        poolTag = tag; // Set the pool tag for this effect
     }
 
     public void OnObjectSpawn()
@@ -18,7 +24,7 @@ public class PooledEffect : MonoBehaviour, IPooledObject
 
     private IEnumerator DisableAfterTime(float time)
     {
-        yield return new WaitForSeconds(time);
-        ObjectPooler.ReturnToPool("BulletHit", gameObject);
+        yield return Helpers.GetWaitForSecond(time);
+        ObjectPooler.ReturnToPool(poolTag, gameObject);
     }
 }
