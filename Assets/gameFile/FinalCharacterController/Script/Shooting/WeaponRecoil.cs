@@ -32,9 +32,13 @@ public class WeaponRecoil : MonoBehaviour
         targetRecoil += new Vector3(
             recoilX,
             Random.Range(-recoilY, recoilY),
-            0f // Keep Z-axis zero to avoid unnecessary tilt
+            0f
         );
-        rigController?.Play("WeaponRecoil" + weaponName, 1, 0.0f);
+
+        if (rigController != null)
+        {
+            rigController.Play("WeaponRecoil" + weaponName, 1, 0.0f);
+        }
     }
 
     private void LateUpdate()

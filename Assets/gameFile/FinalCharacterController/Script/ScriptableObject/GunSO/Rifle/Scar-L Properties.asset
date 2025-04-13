@@ -18,7 +18,7 @@ MonoBehaviour:
   reloadTime: 3
   magazineSize: 25
   bulletsPerTap: 1
-  bulletSpeed: 50
+  bulletSpeed: 100
   bulletLifetime: 3
-  spread: 0
+  spread: 0.1
   upwardForce: 0

@@ -25,16 +25,12 @@ public class HealthSystem : MonoBehaviour
 
     //get components stuff
     private SkinnedMeshRenderer[] skinnedMeshRenderer;
-    private Enemy enemy;
-
     #endregion
 
     #region Startup
     private void Start()
     {
         currentHealth = maxHealth;
-        enemy = GetComponent<Enemy>();
-
         skinnedMeshRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
 
         //store original material values
@@ -56,7 +52,13 @@ public class HealthSystem : MonoBehaviour
         {
             HitBox hitbox = rigidBody.gameObject.AddComponent<HitBox>();
             hitbox.healthSystem = this;
+            if (hitbox.gameObject != gameObject)
+            {
+                hitbox.gameObject.layer = LayerMask.NameToLayer("Hitbox");
+            }
         }
+
+        OnStart();
     }
 
     #endregion
@@ -78,23 +80,24 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(float amount, Vector3 direction)
     {
         currentHealth -= amount;
+        OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs
+        {
+            healthNormalized = currentHealth / maxHealth
+        });
+
+        OnDamage(direction);
 
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             Die(direction);
         }
-        
+
         blinkTimer = blinkDuration;
-        ApplyHitBlinkEffect();
+        ApplyHitBlinkEffect(); // Check if this runs
 
-        StopAllCoroutines(); // Stop previous lerp in case of multiple hits
+        StopAllCoroutines();
         StartCoroutine(LerpBackToOriginalMaterials());
-
-        if (OnHealthChanged != null) OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs
-        {
-            healthNormalized = currentHealth / maxHealth
-        });
     }
 
 
@@ -111,13 +114,14 @@ public class HealthSystem : MonoBehaviour
         });
     }
 
+    public bool IsDead()
+    {
+        return currentHealth <= 0;
+    }
+
     private void Die(Vector3 direction)
     {
-
-        EnemyDeathState deathState = enemy.stateMachine.GetEnemyState(EnemyStateID.Death) as EnemyDeathState;
-
-        deathState.direction = direction;
-        enemy.stateMachine.ChangeState(EnemyStateID.Death);
+        OnDeath(direction);
     }
 
     private void ApplyHitBlinkEffect()
@@ -206,6 +210,22 @@ public class HealthSystem : MonoBehaviour
             if (material.HasProperty("_LightingCutoff"))
                 material.SetFloat("_LightingCutoff", properties.lightingCutoff);
         }
+    }
+
+    #endregion
+
+    #region Virtual Func
+    protected virtual void OnStart() 
+    {
+
+    }
+    protected virtual void OnDeath(Vector3 direction) 
+    {
+
+    }
+    protected virtual void OnDamage(Vector3 direction) 
+    {
+
     }
 
     #endregion

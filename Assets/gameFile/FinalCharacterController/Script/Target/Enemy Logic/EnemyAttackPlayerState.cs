@@ -7,6 +7,7 @@ public class EnemyAttackPlayerState : EnemyState
         enemy.weapons.ActivateWeapon();
         enemy.weapons.SetTarget(enemy.playerTransform);
         enemy.navMeshAgent.stoppingDistance = 5f;
+        enemy.weapons.SetFiring(true);
     }
 
     public void Exit(Enemy enemy)
@@ -22,5 +23,10 @@ public class EnemyAttackPlayerState : EnemyState
     public void Update(Enemy enemy)
     {
         enemy.navMeshAgent.destination = enemy.playerTransform.position;
+
+        if(enemy.playerTransform.GetComponent<HealthSystem>().IsDead())
+        {
+            enemy.stateMachine.ChangeState(EnemyStateID.Idle);
+        }
     }
 }

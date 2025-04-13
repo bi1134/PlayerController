@@ -22,12 +22,14 @@ public class WeaponRaycast : WeaponBase
     //get components stuff
     private ActiveWeapon activeWeapon;
     public TextMeshProUGUI ammunitionDisplay;
+    private PlayerHUD playerHUD;
 
     #endregion
 
     #region Startup
     private void Awake()
     {
+        playerHUD = GetComponentInParent<ActiveWeapon>()?.hud;
         recoil = GetComponent<WeaponRecoil>();
         bulletCount = weaponProperties.magazineSize; //make sure magazine is full
     }
@@ -36,6 +38,10 @@ public class WeaponRaycast : WeaponBase
     {
         // Initial setup
         activeWeapon = GetComponentInParent<ActiveWeapon>();
+        if (playerHUD != null)
+        {
+            playerHUD.UpdateAmmo(bulletCount, weaponProperties.magazineSize, weaponProperties.bulletsPerTap);
+        }
     }
 
     public override void Initialize()
@@ -132,7 +138,10 @@ public class WeaponRaycast : WeaponBase
             }
         }
 
-        recoil.GenerateRecoil(weaponProperties.weaponName.ToString());
+        if(recoil)
+        {
+            recoil.GenerateRecoil(weaponProperties.weaponName.ToString());
+        }    
         muzzleFlash?.Play();
     }
 
@@ -169,14 +178,9 @@ public class WeaponRaycast : WeaponBase
 
     public override void UpdateAmmoUI()
     {
-        if (ammunitionDisplay == null)
+        if (playerHUD != null)
         {
-            ammunitionDisplay = GameObject.Find("AmmoDisplay").GetComponent<TextMeshProUGUI>(); //find ammo display in scene
-        }
-        //set ammo display, if it exists
-        if (ammunitionDisplay != null)
-        {
-            ammunitionDisplay.SetText(bulletCount / weaponProperties.bulletsPerTap + " / " + weaponProperties.magazineSize / weaponProperties.bulletsPerTap); //for shot gun
+            playerHUD.UpdateAmmo(bulletCount, weaponProperties.magazineSize, weaponProperties.bulletsPerTap);
         }
     }
 

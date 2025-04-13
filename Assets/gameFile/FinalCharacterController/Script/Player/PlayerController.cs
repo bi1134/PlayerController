@@ -73,6 +73,9 @@ public class PlayerController : MonoBehaviour
     private float moveSpeed;
     private PlayerDashState lastDashState = PlayerDashState.notDashing;
 
+    //death flag (disable on death)
+    private bool isEnabled = true;
+
     #endregion
 
     #region Startup
@@ -95,6 +98,8 @@ public class PlayerController : MonoBehaviour
     #region Update Logic
     private void Update()
     {
+        if (!isEnabled)
+            return;
         HandleMovement();
         UpdateMovementState();
         HandleVerticalMovement();
@@ -296,6 +301,9 @@ public class PlayerController : MonoBehaviour
     #region Late Update Logic
     private void LateUpdate()
     {
+        if(!isEnabled) 
+            return;
+
         RotateCamera();
     }
 
@@ -400,6 +408,11 @@ public class PlayerController : MonoBehaviour
     {
         //this means the player is moving diagonally at 45 degrees or foward, if so, we can run
         return playerLocomotionInput.movementInput.y >= Mathf.Abs(playerLocomotionInput.movementInput.x);
+    }
+
+    public void DisablePlayerLogic()
+    {
+        isEnabled = false;
     }
 
     #endregion

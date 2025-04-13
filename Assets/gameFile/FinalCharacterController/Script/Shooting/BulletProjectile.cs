@@ -13,6 +13,7 @@ public class BulletProjectile : MonoBehaviour
     public bool isActive;
     private Rigidbody rb;
     private GameObject shooterGameObject;
+    private HealthSystem shooterHealth;
 
     private void OnEnable()
     {
@@ -101,7 +102,6 @@ public class BulletProjectile : MonoBehaviour
     {
         if (!isActive) return;
 
-
         ContactPoint contact = collision.contacts[0];
         Vector3 hitPoint = contact.point;
         Vector3 hitNormal = contact.normal;
@@ -114,10 +114,14 @@ public class BulletProjectile : MonoBehaviour
 
         if (collision.collider.TryGetComponent(out HitBox target))
         {
+            if (target.healthSystem == shooterHealth)
+                return;
+
             target.TakeDamage(shooter, rb.linearVelocity.normalized);
+
             if (settings.bulletType == BulletType.Explosive)
             {
-                Explode(collision.contacts[0].point);
+                Explode(contact.point);
                 return;
             }
         }
@@ -158,7 +162,9 @@ public class BulletProjectile : MonoBehaviour
         {
             if (enemy.TryGetComponent(out HitBox target))
             {
-                if (enemy.gameObject == shooterGameObject) continue;
+                if (target.healthSystem == shooterHealth)
+                    continue;
+
                 Vector3 direction = (enemy.transform.position - point).normalized;
                 target.TakeDamage(shooter, direction);
             }
@@ -196,6 +202,9 @@ public class BulletProjectile : MonoBehaviour
     {
         this.shooter = shooter;
         shooterGameObject = shooter.gameObject;
+
+        shooterHealth = shooter.GetComponentInParent<HealthSystem>();
+
         Collider[] bulletColliders = GetComponentsInChildren<Collider>();
         Collider[] shooterColliders = shooter.GetComponentsInChildren<Collider>();
 

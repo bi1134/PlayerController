@@ -15,7 +15,7 @@ MonoBehaviour:
   bulletType: 1
   maxBounces: 100
   maxLifeTime: 3
-  bulletDrop: 0
+  bulletDrop: 1
   explosionRadius: 5
   explosionForce: 0.0001
   explosionMask:

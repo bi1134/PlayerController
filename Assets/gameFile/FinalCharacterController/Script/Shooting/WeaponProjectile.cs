@@ -4,6 +4,9 @@ using UnityEngine.ProBuilder;
 
 public class WeaponProjectile : WeaponBase
 {
+    //reference
+    private PlayerHUD playerHUD;
+
     //Bullet
     [SerializeField] public ParticleSystem muzzleFlash;
     [SerializeField] private BulletPropertiesSO bulletProperties;
@@ -27,19 +30,36 @@ public class WeaponProjectile : WeaponBase
     public bool allowInvoke = true;
     private Vector3 lastAimPosition;
 
+    #region Startup 
     private void Awake()
     {
         //make sure magazine is full
         bulletsLeft = weaponProperties.magazineSize;
         recoil = GetComponentInParent<WeaponRecoil>();
         playerCamera = GetComponentInParent<Camera>();
+        playerHUD = GetComponentInParent<ActiveWeapon>()?.hud;
     }
 
+    private void Start()
+    {
+        if (playerHUD != null)
+        {
+            playerHUD.UpdateAmmo(bulletsLeft, weaponProperties.magazineSize, weaponProperties.bulletsPerTap);
+        }
+    }
+
+    #endregion
+
+    #region Update
     private void Update()
     {
         timeBetweenShooting = 1f / weaponProperties.fireRate; //calculate time between shots
     }
 
+    #endregion
+
+
+    #region Shooting Logic
     public override void StartFiring(Vector3 aimPosition)
     {
         if (bulletsLeft <= 0)
@@ -132,7 +152,11 @@ public class WeaponProjectile : WeaponBase
             bullet.SetShooter(this);
         }
 
-        recoil.GenerateRecoil(weaponProperties.weaponName.ToString());
+        if (recoil)
+        { 
+            recoil.GenerateRecoil(weaponProperties.weaponName.ToString());
+        }
+        
         muzzleFlash?.Play();
 
         bulletsLeft--;
@@ -181,19 +205,14 @@ public class WeaponProjectile : WeaponBase
         }
     }
 
+    #endregion
+
+    #region Other Func
     public override void UpdateAmmoUI()
     {
-        if (ammunitionDisplay == null)
+        if (playerHUD != null)
         {
-            ammunitionDisplay = GameObject.Find("AmmoDisplay")?.GetComponent<TextMeshProUGUI>();
-        }
-
-        if (ammunitionDisplay != null)
-        {
-            ammunitionDisplay.SetText(
-                (bulletsLeft / weaponProperties.bulletsPerTap) + " / " +
-                (weaponProperties.magazineSize / weaponProperties.bulletsPerTap)
-            );
+            playerHUD.UpdateAmmo(bulletsLeft, weaponProperties.magazineSize, weaponProperties.bulletsPerTap);
         }
     }
 
@@ -204,4 +223,5 @@ public class WeaponProjectile : WeaponBase
         reloading = false;
         allowInvoke = true;
     }
+    #endregion
 }

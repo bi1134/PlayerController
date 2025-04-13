@@ -15,6 +15,7 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] private LayerMask aimColliderMask;
     [SerializeField] private Rig handIK;
     [SerializeField] private Camera playerCamera;
+    [SerializeField] public PlayerHUD hud;
 
     [Header("Rigs")]
     [SerializeField] private Transform leftGrip;
