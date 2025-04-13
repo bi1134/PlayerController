@@ -38,18 +38,20 @@ public class WeaponProjectile : WeaponBase
     private void Update()
     {
         timeBetweenShooting = 1f / weaponProperties.fireRate; //calculate time between shots
-
-        ammunitionDisplay = GameObject.Find("AmmoDisplay").GetComponent<TextMeshProUGUI>(); //find ammo display in scene
-        //set ammo display, if it exists
-        if(ammunitionDisplay != null)
-        {
-            ammunitionDisplay.SetText(bulletsLeft / weaponProperties.bulletsPerTap + " / " + weaponProperties.magazineSize / weaponProperties.bulletsPerTap); //for shot gun
-        }
     }
 
     public override void StartFiring(Vector3 aimPosition)
     {
-        if (reloading || bulletsLeft <= 0) return;
+        if (bulletsLeft <= 0)
+        {
+            if (!reloading)
+            {
+                Reload();
+            }
+            return;
+        }
+
+        if (reloading) return; //if reloading, don't shoot
 
         if (!allowButtonHold && isFiring) return;
 
@@ -135,6 +137,7 @@ public class WeaponProjectile : WeaponBase
 
         bulletsLeft--;
         bulletsShot++;
+        UpdateAmmoUI();
 
 
         if (bulletsShot < weaponProperties.bulletsPerTap && bulletsLeft > 0)
@@ -172,5 +175,33 @@ public class WeaponProjectile : WeaponBase
     {
         bulletsLeft = weaponProperties.magazineSize;
         reloading = false;
+        if (this == GetComponentInParent<ActiveWeapon>()?.GetActiveWeapon())
+        {
+            UpdateAmmoUI();
+        }
+    }
+
+    public override void UpdateAmmoUI()
+    {
+        if (ammunitionDisplay == null)
+        {
+            ammunitionDisplay = GameObject.Find("AmmoDisplay")?.GetComponent<TextMeshProUGUI>();
+        }
+
+        if (ammunitionDisplay != null)
+        {
+            ammunitionDisplay.SetText(
+                (bulletsLeft / weaponProperties.bulletsPerTap) + " / " +
+                (weaponProperties.magazineSize / weaponProperties.bulletsPerTap)
+            );
+        }
+    }
+
+    public override void CancelAllActions()
+    {
+        CancelInvoke();
+        isFiring = false;
+        reloading = false;
+        allowInvoke = true;
     }
 }

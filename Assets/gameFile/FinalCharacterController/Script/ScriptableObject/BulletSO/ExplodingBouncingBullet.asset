@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExplodingBouncingBullet
   m_EditorClassIdentifier: 
   bulletType: 1
-  maxBounces: 1
+  maxBounces: 100
   maxLifeTime: 3
   bulletDrop: 0
   explosionRadius: 5

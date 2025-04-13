@@ -20,14 +20,54 @@ public class BulletProjectile : MonoBehaviour
         isActive = true;
         bounceRemaining = settings.maxBounces;
 
-        if (tracer != null)
+        Renderer renderer = GetComponentInChildren<Renderer>();
+        if (renderer != null)
+        {
+            var mpb = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(mpb);
+
+            Color color = Color.white;
+            switch (settings.bulletType)
+            {
+                case BulletType.Normal:
+                    color = new Color(191f / 255f, 131f / 255f, 0f, 1f); // yellow-ish
+                    break;
+                case BulletType.Explosive:
+                    color = new Color(6f / 255f, 51f / 255f, 3f / 255f, 1f); // dark green
+                    break;
+            }
+
+            mpb.SetColor("_Color", color); // Particle Unlit uses _Color
+            renderer.SetPropertyBlock(mpb);
+        }
+
+        if (tracer != null && tracer.TryGetComponent(out TrailRenderer trail))
         {
             tracer.SetActive(true);
-            if (tracer.TryGetComponent(out TrailRenderer trail))
+            trail.Clear();
+            trail.transform.position = transform.position;
+
+            var mpb = new MaterialPropertyBlock();
+            trail.GetPropertyBlock(mpb);
+
+            Color trailBase = Color.red;
+            Color trailEmission = Color.yellow;
+
+            switch (settings.bulletType)
             {
-                trail.Clear();
-                trail.transform.position = transform.position;
+                case BulletType.Normal:
+                    trailBase = new Color(1f, 0f, 0f); // red
+                    trailEmission = new Color(191f / 255f, 102f / 255f, 0f) * 3.416924f;
+                    break;
+                case BulletType.Explosive:
+                    trailBase = new Color(2f / 255f, 18f / 255f, 191f / 255f);
+                    trailEmission = new Color(81f / 255f, 186f / 255f, 5f / 255f) * 2.923552f;
+                    break;
             }
+
+            mpb.SetColor("_BaseColor", trailBase);         // URP Lit base color
+            mpb.SetColor("_EmissionColor", trailEmission); // HDR Emission
+            trail.SetPropertyBlock(mpb);
         }
     }
 
@@ -65,7 +105,6 @@ public class BulletProjectile : MonoBehaviour
         ContactPoint contact = collision.contacts[0];
         Vector3 hitPoint = contact.point;
         Vector3 hitNormal = contact.normal;
-
 
         GameObject fx = ObjectPooler.SpawnFromPool("BulletHit", hitPoint, Quaternion.identity);
         if (fx.TryGetComponent(out PooledEffect pooledFx))

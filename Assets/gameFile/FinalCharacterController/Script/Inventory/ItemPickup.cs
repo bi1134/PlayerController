@@ -37,10 +37,6 @@ public class ItemPickup : MonoBehaviour
             Destroy(gameObject);
             
         }
-        else
-        {
-            Debug.LogError("ItemPickup: InventoryHolder NOT found on " + other.name);
-        }
 
         //enemy pick up
         EnemyWeapon enemyWeapon = other.GetComponentInChildren<EnemyWeapon>();

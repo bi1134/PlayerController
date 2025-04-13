@@ -23,5 +23,9 @@ public abstract class WeaponBase : MonoBehaviour
     // Optional: Can be overridden for different attack types
     public virtual void Attack() { }
 
+    public virtual void UpdateAmmoUI() { }
+
+    public virtual void CancelAllActions() { }
+
     public virtual float GetWeaponDamage() => weaponProperties != null ? weaponProperties.damage : 0f;
 }

@@ -12,6 +12,8 @@ public class WeaponRaycast : WeaponBase
 
     //bullets
     public int bulletCount;
+    private bool reloading = false;
+    private bool allowInvoke = true;
 
     //Shooting variables
     private float accumulatedTime;
@@ -51,12 +53,7 @@ public class WeaponRaycast : WeaponBase
     #region Update
     private void Update()
     {
-        ammunitionDisplay = GameObject.Find("AmmoDisplay").GetComponent<TextMeshProUGUI>(); //find ammo display in scene
-        //set ammo display, if it exists
-        if (ammunitionDisplay != null)
-        {
-            ammunitionDisplay.SetText(bulletCount / weaponProperties.bulletsPerTap + " / " + weaponProperties.magazineSize / weaponProperties.bulletsPerTap); //for shot gun
-        }
+
     }
     #endregion
 
@@ -66,11 +63,27 @@ public class WeaponRaycast : WeaponBase
     {
         if (weaponProperties == null) return;
 
+        if (reloading || bulletCount <= 0)
+        {
+            if (!reloading && bulletCount <= 0)
+            {
+                Reload();
+            }
+            return;
+        }
+
+
         isFiring = true;
         fireInterval = 1.0f / weaponProperties.fireRate;
         accumulatedTime = 0.0f;
 
         FireRaycastBullet(aimPosition);
+
+        if (allowInvoke)
+        {
+            Invoke(nameof(ResetShot), fireInterval);
+            allowInvoke = false;
+        }
     }
 
     public override void UpdateFiring(float deltaTime, Vector3 aimPosition, bool isShooting)
@@ -100,6 +113,7 @@ public class WeaponRaycast : WeaponBase
             return;
 
         bulletCount--;
+        UpdateAmmoUI();
 
         Vector3 aimDir = (aimPosition - bulletSpawnPosition.position).normalized;
 
@@ -130,7 +144,48 @@ public class WeaponRaycast : WeaponBase
 
     public override void Reload()
     {
+        if (reloading) return;
+
+        reloading = true;
+        isFiring = false;
+        Invoke(nameof(ReloadFinished), weaponProperties.reloadTime);
+    }
+
+    private void ResetShot()
+    {
+        allowInvoke = true;
+    }
+
+    private void ReloadFinished()
+    {
         bulletCount = weaponProperties.magazineSize;
+        reloading = false;
+
+        if (this == GetComponentInParent<ActiveWeapon>()?.GetActiveWeapon())
+        {
+            UpdateAmmoUI();
+        }
+    }
+
+    public override void UpdateAmmoUI()
+    {
+        if (ammunitionDisplay == null)
+        {
+            ammunitionDisplay = GameObject.Find("AmmoDisplay").GetComponent<TextMeshProUGUI>(); //find ammo display in scene
+        }
+        //set ammo display, if it exists
+        if (ammunitionDisplay != null)
+        {
+            ammunitionDisplay.SetText(bulletCount / weaponProperties.bulletsPerTap + " / " + weaponProperties.magazineSize / weaponProperties.bulletsPerTap); //for shot gun
+        }
+    }
+
+    public override void CancelAllActions()
+    {
+        CancelInvoke();
+        isFiring = false;
+        reloading = false;
+        allowInvoke = true;
     }
     #endregion
 }

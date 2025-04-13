@@ -140,6 +140,7 @@ public class ActiveWeapon : MonoBehaviour
         if (equippedWeapon[weaponSlotIndex] != null)
         {
             SetActiveWeapon((WeaponSlot)weaponSlotIndex);
+            equippedWeapon[weaponSlotIndex].UpdateAmmoUI();
             return;
         }
 
@@ -238,6 +239,7 @@ public class ActiveWeapon : MonoBehaviour
         var weapon = GetWeaponIndex(index);
         if (weapon)
         {
+            weapon.CancelAllActions();
             //set holster state to true and play the animation
             rigController.SetBool("isHolster", true);
 
@@ -254,6 +256,10 @@ public class ActiveWeapon : MonoBehaviour
         var weapon = GetWeaponIndex(index);
         if (weapon)
         {
+            if (playerActionInput.attackPressed)
+            {
+                weapon.StartFiring(mouseWorldPosition);
+            }
             //set holster state to false and play the animation
             rigController.SetBool("isHolster", false);
 
