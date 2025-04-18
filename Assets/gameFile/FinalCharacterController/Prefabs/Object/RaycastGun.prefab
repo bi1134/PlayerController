@@ -459,6 +459,7 @@ MonoBehaviour:
   weaponSlot: 0
   bulletSpawnPosition: {fileID: 6006478351284377774}
   recoil: {fileID: 0}
+  animator: {fileID: 22100000, guid: b5ed7f1828c99b842859d503ce1e4875, type: 2}
   <isFiring>k__BackingField: 0
   muzzleFlash: {fileID: 1175908040260868917}
   bulletCount: 10

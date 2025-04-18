@@ -6,6 +6,7 @@ public class HealthBarUI : MonoBehaviour
     #region Variables
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private Image barImage;
+    public bool canShowHealthBar = false;
 
     #endregion
 
@@ -14,7 +15,8 @@ public class HealthBarUI : MonoBehaviour
     {
         healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
         barImage.fillAmount = 1;
-        this.gameObject.SetActive(false);
+
+        this.gameObject.SetActive(canShowHealthBar);
     }
 
     #endregion

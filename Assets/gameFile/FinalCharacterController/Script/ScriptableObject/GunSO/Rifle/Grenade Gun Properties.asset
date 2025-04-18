@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Grenade Gun Properties
   m_EditorClassIdentifier: 
   weaponName: 1
-  damage: 3
-  fireRate: 8
+  damage: 10
+  fireRate: 3
   reloadTime: 3
-  magazineSize: 25
+  magazineSize: 15
   bulletsPerTap: 1
   bulletSpeed: 15
   bulletLifetime: 3

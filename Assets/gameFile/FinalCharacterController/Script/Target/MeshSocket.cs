@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshSocket : MonoBehaviour
@@ -5,18 +6,18 @@ public class MeshSocket : MonoBehaviour
     public MeshSockets.SocketID socketID;
     public HumanBodyBones bone;
 
-    public Vector3 offSet;
-    public Vector3 rotation;
+    public List<WeaponOffsetProfile> offsetProfiles;
 
-    Transform attachPoint;
+    [SerializeField] private Transform attachPoint;
 
     private void Start()
     {
+        if (attachPoint != null) return;
         Animator animator = GetComponentInParent<Animator>();
         attachPoint = new GameObject("socket" + socketID).transform;
         attachPoint.SetParent(animator.GetBoneTransform(bone));
-        attachPoint.localPosition = offSet;
-        attachPoint.localRotation = Quaternion.Euler(rotation);
+        attachPoint.localPosition = Vector3.zero;
+        attachPoint.localRotation = Quaternion.identity;
     }
 
     void Update()
@@ -24,8 +25,17 @@ public class MeshSocket : MonoBehaviour
         
     }
 
-    public void Attach(Transform objectTransform)
+    public void Attach(Transform objectTransform, WeaponName weaponName)
     {
-        objectTransform.SetParent(attachPoint, false);
+        WeaponOffsetProfile profile = offsetProfiles.Find(p => p.weaponName == weaponName);
+        if (profile == null)
+        {
+            Debug.LogWarning($"No offset profile found for {weaponName}, defaulting to zero.");
+            profile = new WeaponOffsetProfile();
+        }
+
+        objectTransform.SetParent(attachPoint);
+        objectTransform.localPosition = profile.positionOffset;
+        objectTransform.localRotation = Quaternion.Euler(profile.rotationOffset);
     }
 }

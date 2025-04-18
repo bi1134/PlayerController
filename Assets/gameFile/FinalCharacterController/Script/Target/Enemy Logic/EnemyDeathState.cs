@@ -11,10 +11,10 @@ public class EnemyDeathState : EnemyState
 
     public void Enter(Enemy enemy)
     {
+        enemy.weapons.DropWeapon();
         enemy.ragdoll.ActivateRagdoll();
         direction.y = 1;
         enemy.ragdoll.ApplyForce(direction * enemy.config.ragdollForce);
-        enemy.weapons.DropWeapon();
     }
 
     public void Update(Enemy enemy)

@@ -1252,10 +1252,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5999362038632942836}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 0.2}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8319427622176952092
 CanvasRenderer:
@@ -1682,9 +1682,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   socketID: 0
-  bone: 7
-  offSet: {x: 0.2083728, y: -0.07167621, z: -0.1774824}
-  rotation: {x: -216.642, y: -87.319, z: 159.899}
+  bone: 0
+  offsetProfiles:
+  - weaponName: 0
+    positionOffset: {x: 0.2083728, y: -0.07167621, z: -0.1774824}
+    rotationOffset: {x: -216.642, y: -87.319, z: 159.899}
+  - weaponName: 1
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  attachPoint: {fileID: 0}
 --- !u!1 &2439844125572503350
 GameObject:
   m_ObjectHideFlags: 0
@@ -4677,7 +4683,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 2.15}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1, y: 0.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &543478588322439723
 Canvas:
@@ -4756,6 +4762,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSystem: {fileID: 314415534169956800}
   barImage: {fileID: 7000180630792097496}
+  canShowHealthBar: 0
 --- !u!114 &3304814634115296054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6385,10 +6392,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5999362038632942836}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 0.2}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9030445861988581202
 CanvasRenderer:
@@ -6441,7 +6448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 0.025, y: -0.025}
+  m_EffectDistance: {x: 0.02, y: -0.02}
   m_UseGraphicAlpha: 1
 --- !u!1 &7898454457293589318
 GameObject:
@@ -7110,8 +7117,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   socketID: 1
   bone: 18
-  offSet: {x: 0, y: -0.076, z: -0.043}
-  rotation: {x: 3.039, y: -100.471, z: -0.1}
+  offsetProfiles:
+  - weaponName: 0
+    positionOffset: {x: -0.04144594, y: 0.1216704, z: -0.03065841}
+    rotationOffset: {x: 0.199, y: -114.076, z: -3.401}
+  - weaponName: 1
+    positionOffset: {x: -0.022, y: 0.066, z: -0.015}
+    rotationOffset: {x: 22.237, y: -122.641, z: -6.104}
+  attachPoint: {fileID: 0}
 --- !u!1 &8748184422555506678
 GameObject:
   m_ObjectHideFlags: 0

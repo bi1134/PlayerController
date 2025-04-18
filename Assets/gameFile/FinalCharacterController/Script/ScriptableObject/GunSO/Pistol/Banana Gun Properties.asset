@@ -16,7 +16,7 @@ MonoBehaviour:
   damage: 5
   fireRate: 5
   reloadTime: 1
-  magazineSize: 15
+  magazineSize: 25
   bulletsPerTap: 2
   bulletSpeed: 100
   bulletLifetime: 3

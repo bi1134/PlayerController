@@ -96,6 +96,7 @@ public class ActiveWeapon : MonoBehaviour
             if (weapon)
             {
                 weapon.Reload();
+                rigController.SetTrigger("isReloading");
             }
         }
 
@@ -288,13 +289,22 @@ public class ActiveWeapon : MonoBehaviour
 
     public void DropWeapon()
     {
-        var currentWeapon = GetActiveWeapon();
-        if (currentWeapon)
+        for (int i = 0; i < equippedWeapon.Length; i++)
         {
-            currentWeapon.transform.SetParent(null);
-            currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
-            currentWeapon.gameObject.AddComponent<Rigidbody>();
-            equippedWeapon[activeWeaponIndex] = null;
+            var weapon = equippedWeapon[i];
+            if (weapon != null)
+            {
+                weapon.transform.SetParent(null);
+
+                var collider = weapon.gameObject.GetComponent<BoxCollider>();
+                if (collider != null)
+                    collider.enabled = true;
+
+                if (!weapon.gameObject.TryGetComponent<Rigidbody>(out _))
+                    weapon.gameObject.AddComponent<Rigidbody>();
+
+                equippedWeapon[i] = null;
+            }
         }
     }
 

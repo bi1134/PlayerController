@@ -7,6 +7,8 @@ public abstract class WeaponBase : MonoBehaviour
     public WeaponSlot weaponSlot;
     public Transform bulletSpawnPosition;
     public WeaponRecoil recoil;
+    public RuntimeAnimatorController animator;
+
 
 
     [field: SerializeField] public bool isFiring { get; protected set; }

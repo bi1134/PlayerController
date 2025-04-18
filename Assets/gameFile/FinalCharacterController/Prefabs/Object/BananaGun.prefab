@@ -94,6 +94,7 @@ MonoBehaviour:
   weaponSlot: 1
   bulletSpawnPosition: {fileID: 8061397527282291445}
   recoil: {fileID: 0}
+  animator: {fileID: 9100000, guid: 8576e78159ce62841a401ef964469121, type: 2}
   <isFiring>k__BackingField: 0
   muzzleFlash: {fileID: 8238311490981668189}
   bulletProperties: {fileID: 11400000, guid: 4ff4adf016f4b4a489e0afc73cbcda1e, type: 2}

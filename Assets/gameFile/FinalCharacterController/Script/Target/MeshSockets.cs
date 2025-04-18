@@ -26,8 +26,8 @@ public class MeshSockets : MonoBehaviour
     {
         
     }
-    public void Attach(Transform objectTransform, SocketID socketId)
+    public void Attach(Transform objectTransform, SocketID socketId, WeaponName weaponName)
     {
-        socketMap[socketId].Attach(objectTransform);
+        socketMap[socketId].Attach(objectTransform, weaponName);
     }
 }

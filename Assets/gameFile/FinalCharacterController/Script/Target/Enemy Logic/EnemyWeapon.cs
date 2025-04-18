@@ -61,7 +61,7 @@ public class EnemyWeapon : MonoBehaviour
     public void Equip(WeaponBase weapon)
     {
         currentWeapon = weapon;
-        sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.Spine);
+        sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.Spine, currentWeapon.weaponProperties.weaponName);
     }
 
     public void ActivateWeapon()
@@ -71,13 +71,14 @@ public class EnemyWeapon : MonoBehaviour
 
     IEnumerator EquipWeapon()
     {
+        animator.runtimeAnimatorController = currentWeapon.animator;
         animator.SetBool("Equip", true);
+       
         yield return new WaitForSeconds(0.5f);
-        while(animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
+        while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
         {
             yield return null;
-        }
-
+        };
         weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
         weaponActive = true;
     }
@@ -106,6 +107,7 @@ public class EnemyWeapon : MonoBehaviour
     {
         if(currentWeapon)
         {
+            weaponIK.weight = 0.0f;
             currentWeapon.transform.SetParent(null);
             currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
             currentWeapon.gameObject.AddComponent<Rigidbody>();
@@ -122,7 +124,7 @@ public class EnemyWeapon : MonoBehaviour
     {
         if(eventName == "equipWeapon")
         {
-            sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.RightHand);
+            sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.RightHand, currentWeapon.weaponProperties.weaponName);
         }
     }
     #endregion
