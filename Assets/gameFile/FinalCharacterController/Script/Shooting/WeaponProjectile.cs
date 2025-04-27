@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 public class WeaponProjectile : WeaponBase
 {
@@ -19,7 +18,7 @@ public class WeaponProjectile : WeaponBase
     public bool allowButtonHold;
 
     //bools
-    public bool readyToShoot = true, reloading;
+    public bool readyToShoot = true;
 
 
     //graphics
@@ -188,7 +187,7 @@ public class WeaponProjectile : WeaponBase
 
     public override void Reload()
     {
-        if (reloading) return;
+        if (reloading || (bulletsLeft / weaponProperties.bulletsPerTap) >= (weaponProperties.magazineSize / weaponProperties.bulletsPerTap)) return;
 
         reloading = true;
         Invoke(nameof(ReloadFinished), weaponProperties.reloadTime);

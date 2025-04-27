@@ -15,10 +15,10 @@ MonoBehaviour:
   weaponName: 1
   damage: 10
   fireRate: 10
-  reloadTime: 3
+  reloadTime: 1.5
   magazineSize: 25
   bulletsPerTap: 1
-  bulletSpeed: 100
+  bulletSpeed: 150
   bulletLifetime: 3
   spread: 0.1
   upwardForce: 0

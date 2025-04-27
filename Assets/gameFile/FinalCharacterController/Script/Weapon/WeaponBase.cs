@@ -8,6 +8,7 @@ public abstract class WeaponBase : MonoBehaviour
     public Transform bulletSpawnPosition;
     public WeaponRecoil recoil;
     public RuntimeAnimatorController animator;
+    public bool reloading = false;
 
 
 

@@ -12,7 +12,6 @@ public class WeaponRaycast : WeaponBase
 
     //bullets
     public int bulletCount;
-    private bool reloading = false;
     private bool allowInvoke = true;
 
     //Shooting variables
@@ -153,7 +152,7 @@ public class WeaponRaycast : WeaponBase
 
     public override void Reload()
     {
-        if (reloading) return;
+        if (reloading || (bulletCount / weaponProperties.bulletsPerTap) >= (weaponProperties.magazineSize / weaponProperties.bulletsPerTap)) return;
 
         reloading = true;
         isFiring = false;

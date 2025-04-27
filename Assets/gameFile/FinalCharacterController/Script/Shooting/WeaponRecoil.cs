@@ -37,7 +37,7 @@ public class WeaponRecoil : MonoBehaviour
 
         if (rigController != null)
         {
-            rigController.Play("WeaponRecoil" + weaponName, 1, 0.0f);
+            rigController.Play("WeaponRecoil" + weaponName, 2, 0.0f);
         }
     }
 

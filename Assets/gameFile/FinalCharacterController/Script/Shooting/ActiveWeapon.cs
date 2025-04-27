@@ -91,11 +91,11 @@ public class ActiveWeapon : MonoBehaviour
             ToggleActiveWeapon();
         }
 
-        if (playerActionInput.reloadPressed)
+        if (playerActionInput.reloadPressed && !weapon.reloading)
         {
-            if (weapon)
+            weapon.Reload();
+            if (weapon.reloading)
             {
-                weapon.Reload();
                 rigController.SetTrigger("isReloading");
             }
         }
