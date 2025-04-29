@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class EnemyFindWeaponState : EnemyState
 {
+    private float waitTimer = 0f;
+    private float waitForWeapon = 3f; // Time to wait before checking for a weapon again
+
     public void Enter(Enemy enemy)
     {
         ItemPickup pickup = FindClosestWeapon(enemy);
@@ -25,9 +28,34 @@ public class EnemyFindWeaponState : EnemyState
 
     public void Update(Enemy enemy)
     {
-        if(enemy.weapons.HasWeapon())
+        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
+
+        // If player is closer than any weapon and in melee range, attack instead
+        if (distanceToPlayer <= enemy.config.meleeRange)
         {
             enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+            return;
+        }
+
+        if (enemy.weapons.HasWeapon())
+        {
+            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+            return;
+        }
+
+        waitTimer += Time.deltaTime;
+        if (waitTimer >= waitForWeapon)
+        {
+            waitTimer = 0f;
+
+            ItemPickup pickup = FindClosestWeapon(enemy);
+            if (pickup == null)
+            {
+                Debug.Log("No weapon found, staying in place.");
+                return;
+            }
+
+            enemy.navMeshAgent.destination = pickup.transform.position;
         }
     }
 

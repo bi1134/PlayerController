@@ -175,6 +175,10 @@ public class WeaponRaycast : WeaponBase
         }
     }
 
+    public override bool IsAmmoEmpty()
+    {
+        return bulletCount <= 0;
+    }
     public override void UpdateAmmoUI()
     {
         if (playerHUD != null)

@@ -19,12 +19,15 @@ public class Enemy : MonoBehaviour
     public EnemyWeapon weapons;
     private Vector3 originalPosition;
     private Quaternion originalRotation;
+    public Animator animator;
+    public bool isDead = false;
 
     #endregion
 
     #region Start Up
     private void Start()
     {
+        animator = GetComponent<Animator>();
         originalPosition = transform.position;
         originalRotation = transform.rotation;
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -49,6 +52,11 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         stateMachine.Update();
+    }
+
+    public void SetAttackTriggerFalse()
+    {
+        animator.ResetTrigger("isAttacking");
     }
     #endregion
 }

@@ -19,6 +19,8 @@ public class EnemyWeapon : MonoBehaviour
 
     //floats
     public float inaccuracy = 0.0f;
+    private float fireCooldown = 0f;
+    public float enemyFireRate = 1f; // shots per second
 
     #region Start Up
     private void Start()
@@ -32,11 +34,24 @@ public class EnemyWeapon : MonoBehaviour
     #region Update
     private void Update()
     {
-        if(currentTarget && currentWeapon && weaponActive)
+        if (currentWeapon && weaponActive && currentWeapon.IsAmmoEmpty() && !currentWeapon.reloading)
         {
-            target = currentTarget.position + weaponIK.targetOffset;
-            target += Random.insideUnitSphere * inaccuracy;
-            currentWeapon.UpdateFiring(Time.deltaTime, target, isFiring);
+            currentWeapon.Reload();
+        }
+
+        if(currentTarget && currentWeapon && weaponActive && !currentWeapon.reloading)
+        {
+            fireCooldown -= Time.deltaTime;
+
+            if (isFiring && fireCooldown <= 0f)
+            {
+                target = currentTarget.position + weaponIK.targetOffset;
+                target += Random.insideUnitSphere * inaccuracy;
+
+                currentWeapon.StartFiring(target);
+                currentWeapon.UpdateFiring(Time.deltaTime, target, true);
+                fireCooldown = 1f / enemyFireRate;
+            }
         }
     }
     #endregion
@@ -45,6 +60,10 @@ public class EnemyWeapon : MonoBehaviour
     public void SetFiring(bool enabled)
     {
         isFiring = enabled;
+
+        if (!currentWeapon)
+            return;
+
         if(enabled)
         {
             currentWeapon.StartFiring(target);
@@ -60,26 +79,40 @@ public class EnemyWeapon : MonoBehaviour
     #region Equip and Drop Weapon Logic
     public void Equip(WeaponBase weapon)
     {
+        if (currentWeapon != null)
+        {
+            currentWeapon.OnReloadStarted -= HandleEnemyReloadStart;
+        }
+
         currentWeapon = weapon;
         sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.Spine, currentWeapon.weaponProperties.weaponName);
+
+        currentWeapon.OnReloadStarted += HandleEnemyReloadStart;
     }
 
     public void ActivateWeapon()
     {
+        if (!currentWeapon)
+            return;
+
         StartCoroutine(EquipWeapon());
     }
 
     IEnumerator EquipWeapon()
     {
+        if (!currentWeapon)
+            yield break;
+
         animator.runtimeAnimatorController = currentWeapon.animator;
         animator.SetBool("Equip", true);
-       
-        yield return new WaitForSeconds(0.5f);
+
+        yield return Helpers.GetWaitForSecond(0.5f);
         while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
         {
             yield return null;
         };
         weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
+        StartCoroutine(LerpIKWeight(1.0f, 0.25f));
         weaponActive = true;
     }
 
@@ -94,12 +127,13 @@ public class EnemyWeapon : MonoBehaviour
     {
         weaponActive = false;
         animator.SetBool("Equip", false);
-        yield return new WaitForSeconds(0.5f);
+        yield return Helpers.GetWaitForSecond(0.5f);
         while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
         {
             yield return null;
         }
 
+        StartCoroutine(LerpIKWeight(0.0f, 0.25f));
         weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
     }
 
@@ -107,7 +141,10 @@ public class EnemyWeapon : MonoBehaviour
     {
         if(currentWeapon)
         {
+            currentWeapon.OnReloadStarted -= HandleEnemyReloadStart;
             weaponIK.weight = 0.0f;
+            weaponIK.SetWeight(0.0f);
+            StartCoroutine(LerpIKWeight(0.0f, 0.25f));
             currentWeapon.transform.SetParent(null);
             currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
             currentWeapon.gameObject.AddComponent<Rigidbody>();
@@ -127,6 +164,12 @@ public class EnemyWeapon : MonoBehaviour
             sockets.Attach(currentWeapon.transform, MeshSockets.SocketID.RightHand, currentWeapon.weaponProperties.weaponName);
         }
     }
+
+    private void HandleEnemyReloadStart()
+    {
+        animator.SetTrigger("isReloading"); 
+    }
+
     #endregion
 
     #region Set Target
@@ -135,5 +178,23 @@ public class EnemyWeapon : MonoBehaviour
         weaponIK.SetTargetTransform(target);
         currentTarget = target;
     }
+
+    private IEnumerator LerpIKWeight(float target, float duration)
+    {
+        float start = weaponIK.weight;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            weaponIK.SetWeight(Mathf.Lerp(start, target, t));
+            yield return null; // Keep this as `null` for per-frame update
+        }
+
+        weaponIK.SetWeight(target);
+    }
+
+
     #endregion
 }

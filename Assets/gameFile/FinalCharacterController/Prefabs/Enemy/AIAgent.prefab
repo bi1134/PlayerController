@@ -2703,6 +2703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inaccuracy: 0
+  enemyFireRate: 1
 --- !u!54 &6995399539300422863
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2777,6 +2778,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
   aimTransform: {fileID: 0}
+  weightLerpSpeed: 10
   weight: 0.8
   iterations: 10
   angleLimit: 90

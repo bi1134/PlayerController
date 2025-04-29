@@ -189,10 +189,15 @@ public class WeaponProjectile : WeaponBase
     {
         if (reloading || (bulletsLeft / weaponProperties.bulletsPerTap) >= (weaponProperties.magazineSize / weaponProperties.bulletsPerTap)) return;
 
-        reloading = true;
+        base.Reload();
+
         Invoke(nameof(ReloadFinished), weaponProperties.reloadTime);
     }
 
+    public override bool IsAmmoEmpty()
+    {
+        return bulletsLeft <= 0;
+    }
 
     private void ReloadFinished()
     {

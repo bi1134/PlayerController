@@ -13,4 +13,9 @@ public class EnemyConfig : ScriptableObject
     [Header("Enemy Idling")]
     public float maxSightDistance = 5.0f;
 
+    [Header("Enemy Attacking range")]
+    public float meleeRange = 2f;
+    public float gunRange = 10f;
+    public float weaponLostRange = 20f;
+
 }

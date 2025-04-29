@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
@@ -9,8 +10,7 @@ public abstract class WeaponBase : MonoBehaviour
     public WeaponRecoil recoil;
     public RuntimeAnimatorController animator;
     public bool reloading = false;
-
-
+    public event Action OnReloadStarted;
 
     [field: SerializeField] public bool isFiring { get; protected set; }
 
@@ -21,7 +21,16 @@ public abstract class WeaponBase : MonoBehaviour
 
     public abstract void Initialize();
 
-    public abstract void Reload();
+    public virtual void Reload()
+    {
+        reloading = true;
+        OnReloadStarted?.Invoke();
+    }
+
+    public virtual bool IsAmmoEmpty()
+    {
+        return false; // default
+    }
 
     // Optional: Can be overridden for different attack types
     public virtual void Attack() { }

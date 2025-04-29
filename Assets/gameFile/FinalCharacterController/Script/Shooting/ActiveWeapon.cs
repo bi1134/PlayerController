@@ -93,10 +93,9 @@ public class ActiveWeapon : MonoBehaviour
 
         if (playerActionInput.reloadPressed && !weapon.reloading)
         {
-            weapon.Reload();
-            if (weapon.reloading)
-            {
-                rigController.SetTrigger("isReloading");
+            if (weapon)
+            { 
+                weapon.Reload();
             }
         }
 
@@ -132,6 +131,7 @@ public class ActiveWeapon : MonoBehaviour
         int weaponSlotIndex = (weaponPrefab.weaponSlot == WeaponSlot.Primary) ? 0 :
                                 (weaponPrefab.weaponSlot == WeaponSlot.Secondary) ? 1 : -1;
 
+        UnsubscribeReloadEvents(equippedWeapon[weaponSlotIndex]);
         if (weaponSlotIndex == -1 || weaponSlotIndex >= weaponSlots.Length)
         {
             Debug.LogError("Invalid weapon slot index: " + weaponSlotIndex);
@@ -155,17 +155,21 @@ public class ActiveWeapon : MonoBehaviour
         // Assign references
         newWeapon.recoil.cameraTransform = playerCamera.transform;
         newWeapon.recoil.rigController = rigController;
+
         isHolstered = true;
 
         // Set active weapon
         SetActiveWeapon((WeaponSlot)weaponSlotIndex);
         newWeapon.Initialize();
+        SubscribeReloadEvents(newWeapon);
     }
 
     public void EquipWeapon(WeaponBase newWeapon)
     {
         int weaponSlotIndex = (int)newWeapon.weaponSlot;
+        UnsubscribeReloadEvents(equippedWeapon[weaponSlotIndex]);
         var weapon = GetWeaponIndex(weaponSlotIndex);
+        SubscribeReloadEvents(weapon);
 
         //if a weapon is already equipped in this slot, destroy it
         if (weapon)
@@ -178,6 +182,7 @@ public class ActiveWeapon : MonoBehaviour
         weapon = newWeapon;
         weapon.recoil.cameraTransform = playerCamera.transform;
         weapon.recoil.rigController = rigController;
+
         weapon.transform.SetParent(weaponSlots[weaponSlotIndex], false);
         equippedWeapon[weaponSlotIndex] = weapon;
 
@@ -274,6 +279,26 @@ public class ActiveWeapon : MonoBehaviour
         }
     }
 
+    private void SubscribeReloadEvents(WeaponBase weapon)
+    {
+        if (weapon == null) return;
+
+        weapon.OnReloadStarted += HandleReloadStart;
+    }
+
+    private void UnsubscribeReloadEvents(WeaponBase weapon)
+    {
+        if (weapon == null) return;
+
+        weapon.OnReloadStarted -= HandleReloadStart;
+    }
+
+    private void HandleReloadStart()
+    {
+        rigController.SetTrigger("isReloading");
+    }
+
+
     public WeaponBase GetActiveWeapon()
     {
         return GetWeaponIndex(activeWeaponIndex);
@@ -294,6 +319,7 @@ public class ActiveWeapon : MonoBehaviour
             var weapon = equippedWeapon[i];
             if (weapon != null)
             {
+                UnsubscribeReloadEvents(weapon);
                 weapon.transform.SetParent(null);
 
                 var collider = weapon.gameObject.GetComponent<BoxCollider>();

@@ -11,6 +11,7 @@ public class EnemyDeathState : EnemyState
 
     public void Enter(Enemy enemy)
     {
+        enemy.isDead = true;
         enemy.weapons.DropWeapon();
         enemy.ragdoll.ActivateRagdoll();
         direction.y = 1;

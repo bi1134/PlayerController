@@ -12,8 +12,6 @@ public class EnemyChasePlayerState : EnemyState
 
     public void Enter(Enemy enemy)
     {
-       
-        
     }
 
     public void Update(Enemy enemy)
@@ -25,20 +23,19 @@ public class EnemyChasePlayerState : EnemyState
         if(!enemy.navMeshAgent.hasPath)
             enemy.navMeshAgent.destination = enemy.playerTransform.position;
 
-        if (enemy.playerTransform != null)
+        if (enemy.playerTransform != null && timer <= 0f)
         {
-            if (timer <= 0f)
+            float sqrDistance = (enemy.playerTransform.position - enemy.transform.position).sqrMagnitude;
+            float meleeSqrRange = enemy.config.meleeRange * enemy.config.meleeRange;
+            float gunSqrRange = enemy.config.gunRange * enemy.config.gunRange;
+
+            if (sqrDistance <= meleeSqrRange ||
+                (enemy.weapons.HasWeapon() && sqrDistance <= gunSqrRange))
             {
-                float sqrtDistance = (enemy.playerTransform.position - enemy.navMeshAgent.destination).sqrMagnitude;
-                if (sqrtDistance > enemy.config.maxDistance * enemy.config.maxDistance)
-                {
-                    if(enemy.navMeshAgent.pathStatus != NavMeshPathStatus.PathPartial)
-                    {
-                        enemy.navMeshAgent.destination = enemy.playerTransform.position;
-                    }
-                }
-                timer = enemy.config.maxTime;
+                enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
             }
+
+            timer = enemy.config.maxTime;
         }
     }
     public void Exit(Enemy enemy)

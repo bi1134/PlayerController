@@ -13,9 +13,11 @@ public class WeaponIK : MonoBehaviour
 {
     [SerializeField] private Transform targetTransform;
     [SerializeField] private Transform aimTransform;
+    [SerializeField] private float weightLerpSpeed = 5f;
 
     [Range(0,1)]
     public float weight = 1.0f;
+    private float targetWeight = 1.0f;
 
     public int iterations = 10;
     public float angleLimit = 90.0f;
@@ -37,18 +39,27 @@ public class WeaponIK : MonoBehaviour
     #region Late Update
     private void LateUpdate()
     {
-        if(aimTransform == null)
+        if (aimTransform == null || targetTransform == null)
             return;
 
-        if(targetTransform == null)
+        if (TryGetComponent<Enemy>(out var enemy) && enemy.isDead)
             return;
-        
+
+        Vector3 directionToTarget = targetTransform.position - transform.position;
+        directionToTarget.y = 0f; // Prevent looking up/down
+        if (directionToTarget.sqrMagnitude > 0.01f)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(directionToTarget.normalized);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Smooth turning
+        }
+
         Vector3 targetPosition = GetTargetPosition();
         for (int i = 0; i < iterations; i++)
         {
             for (int b = 0; b < boneTransforms.Length; b++)
             {
                 Transform bone = boneTransforms[b];
+                weight = Mathf.Lerp(weight, targetWeight, Time.deltaTime * weightLerpSpeed);
                 float boneWeight = humanBones[b].weight * weight;
                 AimAtTarget(bone, targetPosition, boneWeight);
             }
@@ -98,6 +109,11 @@ public class WeaponIK : MonoBehaviour
     public void SetAimTransform(Transform target)
     {
         aimTransform = target;
+    }
+
+    public void SetWeight(float value)
+    {
+        targetWeight = Mathf.Clamp01(value);
     }
     #endregion
 }
