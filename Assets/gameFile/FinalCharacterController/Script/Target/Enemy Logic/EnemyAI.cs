@@ -21,8 +21,4 @@ public class EnemyAI : MonoBehaviour
         animator.SetFloat(inputYHash, navMeshAgent.velocity.y);
         animator.SetFloat(inputMagnitudeHash, navMeshAgent.velocity.magnitude);
     }
-    private void LateUpdate()
-    {
-        
-    }
 }

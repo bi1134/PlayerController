@@ -91,10 +91,10 @@ public class ActiveWeapon : MonoBehaviour
             ToggleActiveWeapon();
         }
 
-        if (playerActionInput.reloadPressed && !weapon.reloading)
+        if (weapon)
         {
-            if (weapon)
-            { 
+            if (playerActionInput.reloadPressed && !weapon.reloading)
+            {
                 weapon.Reload();
             }
         }

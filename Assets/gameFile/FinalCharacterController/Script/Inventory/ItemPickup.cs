@@ -1,4 +1,3 @@
-using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -19,7 +18,6 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("ItemPickup: Triggered by " + other.name);
 
         //player pick up
         var inventory = other.GetComponent<InventoryHolder>();

@@ -2,18 +2,16 @@ using UnityEngine;
 
 public class EnemyFindWeaponState : EnemyState
 {
-    private float waitTimer = 0f;
-    private float waitForWeapon = 3f; // Time to wait before checking for a weapon again
+    private GameObject pickUp;
+    private GameObject[] pickUps = new GameObject[1];
+
+    private float timer = 0f;
+    private const float maxSearchDuration = 3f;
 
     public void Enter(Enemy enemy)
     {
-        ItemPickup pickup = FindClosestWeapon(enemy);
-        if (pickup == null)
-        {
-            Debug.Log("No weapon found, staying in place.");
-            return;  // Prevents setting a null destination
-        }
-        enemy.navMeshAgent.destination = pickup.transform.position;
+        pickUp = null;
+        timer = maxSearchDuration;
         enemy.navMeshAgent.speed = 5;
     }
 
@@ -28,65 +26,57 @@ public class EnemyFindWeaponState : EnemyState
 
     public void Update(Enemy enemy)
     {
-        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
+        timer -= Time.deltaTime;
 
-        // If player is closer than any weapon and in melee range, attack instead
-        if (distanceToPlayer <= enemy.config.meleeRange)
+        //check for weapon insight
+        if (!pickUp)
         {
-            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
-            return;
+            pickUp = FindPickup(enemy);
+
+            if (pickUp)
+            {
+                CollectPickup(enemy, pickUp);
+            }
         }
 
+        // If found a weapon or already equipped one, switch to attack
         if (enemy.weapons.HasWeapon())
         {
             enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
             return;
         }
 
-        waitTimer += Time.deltaTime;
-        if (waitTimer >= waitForWeapon)
+        if (timer <= 0f)
         {
-            waitTimer = 0f;
+            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+            return;
+        }
 
-            ItemPickup pickup = FindClosestWeapon(enemy);
-            if (pickup == null)
-            {
-                Debug.Log("No weapon found, staying in place.");
-                return;
-            }
 
-            enemy.navMeshAgent.destination = pickup.transform.position;
+        // If player is closer than any weapon and in melee range, attack instead
+        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
+        if (distanceToPlayer <= enemy.config.meleeRange)
+        {
+            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
         }
     }
 
-    private ItemPickup FindClosestWeapon(Enemy enemy)
+    GameObject FindPickup(Enemy enemy)
     {
-        ItemPickup[] items = GameObject.FindObjectsByType<ItemPickup>(FindObjectsSortMode.None);
-
-        if (items.Length == 0)
+        int count = enemy.sensor.Filter(pickUps, "Pickup");
+        for (int i = 0; i < count; i++)
         {
-            Debug.Log("No weapons found!");
-            return null;
-        }
-
-        ItemPickup closestWeapon = null;
-        float closestDistance = float.MaxValue;
-
-        foreach (var item in items)
-        {
-            if (item.ItemData == null || item.ItemData.ItemType != ItemType.Weapon)
-                continue;  // Skip non-weapons
-
-            float distanceToWeapon = Vector3.Distance(enemy.transform.position, item.transform.position);
-            if (distanceToWeapon < closestDistance)
+            ItemPickup pickup = pickUps[i].GetComponent<ItemPickup>();
+            if (pickup != null && pickup.ItemData != null && pickup.ItemData.ItemType == ItemType.Weapon)
             {
-                closestDistance = distanceToWeapon;
-                closestWeapon = item;
+                return pickup.gameObject;
             }
         }
-
-        Debug.Log($"Closest weapon found at {closestWeapon.transform.position}");
-        return closestWeapon;
+        return null;
     }
 
+    private void CollectPickup(Enemy enemy, GameObject pickUp)
+    {
+        enemy.navMeshAgent.destination = pickUp.transform.position;
+    }
 }

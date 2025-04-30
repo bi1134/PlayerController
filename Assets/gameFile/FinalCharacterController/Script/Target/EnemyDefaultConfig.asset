@@ -15,3 +15,9 @@ MonoBehaviour:
   maxTime: 2
   maxDistance: 1
   ragdollForce: 10
+  maxSightDistance: 5
+  meleeRange: 2
+  gunRange: 10
+  weaponLostRange: 20
+  health: 100
+  meleeDamage: 10

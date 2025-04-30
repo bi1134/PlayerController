@@ -30,14 +30,6 @@ public class InventoryHolder : MonoBehaviour
     {
         activeWeapon = GetComponent<ActiveWeapon>();
 
-        if (activeWeapon == null)
-        {
-            Debug.LogError("InventoryHolder: activeWeapon is NULL during Awake!");
-        }
-        else
-        {
-            Debug.Log("InventoryHolder: activeWeapon is set to " + activeWeapon.name);
-        }
         inventorySystem = new InventorySystem(inventorySize);
         passiveItemInventory = new InventorySystem(passiveInventorySize);
     }

@@ -126,15 +126,29 @@ public class EnemyWeapon : MonoBehaviour
     IEnumerator HolsterWeapon()
     {
         weaponActive = false;
+
+        if (animator == null)
+        {
+            Debug.LogWarning("Animator is missing on EnemyWeapon.");
+            yield break;
+        }
+
         animator.SetBool("Equip", false);
         yield return Helpers.GetWaitForSecond(0.5f);
+
+        if (animator.layerCount <= 1)
+        {
+            Debug.LogWarning("Animator does not have layer 1.");
+            yield break;
+        }
+
         while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
         {
             yield return null;
         }
 
         StartCoroutine(LerpIKWeight(0.0f, 0.25f));
-        weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
+        weaponIK.SetAimTransform(currentWeapon?.bulletSpawnPosition);
     }
 
     public void DropWeapon()
