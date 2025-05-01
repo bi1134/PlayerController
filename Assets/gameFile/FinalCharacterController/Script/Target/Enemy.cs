@@ -10,6 +10,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] public EnemyConfig config;
     [SerializeField] private float meleeAttackCooldown = 1.5f;
     [SerializeField] private BoxCollider meleeHitbox;
+
+    [SerializeField] private Transform lookRoot; // usually hips or full body root
+    [SerializeField] private Transform player;
+    [SerializeField] private float turnSpeed = 5f;
+    [SerializeField] private float maxAngle = 120f; // prevent rotating completely backward
     public EnemyStateID initialState;
 
 
@@ -26,6 +31,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isDead = false;
     [HideInInspector] public bool canMeleeAttack = true;
     [HideInInspector] public EnemySensor sensor;
+    [HideInInspector] public EnemyTargetingSystem targeting;
 
     #endregion
 
@@ -39,6 +45,7 @@ public class Enemy : MonoBehaviour
         weapons = GetComponent<EnemyWeapon>();
         ragdoll = GetComponent<Ragdoll>();
         sensor = GetComponent<EnemySensor>();
+        targeting = GetComponent<EnemyTargetingSystem>();
 
         if (playerTransform == null)
         {
@@ -50,7 +57,8 @@ public class Enemy : MonoBehaviour
         stateMachine.RegisterState(new EnemyDeathState());
         stateMachine.RegisterState(new EnemyIdleState());
         stateMachine.RegisterState(new EnemyFindWeaponState());
-        stateMachine.RegisterState(new EnemyAttackPlayerState());
+        stateMachine.RegisterState(new EnemyAttackTargetState());
+        stateMachine.RegisterState(new EnemyFindTargetState());
         stateMachine.ChangeState(initialState);
     }
     #endregion
@@ -59,6 +67,27 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         stateMachine.Update();
+    }
+
+    private void LateUpdate()
+    {
+        if (player == null || lookRoot == null)
+            return;
+
+        Vector3 direction = player.position - lookRoot.position;
+        direction.y = 0f; // ignore vertical tilt
+
+        if (direction == Vector3.zero)
+            return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+        float angle = Quaternion.Angle(lookRoot.rotation, targetRotation);
+
+        // clamp rotation angle to avoid twisting too far
+        if (angle <= maxAngle)
+        {
+            lookRoot.rotation = Quaternion.Lerp(lookRoot.rotation, targetRotation, Time.deltaTime * turnSpeed);
+        }
     }
 
     public void SetAttackTriggerFalse()
@@ -101,6 +130,14 @@ public class Enemy : MonoBehaviour
     public void DisableMeleeHitbox()
     {
         meleeHitbox.enabled = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (playerTransform == null) return;
+
+        Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
+        Gizmos.DrawWireSphere(playerTransform.position, config.wanderRadius);
     }
     #endregion
 }

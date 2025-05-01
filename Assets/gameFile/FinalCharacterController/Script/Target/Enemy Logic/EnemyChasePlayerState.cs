@@ -12,6 +12,7 @@ public class EnemyChasePlayerState : EnemyState
 
     public void Enter(Enemy enemy)
     {
+        Debug.Log("Entered: chasePlater");
     }
 
     public void Update(Enemy enemy)
@@ -32,7 +33,7 @@ public class EnemyChasePlayerState : EnemyState
             if (sqrDistance <= meleeSqrRange ||
                 (enemy.weapons.HasWeapon() && sqrDistance <= gunSqrRange))
             {
-                enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+                enemy.stateMachine.ChangeState(EnemyStateID.FindTarget);
             }
 
             timer = enemy.config.maxTime;

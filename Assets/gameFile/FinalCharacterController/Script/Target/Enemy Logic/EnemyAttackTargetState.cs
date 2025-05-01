@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyAttackPlayerState : EnemyState
+public class EnemyAttackTargetState : EnemyState
 {
     private float pickupCheckTimer = 3f;
     private const float pickupCheckCooldown = 3f;
@@ -8,10 +8,8 @@ public class EnemyAttackPlayerState : EnemyState
     public void Enter(Enemy enemy)
     {
         pickupCheckTimer = pickupCheckCooldown;
-
         enemy.weapons.ActivateWeapon();
-        enemy.weapons.SetTarget(enemy.playerTransform);
-        enemy.navMeshAgent.stoppingDistance = 5f;
+        enemy.navMeshAgent.stoppingDistance = enemy.config.chaseTargetSpeed;
     }
 
     public void Exit(Enemy enemy)
@@ -22,21 +20,26 @@ public class EnemyAttackPlayerState : EnemyState
 
     public EnemyStateID GetID()
     {
-        return EnemyStateID.AttackPlayer;
+        return EnemyStateID.AttackTarget;
     }
 
     public void Update(Enemy enemy)
     {
-        if (enemy.playerTransform == null)
-            return;
-
-        // check if player is dead
-        if (enemy.playerTransform.GetComponent<HealthSystem>().IsDead())
+        if (!enemy.targeting.HasTarget)
         {
-            enemy.stateMachine.ChangeState(EnemyStateID.Idle);
+            enemy.stateMachine.ChangeState(EnemyStateID.FindTarget);
             return;
         }
 
+
+        // check if player is dead
+        if (!enemy.targeting.HasTarget)
+        {
+            enemy.stateMachine.ChangeState(EnemyStateID.FindTarget);
+            return;
+        }
+
+        enemy.weapons.SetTarget(enemy.targeting.Target.transform);
         float sqrDistance = (enemy.playerTransform.position - enemy.transform.position).sqrMagnitude;
         float meleeSqrRange = enemy.config.meleeRange * enemy.config.meleeRange;
         float gunSqrRange = enemy.config.gunRange * enemy.config.gunRange;
@@ -46,10 +49,14 @@ public class EnemyAttackPlayerState : EnemyState
         {
             pickupCheckTimer -= Time.deltaTime;
 
-            if (pickupCheckTimer <= 0f && WeaponInSight(enemy))
+            if (pickupCheckTimer <= 0f)
             {
-                enemy.stateMachine.ChangeState(EnemyStateID.FindWeapon);
-                return;
+                pickupCheckTimer = pickupCheckCooldown;
+                if (WeaponInSight(enemy))
+                {
+                    enemy.stateMachine.ChangeState(EnemyStateID.FindWeapon);
+                    return;
+                }
             }
         }
         else
@@ -74,6 +81,8 @@ public class EnemyAttackPlayerState : EnemyState
         // if enemy has weapon and is within gun range
         if (enemy.weapons.HasWeapon() && sqrDistance <= gunSqrRange)
         {
+            enemy.weapons.ActivateWeapon();
+
             float preferredRange = Random.Range(enemy.config.gunRange / 2f, enemy.config.gunRange - 1f);
             float preferredSqrRange = preferredRange * preferredRange;
 
@@ -82,7 +91,7 @@ public class EnemyAttackPlayerState : EnemyState
                 // move closer to preferred range
                 enemy.navMeshAgent.stoppingDistance = preferredRange;
                 enemy.navMeshAgent.isStopped = false;
-                enemy.navMeshAgent.destination = enemy.playerTransform.position;
+                enemy.navMeshAgent.destination = enemy.targeting.TargetPosition;
             }
             else
             {
@@ -100,11 +109,18 @@ public class EnemyAttackPlayerState : EnemyState
         enemy.navMeshAgent.isStopped = false;
         enemy.navMeshAgent.stoppingDistance = 0f;
         enemy.navMeshAgent.destination = enemy.playerTransform.position;
+
+        //this is for if the enemy is standing still
+        if (!enemy.weapons.HasWeapon() && !enemy.navMeshAgent.hasPath)
+        {
+            enemy.stateMachine.ChangeState(EnemyStateID.FindWeapon);
+            return;
+        }
     }
 
     private void UpdateFiring(Enemy enemy)
     {
-        if (enemy.sensor.IsInsight(enemy.playerTransform.gameObject))
+        if (enemy.targeting.IsTargetInSight)
         {
             enemy.weapons.SetFiring(true);
         }
@@ -113,7 +129,7 @@ public class EnemyAttackPlayerState : EnemyState
             enemy.weapons.SetFiring(false);
         }
     }
-
+     
     private bool WeaponInSight(Enemy enemy)
     {
         foreach (var obj in enemy.sensor.Objects)
@@ -128,4 +144,5 @@ public class EnemyAttackPlayerState : EnemyState
 
         return false;
     }
+
 }

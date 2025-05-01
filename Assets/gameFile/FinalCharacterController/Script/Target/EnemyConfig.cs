@@ -3,9 +3,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyConfig", menuName = "Scriptable Objects/EnemyConfig")]
 public class EnemyConfig : ScriptableObject
 {
-    [Header("Enemy Chasing")]
+    [Header("Enemy Finding and Chasing")]
     public float maxTime = 2f;
     public float maxDistance = 1.0f;
+    public float findWeaponSpeed = 5.0f;
+    public float findTargetSpeed = 5.0f;
+    public float chaseTargetSpeed = 3.0f;
+    public float wanderRadius = 20f;
 
     [Header("Enemy Dying")]
     public float ragdollForce = 10;

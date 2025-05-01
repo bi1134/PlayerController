@@ -92,7 +92,7 @@ public class EnemyWeapon : MonoBehaviour
 
     public void ActivateWeapon()
     {
-        if (!currentWeapon)
+        if (!currentWeapon || weaponActive)
             return;
 
         StartCoroutine(EquipWeapon());

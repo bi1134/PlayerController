@@ -115,7 +115,14 @@ public class BulletProjectile : MonoBehaviour
             if (target.healthSystem == shooterHealth)
                 return;
 
-            target.TakeDamage(shooter, rb.linearVelocity.normalized);
+            float damageMultiplier = 1f;
+
+            if (target.gameObject.layer == shooterGameObject.layer)
+            {
+                damageMultiplier = 0.3f; // 30% damage to teammates
+            }
+
+            target.TakeDamage(shooter, rb.linearVelocity.normalized, damageMultiplier);
 
             if (settings.bulletType == BulletType.Explosive)
             {

@@ -2602,6 +2602,7 @@ GameObject:
   - component: {fileID: 356823622682801069}
   - component: {fileID: 8140496791718557534}
   - component: {fileID: 6786716328093949482}
+  - component: {fileID: 4225669910884994661}
   m_Layer: 7
   m_Name: AIAgent
   m_TagString: Untagged
@@ -2791,7 +2792,11 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: 412284be2d2d74c479bf3053bcba54f1, type: 2}
   meleeAttackCooldown: 1.5
   meleeHitbox: {fileID: 1067457593422863874}
-  initialState: 3
+  lookRoot: {fileID: 2453352997371671245}
+  player: {fileID: 0}
+  turnSpeed: 5
+  maxAngle: 120
+  initialState: 5
   ragdoll: {fileID: 0}
   playerTransform: {fileID: 0}
   weapons: {fileID: 0}
@@ -2799,6 +2804,7 @@ MonoBehaviour:
   isDead: 0
   canMeleeAttack: 1
   sensor: {fileID: 0}
+  targeting: {fileID: 0}
 --- !u!114 &4991232131577574366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2865,16 +2871,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distance: 10
-  angle: 42.2
+  angle: 50.7
   height: 1.8
-  meshColor: {r: 1, g: 0, b: 0, a: 0.75686276}
+  meshColor: {r: 0.014332486, g: 0.56281036, b: 0.690566, a: 0.75686276}
   scanFrequency: 30
   layers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1280
   occulionLayers:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &4225669910884994661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446328349848550656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8806a23f45cf6e54ca1a4b0a3e0b09d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  memorySpan: 3
+  distanceWeight: 2
+  angleWeight: 1
+  ageWeight: 1
 --- !u!1 &3455802336500001156
 GameObject:
   m_ObjectHideFlags: 0

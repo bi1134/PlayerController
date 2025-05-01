@@ -6,7 +6,8 @@ public enum EnemyStateID
     Death,
     Idle,
     FindWeapon,
-    AttackPlayer
+    AttackTarget,
+    FindTarget,
 }
 
 public interface EnemyState

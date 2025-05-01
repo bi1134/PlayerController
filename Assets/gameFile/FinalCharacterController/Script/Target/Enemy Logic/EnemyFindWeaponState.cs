@@ -10,9 +10,10 @@ public class EnemyFindWeaponState : EnemyState
 
     public void Enter(Enemy enemy)
     {
+        Debug.Log("Entered: FindWeapon");
         pickUp = null;
         timer = maxSearchDuration;
-        enemy.navMeshAgent.speed = 5;
+        enemy.navMeshAgent.speed = enemy.config.findWeaponSpeed;
     }
 
     public void Exit(Enemy enemy)
@@ -42,13 +43,13 @@ public class EnemyFindWeaponState : EnemyState
         // If found a weapon or already equipped one, switch to attack
         if (enemy.weapons.HasWeapon())
         {
-            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+            enemy.stateMachine.ChangeState(EnemyStateID.FindTarget);
             return;
         }
 
         if (timer <= 0f)
         {
-            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+            enemy.stateMachine.ChangeState(EnemyStateID.FindTarget);
             return;
         }
 
@@ -57,7 +58,7 @@ public class EnemyFindWeaponState : EnemyState
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
         if (distanceToPlayer <= enemy.config.meleeRange)
         {
-            enemy.stateMachine.ChangeState(EnemyStateID.AttackPlayer);
+            enemy.stateMachine.ChangeState(EnemyStateID.AttackTarget);
         }
     }
 
