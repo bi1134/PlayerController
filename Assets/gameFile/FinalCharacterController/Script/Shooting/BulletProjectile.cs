@@ -80,6 +80,15 @@ public class BulletProjectile : MonoBehaviour
         StartCoroutine(DestroySelf(lifeTime));
     }
 
+
+    private void FixedUpdate()
+    {
+        // Optional gravity influence (bullet drop)
+        if (settings.bulletDrop != 0f)
+        {
+            rb.AddForce(Vector3.down * settings.bulletDrop, ForceMode.Acceleration);
+        }
+    }
     private void OnDisable()
     {
         if (rb != null)
@@ -93,7 +102,7 @@ public class BulletProjectile : MonoBehaviour
     IEnumerator DestroySelf(float delay)
     {
         yield return Helpers.GetWaitForSecond(delay);
-        Deactivate();
+        TryExplodeOrDeactivate();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -133,29 +142,43 @@ public class BulletProjectile : MonoBehaviour
 
         if (bounceRemaining > 0)
         {
-            bounceRemaining--;
-
-            // Reflect the velocity off the hit normal
-            Vector3 incomingVelocity = rb.linearVelocity;
-            Vector3 reflected = Vector3.Reflect(incomingVelocity, hitNormal).normalized;
-
-            // Maintain speed (or slightly reduce to simulate energy loss if you want)
-            float speed = incomingVelocity.magnitude;
-            rb.linearVelocity = reflected * speed;
-
-            // Offset to prevent getting stuck in surface
-            transform.position = hitPoint + hitNormal * 0.01f;
+            HandleBounce(hitNormal);
         }
         else
         {
-            if (settings.bulletType == BulletType.Explosive)
-            {
-                Explode(hitPoint);
-            }
-            else
-            {
-                Deactivate();
-            }
+            TryExplodeOrDeactivate(hitPoint);
+        }
+    }
+
+    private void HandleBounce(Vector3 hitNormal)
+    {
+        if (bounceRemaining <= 0)
+        {
+            TryExplodeOrDeactivate(transform.position);
+            return;
+        }
+
+        bounceRemaining--;
+
+        Vector3 velocity = rb.linearVelocity;
+        float speed = velocity.magnitude;
+        Vector3 direction = velocity.normalized;
+        float travelDistance = speed * Time.fixedDeltaTime;
+        float radius = GetBulletRadius();
+
+        if (Physics.SphereCast(transform.position, radius, direction, out RaycastHit hit, travelDistance, ~0))
+        {
+            // Move just before the hit point
+            transform.position = hit.point + hit.normal * 0.01f;
+
+            // Reflect off the surface
+            Vector3 reflected = Vector3.Reflect(direction, hit.normal);
+            rb.linearVelocity = reflected * speed;
+        }
+        else
+        {
+            // Continue moving forward manually
+            transform.position += velocity * Time.fixedDeltaTime;
         }
     }
 
@@ -203,6 +226,24 @@ public class BulletProjectile : MonoBehaviour
         ObjectPooler.ReturnToPool(settings.bulletPoolTag, gameObject);
     }
 
+    private float GetBulletRadius()
+    {
+        SphereCollider sphere = GetComponent<SphereCollider>();
+        if (sphere != null)
+        {
+            return sphere.radius * Mathf.Max(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        }
+
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        if (capsule != null)
+        {
+            return capsule.radius * Mathf.Max(transform.localScale.x, transform.localScale.z); // x/z for horizontal capsules
+        }
+
+        // Default fallback
+        return 0.05f;
+    }
+
     public void SetShooter(WeaponProjectile shooter)
     {
         this.shooter = shooter;
@@ -222,6 +263,18 @@ public class BulletProjectile : MonoBehaviour
         }
     }
 
+
+    private void TryExplodeOrDeactivate(Vector3? explosionPoint = null)
+    {
+        if (settings.bulletType == BulletType.Explosive)
+        {
+            Explode(explosionPoint ?? transform.position);
+        }
+        else
+        {
+            Deactivate();
+        }
+    }
 }
 
 

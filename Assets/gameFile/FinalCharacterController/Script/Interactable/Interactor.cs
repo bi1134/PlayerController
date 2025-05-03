@@ -35,7 +35,9 @@ public class Interactor : MonoBehaviour
                     // Get the InteractionPromptUI from the interactable object
                     currentPromptUI = interactable.GetInteractionPromptUI();
 
-                    if (currentPromptUI != null && !currentPromptUI.isDisplayed)
+                    var chest = interactable as Chest;
+
+                    if (currentPromptUI != null && !currentPromptUI.isDisplayed && !chest.hasOpened)
                     {
                         currentPromptUI.SetUp(interactable.interactionPrompt);
                     }
@@ -45,6 +47,10 @@ public class Interactor : MonoBehaviour
                 if (playerActionInput.isInteracting)
                 {
                     interactable.Interact(this);
+                    if (currentPromptUI != null && currentPromptUI.isDisplayed)
+                    {
+                        currentPromptUI.Close();
+                    }
                 }
             }
         }

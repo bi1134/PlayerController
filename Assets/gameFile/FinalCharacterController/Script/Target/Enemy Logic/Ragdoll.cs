@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Ragdoll : MonoBehaviour
@@ -40,7 +41,29 @@ public class Ragdoll : MonoBehaviour
         }
         animator.enabled = true;
     }
-    
+
+    public void DisableCollider()
+    {
+        foreach (Rigidbody rb in rigidbodies)
+        {
+            rb.isKinematic = true;
+            Collider col = rb.GetComponent<Collider>();
+            if (col != null)
+                col.enabled = false;
+        }
+    }
+
+    public void DisableCollidersDelayed(float delay)
+    {
+        StartCoroutine(DisableAfterDelay(delay));
+    }
+
+    private IEnumerator DisableAfterDelay(float delay)
+    {
+        yield return Helpers.GetWaitForSecond(delay);
+        DisableCollider();
+    }
+
     public void ApplyForce(Vector3 force)
     {
         var rigidbody = animator.GetBoneTransform(HumanBodyBones.Hips).GetComponent<Rigidbody>();

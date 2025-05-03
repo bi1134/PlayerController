@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class Chest : MonoBehaviour, IInteractable
 {
+
     [SerializeField] private string prompt;
     [SerializeField] private InteractionPromptUI interactionPromptUI;
     private Animator animator;
+    public bool hasOpened;
+
 
     private void Awake()
     {
@@ -15,11 +18,13 @@ public class Chest : MonoBehaviour, IInteractable
 
     public bool Interact(Interactor interactor)
     {
-        Debug.Log("Chest opened");
-        if (animator != null)
+        if (hasOpened)
         {
-            animator.SetTrigger("Open");
+            return false;
         }
+        hasOpened = true;
+        Debug.Log("Chest opened");
+        animator.SetTrigger("Open");
         return true;
     }
 

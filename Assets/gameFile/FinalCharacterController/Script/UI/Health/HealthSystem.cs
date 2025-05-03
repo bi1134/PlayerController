@@ -25,6 +25,9 @@ public class HealthSystem : MonoBehaviour
 
     //get components stuff
     private SkinnedMeshRenderer[] skinnedMeshRenderer;
+
+    protected Rigidbody[] rigidBodies;
+    protected HitBox hitbox;
     #endregion
 
     #region Startup
@@ -47,10 +50,10 @@ public class HealthSystem : MonoBehaviour
         }
 
         //add hitboxes
-        var rigidBodies = GetComponentsInChildren<Rigidbody>();
+        rigidBodies = GetComponentsInChildren<Rigidbody>();
         foreach (var rigidBody in rigidBodies)
         {
-            HitBox hitbox = rigidBody.gameObject.AddComponent<HitBox>();
+            hitbox = rigidBody.gameObject.AddComponent<HitBox>();
             hitbox.healthSystem = this;
             if (hitbox.gameObject != gameObject)
             {
@@ -209,6 +212,18 @@ public class HealthSystem : MonoBehaviour
 
             if (material.HasProperty("_LightingCutoff"))
                 material.SetFloat("_LightingCutoff", properties.lightingCutoff);
+        }
+    }
+
+    private IEnumerator DestroySelf(float delay)
+    {
+        yield return Helpers.GetWaitForSecond(delay);
+        foreach (var rigidBody in rigidBodies)
+        {
+            if (hitbox.gameObject != gameObject)
+            {
+                hitbox.gameObject.SetActive(false);
+            }
         }
     }
 

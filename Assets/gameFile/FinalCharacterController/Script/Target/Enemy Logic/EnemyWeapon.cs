@@ -100,7 +100,7 @@ public class EnemyWeapon : MonoBehaviour
 
     IEnumerator EquipWeapon()
     {
-        if (!currentWeapon)
+        if (!currentWeapon || !weaponIK)
             yield break;
 
         animator.runtimeAnimatorController = currentWeapon.animator;

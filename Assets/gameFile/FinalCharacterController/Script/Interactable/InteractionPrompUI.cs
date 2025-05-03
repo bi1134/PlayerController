@@ -6,12 +6,11 @@ public class InteractionPromptUI : MonoBehaviour
     [SerializeField] private GameObject uiPanel;
     [SerializeField] private TextMeshProUGUI promptText;
 
-
     private Camera mainCamera;
-    public bool isDisplayed = false;
+    [field: SerializeField] public bool isDisplayed { get; private set; }
 
 
-    private void Start()
+private void Start()
     {
         mainCamera = Camera.main;
         uiPanel.SetActive(false);
