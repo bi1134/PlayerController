@@ -26,9 +26,11 @@ public class InventoryHolder : MonoBehaviour
 
 
     private ActiveWeapon activeWeapon;
+    private PlayerStats stats;
     private void Awake()
     {
         activeWeapon = GetComponent<ActiveWeapon>();
+        stats = GetComponent<PlayerStats>();
 
         inventorySystem = new InventorySystem(inventorySize);
         passiveItemInventory = new InventorySystem(passiveInventorySize);
@@ -45,7 +47,19 @@ public class InventoryHolder : MonoBehaviour
         switch (itemData.ItemType)
         {
             case ItemType.Passive:
-                return passiveItemInventory.AddToInventory(itemData, 1);
+                if (passiveItemInventory.AddToInventory(itemData, 1))
+                {
+                    var prefab = itemData.Prefab;
+                    if (prefab != null)
+                    {
+                        var effect = prefab.GetComponent<ItemEffectBehaviour>();
+                        if (effect != null && effect.config != null)
+                        {
+                            stats.TryAddEffectFromItem(effect.config, prefab);
+                        }
+                    }
+                }
+                return false;
 
             case ItemType.Active:
                 activeItem = itemData;

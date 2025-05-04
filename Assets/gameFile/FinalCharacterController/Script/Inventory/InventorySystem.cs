@@ -47,6 +47,11 @@ public class InventorySystem
         return false;
     }
 
+    public List<InventorySlot> GetAllFilledSlots()
+    {
+        return inventorySlots.Where(slot => slot.ItemData != null).ToList();
+    }
+
     public bool ContainsItem(InventoryItemData itemToAdd, out List<InventorySlot> inventorySlot)
     {
         inventorySlot = InventorySlots.Where(i => i.ItemData == itemToAdd).ToList();
@@ -57,5 +62,15 @@ public class InventorySystem
     {
         freeSlot = InventorySlots.FirstOrDefault(i => i.ItemData == null);
         return freeSlot == null ? false : true;
+    }
+
+    public int GetItemStack(InventoryItemData itemData)
+    {
+        foreach (var slot in inventorySlots)
+        {
+            if (slot.ItemData == itemData)
+                return slot.StackSize;
+        }
+        return 0;
     }
 }

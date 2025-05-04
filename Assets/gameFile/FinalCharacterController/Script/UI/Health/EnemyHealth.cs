@@ -7,7 +7,6 @@ public class EnemyHealth : HealthSystem
     protected override void OnStart()
     {
         enemy = GetComponent<Enemy>();
-        maxHealth = enemy.config.health;
     }
     protected override void OnDeath(Vector3 direction)
     {

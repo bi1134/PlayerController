@@ -15,9 +15,7 @@ MonoBehaviour:
   ID: 1
   ItemType: 0
   ItemName: Ball
-  Description: 'just an item
-
-'
+  Description: +10 max HP per stack, retriggers all stacks on pickup
   Icon: {fileID: 0}
   MaxStackSize: 5
-  Prefab: {fileID: 3027310757728184972, guid: dd34fecab41c38a4fbf63c3950b255d7, type: 3}
+  Prefab: {fileID: 3027310757728184972, guid: ab37dcbbe6b51ae41b98f8c504a4c7f5, type: 3}

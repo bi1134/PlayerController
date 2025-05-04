@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
     private PlayerActionInput playerActionInput;
+    private PlayerStats playerStats;
 
     private Vector2 cameraRotation = Vector2.zero;
     private Vector2 playerTargetRotation = Vector2.zero;
@@ -82,6 +83,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
+        playerStats = GetComponent<PlayerStats>();
         playerState = GetComponent<PlayerState>();
         playerActionInput = GetComponent<PlayerActionInput>();
 
@@ -132,6 +134,7 @@ public class PlayerController : MonoBehaviour
         //control airborn state
         if (!isGrounded || jumpLastFrame)
         {
+            playerStats.TriggerEffects(EffectTrigger.OnJump);
             if (characterController.velocity.y > 0f)
             {
                 playerState.SetPlayerMovementState(PlayerMovementState.Jumping);

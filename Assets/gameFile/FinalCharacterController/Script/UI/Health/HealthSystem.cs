@@ -83,10 +83,7 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(float amount, Vector3 direction)
     {
         currentHealth -= amount;
-        OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs
-        {
-            healthNormalized = currentHealth / maxHealth
-        });
+        TriggerHealthChanged();
 
         OnDamage(direction);
 
@@ -111,10 +108,10 @@ public class HealthSystem : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
-        if (OnHealthChanged != null) OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs
+        if (OnHealthChanged != null) 
         {
-            healthNormalized = currentHealth / maxHealth
-        });
+            TriggerHealthChanged();
+        };
     }
 
     public bool IsDead()
@@ -225,6 +222,14 @@ public class HealthSystem : MonoBehaviour
                 hitbox.gameObject.SetActive(false);
             }
         }
+    }
+
+    public void TriggerHealthChanged()
+    {
+        OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs
+        {
+            healthNormalized = currentHealth / maxHealth
+        });
     }
 
     #endregion

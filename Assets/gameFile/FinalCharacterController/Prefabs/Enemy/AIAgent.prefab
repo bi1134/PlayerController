@@ -2603,6 +2603,7 @@ GameObject:
   - component: {fileID: 8140496791718557534}
   - component: {fileID: 6786716328093949482}
   - component: {fileID: 4225669910884994661}
+  - component: {fileID: 7262543112533531350}
   m_Layer: 7
   m_Name: AIAgent
   m_TagString: Untagged
@@ -2897,6 +2898,19 @@ MonoBehaviour:
   distanceWeight: 2
   angleWeight: 1
   ageWeight: 1
+--- !u!114 &7262543112533531350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446328349848550656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b26f36be4c51d4ba1ae014a33dc4da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseStats: {fileID: 11400000, guid: bb5de1c9d85ac414da413151e998fe87, type: 2}
 --- !u!1 &3455802336500001156
 GameObject:
   m_ObjectHideFlags: 0

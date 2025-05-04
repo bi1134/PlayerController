@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     #region Variables
     [Header("Compoments")]
     [SerializeField] public EnemyConfig config;
-    [SerializeField] private float meleeAttackCooldown = 1.5f;
+    [SerializeField] private float meleeAttackCooldown = 0.8f;
     [SerializeField] private BoxCollider meleeHitbox;
 
     [SerializeField] private Transform lookRoot; // usually hips or full body root
@@ -32,6 +32,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool canMeleeAttack = true;
     [HideInInspector] public EnemySensor sensor;
     [HideInInspector] public EnemyTargetingSystem targeting;
+    [HideInInspector] public EnemyStats enemyStats;
 
     #endregion
 
@@ -46,6 +47,7 @@ public class Enemy : MonoBehaviour
         ragdoll = GetComponent<Ragdoll>();
         sensor = GetComponent<EnemySensor>();
         targeting = GetComponent<EnemyTargetingSystem>();
+        enemyStats = GetComponent<EnemyStats>();
 
         if (playerTransform == null)
         {
@@ -105,7 +107,7 @@ public class Enemy : MonoBehaviour
             if (health != null)
             {
                 Vector3 direction = (other.transform.position - transform.position).normalized;
-                health.TakeDamage(config.meleeDamage, direction);
+                health.TakeDamage(enemyStats.baseStats.baseDamage, direction);
 
                 canMeleeAttack = false;
                 StartCoroutine(ResetMeleeCooldown());

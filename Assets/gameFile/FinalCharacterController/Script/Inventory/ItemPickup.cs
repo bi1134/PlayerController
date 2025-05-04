@@ -72,7 +72,6 @@ public class ItemPickup : MonoBehaviour
         var inventory = other.GetComponent<InventoryHolder>();
         if (inventory) // if inventory = true
         {
-            Debug.Log("ItemPickup: Found InventoryHolder on " + other.name);
             if (ItemData == null)
             {
                 Debug.LogError("ItemPickup: itemData is NULL!");

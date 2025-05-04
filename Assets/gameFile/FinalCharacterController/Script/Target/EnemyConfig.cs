@@ -21,8 +21,4 @@ public class EnemyConfig : ScriptableObject
     public float meleeRange = 2f;
     public float gunRange = 10f;
     public float weaponLostRange = 20f;
-
-    [Header("Enemy stats")]
-    public float health = 100f;
-    public float meleeDamage = 10f;
 }
