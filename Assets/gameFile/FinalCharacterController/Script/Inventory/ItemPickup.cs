@@ -78,10 +78,12 @@ public class ItemPickup : MonoBehaviour
                 return;
             }
 
-            inventory.PickUpItem(ItemData);
-            
-            Destroy(gameObject);
-            
+            bool pickedUp = inventory.PickUpItem(ItemData);
+            if (pickedUp)
+            {
+                Destroy(gameObject);
+            }
+
         }
 
         //enemy pick up
@@ -89,6 +91,8 @@ public class ItemPickup : MonoBehaviour
        
         if (enemyWeapon && ItemData.ItemType == ItemType.Weapon)
         {
+            if (enemyWeapon.HasWeapon()) return;
+
             WeaponBase newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponBase>();
 
             // Equip the weapon

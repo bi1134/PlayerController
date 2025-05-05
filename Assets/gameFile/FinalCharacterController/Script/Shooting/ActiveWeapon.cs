@@ -24,7 +24,7 @@ public class ActiveWeapon : MonoBehaviour
 
     //references
     private PlayerActionInput playerActionInput;
-    private WeaponBase[] equippedWeapon = new WeaponBase[2];
+    private WeaponBase[] equippedWeapon = new WeaponBase[4];
     private int activeWeaponIndex;
     private InventoryHolder inventoryHolder;
 
@@ -48,12 +48,7 @@ public class ActiveWeapon : MonoBehaviour
         playerActionInput = GetComponent<PlayerActionInput>();
         inventoryHolder = GetComponent<InventoryHolder>();
 
-        //check if the player already has a weapon and equip it
-        WeaponRaycast existingWeapon = GetComponentInChildren<WeaponRaycast>();
-        if (existingWeapon)
-        {
-            EquipWeapon(existingWeapon);
-        }
+        SyncEquippedWeaponsWithInventory();
     }
     #endregion
 
@@ -119,7 +114,7 @@ public class ActiveWeapon : MonoBehaviour
     public void EquipWeaponFromInventory(InventoryItemData weaponData)
     {
         if (weaponData == null || weaponData.ItemType != ItemType.Weapon)
-            return; // Not a valid weapon
+            return;
 
         WeaponBase weaponPrefab = weaponData.Prefab.GetComponent<WeaponBase>();
         if (weaponPrefab == null)
@@ -128,37 +123,42 @@ public class ActiveWeapon : MonoBehaviour
             return;
         }
 
-        int weaponSlotIndex = (weaponPrefab.weaponSlot == WeaponSlot.Primary) ? 0 :
-                                (weaponPrefab.weaponSlot == WeaponSlot.Secondary) ? 1 : -1;
+        // Check if weapon is already equipped in any slot
+        for (int i = 0; i < equippedWeapon.Length; i++)
+        {
+            if (equippedWeapon[i] != null && equippedWeapon[i].inventoryData.ID == weaponData.ID)
+            {
+                SetActiveWeapon((WeaponSlot)i);
+                equippedWeapon[i].UpdateAmmoUI();
+                return;
+            }
+        }
+        // Not equipped, find a free slot based on weapon type
+        int weaponSlotIndex = GetCorrectWeaponIndex(weaponData);
 
-        UnsubscribeReloadEvents(equippedWeapon[weaponSlotIndex]);
-        if (weaponSlotIndex == -1 || weaponSlotIndex >= weaponSlots.Length)
+        if (weaponSlotIndex == -1)
+        {
+            Debug.LogError("No available weapon slot");
+            return;
+        }
+
+        if (weaponSlotIndex >= weaponSlots.Length)
         {
             Debug.LogError("Invalid weapon slot index: " + weaponSlotIndex);
             return;
         }
 
-        // Check if weapon is already equipped
-        if (equippedWeapon[weaponSlotIndex] != null)
-        {
-            SetActiveWeapon((WeaponSlot)weaponSlotIndex);
-            equippedWeapon[weaponSlotIndex].UpdateAmmoUI();
-            return;
-        }
-
-        // Instantiate only if weapon is not already stored
+        // Instantiate and equip new weapon
         WeaponBase newWeapon = Instantiate(weaponData.Prefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponBase>();
         equippedWeapon[weaponSlotIndex] = newWeapon;
 
         newWeapon.weaponSlot = weaponPrefab.weaponSlot;
-
-        // Assign references
+        newWeapon.inventoryData = weaponData;
         newWeapon.recoil.cameraTransform = playerCamera.transform;
         newWeapon.recoil.rigController = rigController;
 
         isHolstered = true;
 
-        // Set active weapon
         SetActiveWeapon((WeaponSlot)weaponSlotIndex);
         newWeapon.Initialize();
         SubscribeReloadEvents(newWeapon);
@@ -267,11 +267,10 @@ public class ActiveWeapon : MonoBehaviour
             {
                 weapon.StartFiring(mouseWorldPosition);
             }
+            string slotNumber = (weapon.inventoryData.ID == inventoryHolder.weaponSlot1.ID) ? "1" : "2";
             //set holster state to false and play the animation
             rigController.SetBool("isHolster", false);
-
-            //wait for equip animation to finish
-            rigController.Play("Equip" + weapon.weaponProperties.weaponName);
+            rigController.Play("Equip" + weapon.weaponProperties.weaponName + slotNumber);
             do
             {
                 yield return new WaitForEndOfFrame();
@@ -332,6 +331,60 @@ public class ActiveWeapon : MonoBehaviour
                 equippedWeapon[i] = null;
             }
         }
+    }
+
+    int GetCorrectWeaponIndex(InventoryItemData weaponData)
+    {
+        if (weaponData == inventoryHolder.weaponSlot1)
+        {
+            return weaponData.Prefab.GetComponent<WeaponBase>().weaponSlot == WeaponSlot.Primary ? 0 : 1;
+        }
+        else if (weaponData == inventoryHolder.weaponSlot2)
+        {
+            return weaponData.Prefab.GetComponent<WeaponBase>().weaponSlot == WeaponSlot.Primary ? 2 : 3;
+        }
+
+        Debug.LogWarning("Weapon not found in inventory slots!");
+        return -1;
+    }
+
+
+    public void SyncEquippedWeaponsWithInventory()
+    {
+        // Ensure only weapons in inventory are equipped
+        TryEquipFromInventory(inventoryHolder.weaponSlot1);
+        TryEquipFromInventory(inventoryHolder.weaponSlot2);
+
+        // Optional: remove weapons not present in inventory
+        for (int i = 0; i < equippedWeapon.Length; i++)
+        {
+            if (equippedWeapon[i] != null)
+            {
+                var id = equippedWeapon[i].inventoryData.ID;
+                if ((inventoryHolder.weaponSlot1 == null || inventoryHolder.weaponSlot1.ID != id) &&
+                    (inventoryHolder.weaponSlot2 == null || inventoryHolder.weaponSlot2.ID != id))
+                {
+                    Destroy(equippedWeapon[i].gameObject);
+                    equippedWeapon[i] = null;
+                }
+            }
+        }
+    }
+
+    private void TryEquipFromInventory(InventoryItemData data)
+    {
+        if (data == null || data.ItemType != ItemType.Weapon)
+            return;
+
+        // Already equipped?
+        for (int i = 0; i < equippedWeapon.Length; i++)
+        {
+            if (equippedWeapon[i] != null && equippedWeapon[i].inventoryData.ID == data.ID)
+                return;
+        }
+
+        // Equip if not already equipped
+        EquipWeaponFromInventory(data);
     }
 
     #endregion

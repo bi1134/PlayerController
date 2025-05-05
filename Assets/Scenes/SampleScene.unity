@@ -23412,47 +23412,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ThirdPersonController
       objectReference: {fileID: 0}
-    - target: {fileID: 3081354061384957970, guid: e225a0484abe43847a318b21a232e50a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3081354061384957970, guid: e225a0484abe43847a318b21a232e50a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5143429499935632704, guid: e225a0484abe43847a318b21a232e50a, type: 3}
-      propertyPath: maxHealth
-      value: 10000
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2728314134309740973, guid: e225a0484abe43847a318b21a232e50a, type: 3}
-      insertIndex: 15
-      addedObject: {fileID: 3393708270749636186}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e225a0484abe43847a318b21a232e50a, type: 3}
---- !u!1 &3393708270749636185 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2728314134309740973, guid: e225a0484abe43847a318b21a232e50a, type: 3}
-  m_PrefabInstance: {fileID: 3393708270749636184}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3393708270749636186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3393708270749636185}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89521e27a7b431c4a894bb04ef956808, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseStats: {fileID: 11400000, guid: 36488c871d379b34b8a7e2a76aa6c81b, type: 2}
-  playerHealth: {fileID: 0}
-  activeEffects: []
-  allowRetriggerOnDuplicatePickup: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

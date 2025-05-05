@@ -11,6 +11,7 @@ public abstract class WeaponBase : MonoBehaviour
     public RuntimeAnimatorController animator;
     public bool reloading = false;
     public event Action OnReloadStarted;
+    public InventoryItemData inventoryData;
 
     [field: SerializeField] public bool isFiring { get; protected set; }
 
