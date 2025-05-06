@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,7 @@ public class HealthBarUI : MonoBehaviour
     #region Variables
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private Image barImage;
+    [SerializeField] private TextMeshProUGUI healthText;
     public bool canShowHealthBar = false;
 
     #endregion
@@ -15,6 +17,12 @@ public class HealthBarUI : MonoBehaviour
     {
         healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
         barImage.fillAmount = 1;
+
+        if (healthText)
+        {
+            healthText.text = healthSystem.currentHealth.ToString() + "/" + healthSystem.maxHealth.ToString();
+        }
+
 
         this.gameObject.SetActive(canShowHealthBar);
     }
@@ -26,6 +34,10 @@ public class HealthBarUI : MonoBehaviour
     {
         this.gameObject.SetActive(true);
         barImage.fillAmount = e.healthNormalized;
+        if (healthText)
+        {
+            healthText.text = healthSystem.currentHealth.ToString() + "/" + healthSystem.maxHealth.ToString();
+        }
         if (barImage.fillAmount <= 0)
         {
             this.gameObject.SetActive(false);

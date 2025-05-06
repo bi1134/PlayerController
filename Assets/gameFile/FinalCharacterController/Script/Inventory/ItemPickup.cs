@@ -101,4 +101,9 @@ public class ItemPickup : MonoBehaviour
             Destroy(gameObject); // Destroy the pickup
         }
     }
+
+    public void SetItemData(InventoryItemData data)
+    {
+        ItemData = data;
+    }
 }

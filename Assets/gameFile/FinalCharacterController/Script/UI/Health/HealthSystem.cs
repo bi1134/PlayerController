@@ -34,6 +34,7 @@ public class HealthSystem : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
+        TriggerHealthChanged();
         skinnedMeshRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
 
         //store original material values

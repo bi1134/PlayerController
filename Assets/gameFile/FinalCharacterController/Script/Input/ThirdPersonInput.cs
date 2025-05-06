@@ -1,24 +1,28 @@
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Playables;
 
 public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapActions
 {
     #region Class Variables
     [SerializeField] private CinemachineCamera cinemachineCamera;
-    [SerializeField] private float cameraZoomSpeed = 0.1f;
-    [SerializeField] private float cameraMinZoom = 1f;
-    [SerializeField] private float cameraMaxZoom = 5f;
+    [SerializeField] private float idleZoom = 1.5f;
+    [SerializeField] private float runZoom = 4.5f;
+    [SerializeField] private float dashZoom = 5.5f;
+    [SerializeField] private float zoomLerpSpeed = 5f;
+
+    private PlayerState playerState;
 
     private CinemachineThirdPersonFollow thirdPersonFollow;
 
-    public Vector2 scrollInputNormalized { get; private set; }
     #endregion
 
     #region Startup
 
     private void Awake()
     {
+        playerState = GetComponent<PlayerState>();
         thirdPersonFollow = cinemachineCamera.GetComponent<CinemachineThirdPersonFollow>();
     }
 
@@ -51,12 +55,34 @@ public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapAct
     #region Update Logic
     private void Update()
     {
-        thirdPersonFollow.CameraDistance = Mathf.Clamp(thirdPersonFollow.CameraDistance + scrollInputNormalized.y, cameraMinZoom, cameraMaxZoom);
+        float targetZoom = idleZoom;
+
+        if (playerState.currentPlayerDashingState == PlayerDashState.Dashing)
+        {
+            targetZoom = dashZoom;
+        }
+        else
+        {
+            switch (playerState.currentPlayerMovementState)
+            {
+                case PlayerMovementState.Sprinting:
+                case PlayerMovementState.Jumping:
+                case PlayerMovementState.Falling:
+                    targetZoom = runZoom;
+                    break;
+                case PlayerMovementState.Running:
+                case PlayerMovementState.Idling:
+                case PlayerMovementState.Walking:
+                    targetZoom = idleZoom;
+                    break;
+            }
+        }
+
+        thirdPersonFollow.CameraDistance = Mathf.Lerp(thirdPersonFollow.CameraDistance, targetZoom, Time.deltaTime * zoomLerpSpeed);
     }
 
     private void LateUpdate()
     {
-        scrollInputNormalized = Vector2.zero;
     }
 
     #endregion
@@ -65,11 +91,7 @@ public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapAct
     #region Input Callback
     public void OnScrollCamera(InputAction.CallbackContext context)
     {
-        if(!context.performed)
-            return;
-            
-        Vector2 scrollInput = context.ReadValue<Vector2>();
-        scrollInputNormalized = -1f * scrollInput.normalized * cameraZoomSpeed; 
+        
     }
     #endregion
 }

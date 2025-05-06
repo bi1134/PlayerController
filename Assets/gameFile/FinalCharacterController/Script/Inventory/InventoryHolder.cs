@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,21 +20,30 @@ public class InventoryHolder : MonoBehaviour
     public InventoryItemData weaponSlot1;
     public InventoryItemData weaponSlot2;
 
+    [Header("Weapon Inventory (for UI only)")]
+    [SerializeField] public InventorySystem weaponInventory;
     public InventorySystem InventorySystem => inventorySystem;
     public InventorySystem PassiveItemInventory => passiveItemInventory;
 
-    public static UnityAction<InventorySystem> OnDynamicInventoryDisplayRequested;
+    public InventorySystem WeaponInventory => weaponInventory;
+
+    public static UnityAction<InventorySystem> OnWeaponInventoryChanged;
 
 
     private ActiveWeapon activeWeapon;
     private PlayerStats stats;
     private void Awake()
     {
+        weaponInventory = new InventorySystem(2);
         activeWeapon = GetComponent<ActiveWeapon>();
         stats = GetComponent<PlayerStats>();
 
         inventorySystem = new InventorySystem(inventorySize);
         passiveItemInventory = new InventorySystem(passiveInventorySize);
+    }
+
+    private void Update()
+    {
     }
 
     public bool PickUpItem(InventoryItemData itemData)
@@ -78,14 +88,20 @@ public class InventoryHolder : MonoBehaviour
                 if (weaponSlot1 == null)
                 {
                     weaponSlot1 = itemData;
+                    weaponInventory.AddToInventory(itemData, 1); // slot 0
                     EquipWeaponImmediately(weaponSlot1);
                     activeWeapon.SyncEquippedWeaponsWithInventory();
+
+                    OnWeaponInventoryChanged?.Invoke(weaponInventory);
                     return true;
                 }
                 else if (weaponSlot2 == null)
                 {
                     weaponSlot2 = itemData;
+                    weaponInventory.AddToInventory(itemData, 1); // slot 1
                     activeWeapon.SyncEquippedWeaponsWithInventory();
+
+                    OnWeaponInventoryChanged?.Invoke(weaponInventory); // 
                     return true;
                 }
 
@@ -104,5 +120,13 @@ public class InventoryHolder : MonoBehaviour
             return;
         }
             activeWeapon.EquipWeaponFromInventory(weaponData);
+    }
+
+    public List<InventoryItemData> GetAllWeapons()
+    {
+        List<InventoryItemData> weapons = new List<InventoryItemData>();
+        if (weaponSlot1 != null) weapons.Add(weaponSlot1);
+        if (weaponSlot2 != null) weapons.Add(weaponSlot2);
+        return weapons;
     }
 }

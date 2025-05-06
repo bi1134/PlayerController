@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEditor;
@@ -16,6 +17,7 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] private Rig handIK;
     [SerializeField] private Camera playerCamera;
     [SerializeField] public PlayerHUD hud;
+    [SerializeField] private GameObject itemPickupPrefab;
 
     [Header("Rigs")]
     [SerializeField] private Transform leftGrip;
@@ -109,6 +111,10 @@ public class ActiveWeapon : MonoBehaviour
                 isHolstered = true;
                 EquipWeaponFromInventory(inventoryHolder.weaponSlot2);
             }
+        }
+        if (playerActionInput.weaponDropPressed)
+        {
+            DropEquippedWeapon();
         }
     }
     public void EquipWeaponFromInventory(InventoryItemData weaponData)
@@ -328,9 +334,26 @@ public class ActiveWeapon : MonoBehaviour
                 if (!weapon.gameObject.TryGetComponent<Rigidbody>(out _))
                     weapon.gameObject.AddComponent<Rigidbody>();
 
+                InventoryItemData droppedItem = weapon.inventoryData;
+
+                // Remove from holder and UI inventory
+                if (inventoryHolder.weaponSlot1 != null && inventoryHolder.weaponSlot1.ID == droppedItem.ID)
+                {
+                    inventoryHolder.weaponInventory.RemoveToInventory(droppedItem, 1);
+                    inventoryHolder.weaponSlot1 = null;
+                }
+                else if (inventoryHolder.weaponSlot2 != null && inventoryHolder.weaponSlot2.ID == droppedItem.ID)
+                {
+                    inventoryHolder.weaponInventory.RemoveToInventory(droppedItem, 1);
+                    inventoryHolder.weaponSlot2 = null;
+                }
+
                 equippedWeapon[i] = null;
             }
         }
+
+        rigController.Play("CharacterUnarmed");
+        InventoryHolder.OnWeaponInventoryChanged?.Invoke(inventoryHolder.weaponInventory);
     }
 
     int GetCorrectWeaponIndex(InventoryItemData weaponData)
@@ -385,6 +408,73 @@ public class ActiveWeapon : MonoBehaviour
 
         // Equip if not already equipped
         EquipWeaponFromInventory(data);
+    }
+
+    public void DropEquippedWeapon()
+    {
+        WeaponBase currentWeapon = GetActiveWeapon();
+        if (currentWeapon == null) return;
+
+        int index = activeWeaponIndex;
+        UnsubscribeReloadEvents(currentWeapon);
+
+        currentWeapon.CancelAllActions();
+        currentWeapon.transform.SetParent(null);
+
+        var rb = currentWeapon.gameObject.GetComponent<Rigidbody>();
+        if (rb == null) rb = currentWeapon.gameObject.AddComponent<Rigidbody>();
+
+        var collider = currentWeapon.gameObject.GetComponent<Collider>();
+        if (collider == null) collider = currentWeapon.gameObject.AddComponent<BoxCollider>();
+        collider.enabled = true;
+
+        // Remove from InventoryHolder
+        var droppedItem = currentWeapon.inventoryData;
+        if (inventoryHolder.weaponSlot1 != null && inventoryHolder.weaponSlot1.ID == droppedItem.ID)
+        {
+            inventoryHolder.weaponInventory.RemoveToInventory(droppedItem, 1);
+            inventoryHolder.weaponSlot1 = null;
+        }
+        else if (inventoryHolder.weaponSlot2 != null && inventoryHolder.weaponSlot2.ID == droppedItem.ID)
+        {
+            inventoryHolder.weaponInventory.RemoveToInventory(droppedItem, 1);
+            inventoryHolder.weaponSlot2 = null;
+        }
+
+        equippedWeapon[index] = null;
+
+        // Play unarmed animation
+        rigController.Play("CharacterUnarmed");
+
+        InventoryHolder.OnWeaponInventoryChanged?.Invoke(inventoryHolder.weaponInventory);
+
+        // Convert into pickup
+        StartCoroutine(DelayedPickupSpawn(currentWeapon.gameObject, droppedItem));
+    }
+
+    private IEnumerator DelayedPickupSpawn(GameObject weaponGO, InventoryItemData itemData)
+    {
+        yield return Helpers.GetWaitForSecond(2.5f);
+
+        // Spawn ItemPickup in the same position
+        Vector3 dropPosition = weaponGO.transform.position;
+        Quaternion dropRotation = weaponGO.transform.rotation;
+
+        Destroy(weaponGO); // Clean up weapon
+
+        GameObject pickup = Instantiate(itemPickupPrefab, dropPosition, dropRotation);
+
+        if (pickup == null)
+        {
+            Debug.LogError("ItemPickup prefab not found in Resources!");
+            yield break;
+        }
+
+        var pickupComponent = pickup.GetComponent<ItemPickup>();
+        if (pickupComponent != null)
+        {
+            pickupComponent.SetItemData(itemData);
+        }
     }
 
     #endregion

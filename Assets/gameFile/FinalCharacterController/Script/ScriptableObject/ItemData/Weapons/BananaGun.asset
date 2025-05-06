@@ -16,6 +16,6 @@ MonoBehaviour:
   ItemType: 2
   ItemName: Banana gun
   Description: Turns out there is a red banana inside the super market
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: ebe59218d5011074bb3edb290bcbd462, type: 3}
   MaxStackSize: 2
   Prefab: {fileID: 2461294233747802360, guid: bfdb2c41738533c4bac27488753fb82d, type: 3}

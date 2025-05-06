@@ -22,6 +22,7 @@ public class EnemyDeathState : EnemyState
 
     public void Update(Enemy enemy)
     {
+
     }
 
     public void Exit(Enemy enemy)

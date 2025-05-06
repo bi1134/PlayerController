@@ -31,6 +31,8 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     public bool dashAnimation { get; private set; }
     public bool holsterPressed { get; private set; }
     public bool reloadPressed { get; private set; }
+    public bool tabPressed { get; private set; }
+    public bool weaponDropPressed { get; private set; }
     public float weaponButton { get; private set; }
 
     //get component stuff
@@ -220,6 +222,30 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         if (!context.performed) return;
 
         reloadPressed = true;
+    }
+
+    public void OnTab(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            tabPressed = true; // holding
+        }
+        else if (context.canceled)
+        {
+            tabPressed = false; // released
+        }
+    }
+
+    public void OnDropWeapon(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            weaponDropPressed = true; // holding
+        }
+        else if (context.canceled)
+        {
+            weaponDropPressed = false; // released
+        }
     }
 
     #endregion
