@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -10,6 +10,7 @@ public class ItemPickup : MonoBehaviour
 
     private SphereCollider itemCollider;
     public Transform outlineMesh;
+    public Quaternion PickupRotation = Quaternion.identity;
 
     private void Awake()
     {

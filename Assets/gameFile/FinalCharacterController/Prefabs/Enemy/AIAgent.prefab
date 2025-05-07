@@ -2797,7 +2797,7 @@ MonoBehaviour:
   player: {fileID: 0}
   turnSpeed: 5
   maxAngle: 120
-  initialState: 5
+  initialState: 3
   ragdoll: {fileID: 0}
   playerTransform: {fileID: 0}
   weapons: {fileID: 0}
@@ -2872,9 +2872,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed8ba6d8fc9eda4b959c09a7538debd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 10
-  angle: 100
-  height: 1.8
+  distance: 40
+  angle: 102.1
+  height: 5.99
   meshColor: {r: 0.014332486, g: 0.56281036, b: 0.690566, a: 0.75686276}
   scanFrequency: 30
   layers:
@@ -4885,6 +4885,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSystem: {fileID: 314415534169956800}
   barImage: {fileID: 7000180630792097496}
+  barObject: {fileID: 5257693562401232872}
+  healthText: {fileID: 0}
   canShowHealthBar: 0
 --- !u!114 &3304814634115296054
 MonoBehaviour:

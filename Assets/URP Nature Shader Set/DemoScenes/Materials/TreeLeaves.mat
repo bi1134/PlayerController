@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7285472282746108403
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TreeLeaves
+  m_Shader: {fileID: -6465566751694194690, guid: 1532302550da7ee4ca17136fafb02c70, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_17B1C51B:
+        m_Texture: {fileID: 2800000, guid: 8ad37f8cf7c091149b1c2a29bfe1be58, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AlphaTexture:
+        m_Texture: {fileID: 2800000, guid: 8ad37f8cf7c091149b1c2a29bfe1be58, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Diffuse_Texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - Vector1_A27A3D7E: 32
+    - Vector1_CC2ACFFC: 0.1
+    - Vector1_E74BFB7C: 0.7
+    - _AmbientStrength: 0.25
+    - _Ambient_Strength: 1.31
+    - _FalloffAmount: 0.05
+    - _Falloff_Amount: 0
+    - _FresnelSize: 0.1
+    - _Fresnel_Size: 9.6
+    - _LightingCutoff: 0
+    - _Lighting_Cutoff: 0.01
+    - _Max: 1.36
+    - _Min: 0.82
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _Shades: 0.72
+    - _Smoothness: 1002.93
+    - _WindDensity: 0.1
+    - _WindStrength: 0.2
+    m_Colors:
+    - Color_27150168: {r: 1, g: 1, b: 1, a: 0}
+    - Color_A94F19A0: {r: 1, g: 1, b: 1, a: 0}
+    - Color_C19B377F: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0}
+    - Color_F306B785: {r: 0.44705883, g: 0.54509807, b: 0.75686276, a: 0}
+    - _Color: {r: 0.24222018, g: 0.5169811, b: 0.026336731, a: 0}
+    - _DiffuseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Diffuse_Color: {r: 0.17763966, g: 0.5396226, b: 0, a: 0}
+    - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Fresnel_Color: {r: 0.04989173, g: 0.5999999, b: 0.012452815, a: 0}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Specular_Color: {r: 0.38557753, g: 0.13040222, b: 0.6981132, a: 0}
+    - _WindMovement: {r: 6, g: 6, b: 6, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

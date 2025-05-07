@@ -7,6 +7,7 @@ public class HealthBarUI : MonoBehaviour
     #region Variables
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private Image barImage;
+    [SerializeField] private GameObject barObject;
     [SerializeField] private TextMeshProUGUI healthText;
     public bool canShowHealthBar = false;
 
@@ -40,7 +41,11 @@ public class HealthBarUI : MonoBehaviour
         }
         if (barImage.fillAmount <= 0)
         {
-            this.gameObject.SetActive(false);
+            barObject.SetActive(false);
+        }
+        else
+        {
+            barObject.SetActive(true);
         }
     }
     #endregion

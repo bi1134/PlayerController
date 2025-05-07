@@ -11,6 +11,9 @@ public class Interactor : MonoBehaviour
     private PlayerActionInput playerActionInput;
     private IInteractable currentInteractable;
     private InteractionPromptUI currentPromptUI;
+    private float closestDistance = float.MaxValue;
+    private IInteractable closestInteractable = null;
+    private InteractionPromptUI closestPromptUI = null;
 
     private void Start()
     {
@@ -19,53 +22,55 @@ public class Interactor : MonoBehaviour
 
     private void Update()
     {
+        closestDistance = float.MaxValue;
+        closestInteractable = null;
+        closestPromptUI = null;
+
         numFound = Physics.OverlapSphereNonAlloc(interactionPoint.position, interactionPointRadius, colliders, interactableMask);
 
-        if (numFound > 0)
+        for (int i = 0; i < numFound; i++)
         {
-            IInteractable interactable = colliders[0].GetComponent<IInteractable>();
-
+            IInteractable interactable = colliders[i].GetComponent<IInteractable>();
             if (interactable != null)
             {
-                // If new interactable is detected, update UI reference
-                if (currentInteractable != interactable)
+                float distance = Vector3.Distance(transform.position, colliders[i].transform.position);
+                if (distance < closestDistance)
                 {
-                    currentInteractable = interactable;
-
-                    // Get the InteractionPromptUI from the interactable object
-                    currentPromptUI = interactable.GetInteractionPromptUI();
-
-                    var chest = interactable as Chest;
-
-                    if (currentPromptUI != null && !currentPromptUI.isDisplayed && !chest.hasOpened)
-                    {
-                        currentPromptUI.SetUp(interactable.interactionPrompt);
-                    }
+                    closestDistance = distance;
+                    closestInteractable = interactable;
+                    closestPromptUI = interactable.GetInteractionPromptUI();
                 }
+            }
+        }
 
-                // Handle interaction
-                if (playerActionInput.isInteracting)
-                {
-                    interactable.Interact(this);
-                    if (currentPromptUI != null && currentPromptUI.isDisplayed)
-                    {
-                        currentPromptUI.Close();
-                    }
-                }
+        if (closestInteractable != null)
+        {
+            if (currentInteractable != closestInteractable)
+            {
+                // Close previous
+                if (currentPromptUI != null && currentPromptUI.isDisplayed)
+                    currentPromptUI.Close();
+
+                currentInteractable = closestInteractable;
+                currentPromptUI = closestPromptUI;
+
+                if (currentPromptUI != null && !currentPromptUI.isDisplayed)
+                    currentPromptUI.SetUp(currentInteractable.interactionPrompt);
+            }
+
+            if (playerActionInput.isInteracting)
+            {
+                currentInteractable.Interact(this);
+                currentPromptUI?.Close();
             }
         }
         else
         {
-            // Reset interaction if nothing is found
-            if (currentInteractable != null)
-            {
-                if (currentPromptUI != null && currentPromptUI.isDisplayed)
-                {
-                    currentPromptUI.Close();
-                }
-                currentInteractable = null;
-                currentPromptUI = null;
-            }
+            if (currentPromptUI != null && currentPromptUI.isDisplayed)
+                currentPromptUI.Close();
+
+            currentInteractable = null;
+            currentPromptUI = null;
         }
     }
 

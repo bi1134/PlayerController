@@ -100,17 +100,34 @@ public class EnemyWeapon : MonoBehaviour
 
     IEnumerator EquipWeapon()
     {
-        if (!currentWeapon || !weaponIK)
+        if (!currentWeapon)
+        {
+            Debug.LogError("EquipWeapon: currentWeapon is null!");
             yield break;
+        }
+
+        if (!weaponIK)
+        {
+            Debug.LogError("EquipWeapon: weaponIK is null!");
+            yield break;
+        }
+
+        if (!currentWeapon.bulletSpawnPosition)
+        {
+            Debug.LogError("EquipWeapon: bulletSpawnPosition is null in " + currentWeapon.name);
+            yield break;
+        }
 
         animator.runtimeAnimatorController = currentWeapon.animator;
         animator.SetBool("Equip", true);
 
         yield return Helpers.GetWaitForSecond(0.5f);
+
         while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1.0f)
         {
             yield return null;
         };
+
         weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
         StartCoroutine(LerpIKWeight(1.0f, 0.25f));
         weaponActive = true;

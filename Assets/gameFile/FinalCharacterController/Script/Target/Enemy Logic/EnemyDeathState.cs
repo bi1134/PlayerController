@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class EnemyDeathState : EnemyState
 {
+    public delegate void DeathEvent();
+    public static event DeathEvent OnDeath;
+
     public Vector3 direction;
 
     public EnemyStateID GetID()
@@ -18,6 +21,13 @@ public class EnemyDeathState : EnemyState
         direction.y = 1;
         enemy.ragdoll.ApplyForce(direction * enemy.config.ragdollForce);
         enemy.ragdoll.DisableCollidersDelayed(5.0f);
+
+        enemy.GetComponent<EnemyAI>().enabled = false;
+        enemy.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
+        enemy.GetComponentInChildren<Animator>().enabled = false;
+        enemy.GetComponent<EnemySensor>().enabled = false;
+
+        OnDeath?.Invoke(); // Fire event
     }
 
     public void Update(Enemy enemy)

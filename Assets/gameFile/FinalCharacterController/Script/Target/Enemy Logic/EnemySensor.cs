@@ -64,7 +64,7 @@ public class EnemySensor : MonoBehaviour
         Vector3 dest = obj.transform.position;
         Vector3 direction = dest - origin;
 
-        if (direction.y > height || direction.y < -0.2f)
+        if (Mathf.Abs(direction.y) > height)
         {
             return false;
         }

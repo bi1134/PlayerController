@@ -27,6 +27,11 @@ public class PlayerHealth : HealthSystem
         weapons.DisableAiming();
         player.DisablePlayerLogic();
         //cameraManager.EnableKillCam();
+        GameHandler handler = FindFirstObjectByType<GameHandler>();
+        if (handler != null)
+        {
+            handler.TriggerGameOver();
+        }
     }
     protected override void OnDamage(Vector3 direction)
     {

@@ -18,6 +18,6 @@ MonoBehaviour:
   Description: 'A Good gun
 
 '
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 41d34f35c9981064aab8ae7f54b9c446, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: 826da1e8828290c47adc45765739ee90, type: 3}
