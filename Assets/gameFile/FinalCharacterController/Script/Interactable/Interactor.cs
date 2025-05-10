@@ -31,7 +31,7 @@ public class Interactor : MonoBehaviour
         for (int i = 0; i < numFound; i++)
         {
             IInteractable interactable = colliders[i].GetComponent<IInteractable>();
-            if (interactable != null)
+            if (interactable != null && interactable.ShouldDisplayPrompt())
             {
                 float distance = Vector3.Distance(transform.position, colliders[i].transform.position);
                 if (distance < closestDistance)

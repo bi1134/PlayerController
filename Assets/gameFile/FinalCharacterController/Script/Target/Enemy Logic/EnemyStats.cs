@@ -6,15 +6,11 @@ public class EnemyStats : MonoBehaviour
     public BaseStatsSO baseStats;
 
     private Dictionary<string, float> currentStats = new();
+    private EnemyHealth health;
 
     private void Start()
     {
-        var health = GetComponent<EnemyHealth>();
-        if (health != null)
-        {
-            health.maxHealth = baseStats.maxHealth;
-            health.currentHealth = baseStats.maxHealth; // full heal on start
-        }
+        health = GetComponent<EnemyHealth>();
     }
 
     public float GetStat(string statName)
@@ -26,5 +22,14 @@ public class EnemyStats : MonoBehaviour
     {
         if (!currentStats.ContainsKey(statName)) currentStats[statName] = 0f;
         currentStats[statName] += amount;
+    }
+
+    public void ResetStats()
+    {
+        if (health != null)
+        {
+            health.maxHealth = baseStats.maxHealth;
+            health.currentHealth = baseStats.maxHealth; // full heal on start
+        }
     }
 }

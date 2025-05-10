@@ -7,17 +7,17 @@ TerrainLayer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass_lighted_up
-  m_DiffuseTexture: {fileID: 2800000, guid: 9273b0666f47d5e4e86165bf96cb7404, type: 3}
+  m_DiffuseTexture: {fileID: 2800000, guid: 1b3126a7b58325c498bf117c32d57b03, type: 3}
   m_NormalMapTexture: {fileID: 0}
   m_MaskMapTexture: {fileID: 0}
-  m_TileSize: {x: 25, y: 25}
+  m_TileSize: {x: 5, y: 5}
   m_TileOffset: {x: 14.92, y: -50.9}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
   m_Metallic: 0
   m_Smoothness: 0
   m_NormalScale: 1
   m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
-  m_DiffuseRemapMax: {x: 0.07244563, y: 0.54260314, z: 0.6981132, w: 1}
+  m_DiffuseRemapMax: {x: 0.68490565, y: 0.8649595, z: 1, w: 1}
   m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
   m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_SmoothnessSource: 1

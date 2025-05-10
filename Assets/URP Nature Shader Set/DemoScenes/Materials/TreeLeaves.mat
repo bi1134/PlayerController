@@ -21,13 +21,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TreeLeaves
-  m_Shader: {fileID: -6465566751694194690, guid: 1532302550da7ee4ca17136fafb02c70, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 11d22cfad9e74484093d5f04f42782ba, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -67,9 +67,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_A27A3D7E: 32
-    - Vector1_CC2ACFFC: 0.1
-    - Vector1_E74BFB7C: 0.7
+    - Vector1_A27A3D7E: 0
+    - Vector1_CC2ACFFC: 0.85
+    - Vector1_E74BFB7C: 0.81
     - _AmbientStrength: 0.25
     - _Ambient_Strength: 1.31
     - _FalloffAmount: 0.05
@@ -84,13 +84,13 @@ Material:
     - _QueueOffset: 0
     - _Shades: 0.72
     - _Smoothness: 1002.93
-    - _WindDensity: 0.1
-    - _WindStrength: 0.2
+    - _WindDensity: 2.75
+    - _WindStrength: 0.1
     m_Colors:
-    - Color_27150168: {r: 1, g: 1, b: 1, a: 0}
-    - Color_A94F19A0: {r: 1, g: 1, b: 1, a: 0}
-    - Color_C19B377F: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0}
-    - Color_F306B785: {r: 0.44705883, g: 0.54509807, b: 0.75686276, a: 0}
+    - Color_27150168: {r: 0.32121813, g: 0.4113207, b: 0.11097896, a: 0}
+    - Color_A94F19A0: {r: 0.015671052, g: 0.05523217, b: 0.11698109, a: 0}
+    - Color_C19B377F: {r: 0.12912063, g: 0.26562694, b: 0.3509434, a: 0}
+    - Color_F306B785: {r: 0.5372549, g: 0.47450984, b: 0.27450982, a: 0}
     - _Color: {r: 0.24222018, g: 0.5169811, b: 0.026336731, a: 0}
     - _DiffuseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Diffuse_Color: {r: 0.17763966, g: 0.5396226, b: 0, a: 0}

@@ -82,7 +82,7 @@ public class ItemPickup : MonoBehaviour
             bool pickedUp = inventory.PickUpItem(ItemData);
             if (pickedUp)
             {
-                Destroy(gameObject);
+                ObjectPooler.ReturnToPool("ItemPickup", gameObject);
             }
 
         }
@@ -99,7 +99,7 @@ public class ItemPickup : MonoBehaviour
             // Equip the weapon
             enemyWeapon.Equip(newWeapon);
 
-            Destroy(gameObject); // Destroy the pickup
+            ObjectPooler.ReturnToPool("ItemPickup", gameObject); //pool the pick up
         }
     }
 

@@ -20,7 +20,7 @@ public class ItemDropHandler : MonoBehaviour
 
         if (itemData != null)
         {
-            GameObject pickup = Instantiate(itemPickupPrefab, transform.position, Quaternion.identity);
+            GameObject pickup = ObjectPooler.SpawnFromPool("ItemPickup", transform.position, Quaternion.identity);
             var pickupScript = pickup.GetComponent<ItemPickup>();
             if (pickupScript != null)
             {
@@ -28,6 +28,6 @@ public class ItemDropHandler : MonoBehaviour
             }
         }
 
-        Destroy(gameObject); 
+        ObjectPooler.ReturnToPool("ItemOrb", gameObject);
     }
 }

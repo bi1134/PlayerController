@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5182023404631757618}
   - component: {fileID: 8050627399013581904}
   - component: {fileID: 3977173514224666730}
+  - component: {fileID: 7691846662310257430}
   m_Layer: 0
   m_Name: rock1
   m_TagString: Untagged
@@ -86,6 +87,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7691846662310257430
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908377145098780631}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5495902117074765545, guid: 7fe598a579573bb48a0285d3f31db940, type: 3}
 --- !u!1 &5679573102481004695
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +118,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3879203190899875071}
-  - component: {fileID: 2985792179692130767}
   m_Layer: 0
   m_Name: SmallRock
   m_TagString: Untagged
@@ -119,24 +141,3 @@ Transform:
   - {fileID: 5182023404631757618}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 13.384, y: 0, z: 0}
---- !u!135 &2985792179692130767
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5679573102481004695}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.75629604
-  m_Center: {x: -0.12629567, y: -0.69, z: -0.019999988}

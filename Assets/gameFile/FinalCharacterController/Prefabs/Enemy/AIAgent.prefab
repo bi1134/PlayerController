@@ -2604,6 +2604,7 @@ GameObject:
   - component: {fileID: 6786716328093949482}
   - component: {fileID: 4225669910884994661}
   - component: {fileID: 7262543112533531350}
+  - component: {fileID: 1352830939263470653}
   m_Layer: 7
   m_Name: AIAgent
   m_TagString: Untagged
@@ -2661,7 +2662,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3446328349848550656}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 7
@@ -2912,6 +2913,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseStats: {fileID: 11400000, guid: bb5de1c9d85ac414da413151e998fe87, type: 2}
+--- !u!114 &1352830939263470653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446328349848550656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a8f7346b17742458a53433fdd6ba71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3455802336500001156
 GameObject:
   m_ObjectHideFlags: 0

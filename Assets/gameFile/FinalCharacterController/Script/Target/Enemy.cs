@@ -115,6 +115,27 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void ResetState()
+    {
+        StartCoroutine(DeferredReset());
+    }
+
+    private IEnumerator DeferredReset()
+    {
+        ragdoll.DeActivateRagdoll();
+
+        yield return null; // Wait one frame to avoid immediate collision
+        ragdoll.EnableCollider();
+
+        navMeshAgent.enabled = true;
+        animator.enabled = true;
+        GetComponent<EnemySensor>().enabled = true;
+        GetComponent<EnemyAI>().enabled = true;
+        enemyStats.ResetStats();
+        isDead = false;
+        stateMachine.ChangeState(initialState);
+    }
+
     private IEnumerator ResetMeleeCooldown()
     {
         yield return Helpers.GetWaitForSecond(meleeAttackCooldown);

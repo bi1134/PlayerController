@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4774324068502192163}
   - component: {fileID: 2912709869369657954}
   - component: {fileID: 7310445438545859889}
+  - component: {fileID: 2211203734062824682}
   m_Layer: 0
   m_Name: rock2
   m_TagString: Untagged
@@ -86,6 +87,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2211203734062824682
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245812265187365303}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5495902117074765545, guid: 28121468ac6885145a4dc0556439dec4, type: 3}
 --- !u!1 &6199522721062363592
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +118,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7978381537151809477}
-  - component: {fileID: 7007865127291259681}
   m_Layer: 0
   m_Name: TallRockBridge
   m_TagString: Untagged
@@ -119,26 +141,3 @@ Transform:
   - {fileID: 4774324068502192163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7007865127291259681
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6199522721062363592}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.92255205
-  m_Height: 10.000882
-  m_Direction: 1
-  m_Center: {x: 0, y: 4.0004377, z: 0.07744793}

@@ -1,4 +1,3 @@
-using System.Threading;
 using UnityEngine;
 
 public class EnemyDeathState : EnemyState
@@ -15,6 +14,8 @@ public class EnemyDeathState : EnemyState
 
     public void Enter(Enemy enemy)
     {
+        if (enemy.isDead) return;
+
         enemy.isDead = true;
         enemy.weapons.DropWeapon();
         enemy.ragdoll.ActivateRagdoll();
@@ -27,7 +28,13 @@ public class EnemyDeathState : EnemyState
         enemy.GetComponentInChildren<Animator>().enabled = false;
         enemy.GetComponent<EnemySensor>().enabled = false;
 
-        OnDeath?.Invoke(); // Fire event
+        var pooled = enemy.GetComponent<EnemyPooled>();
+        EnemyCorpseTracker.Register(enemy.gameObject);
+        OnDeath?.Invoke();
+        if (pooled != null)
+        {
+            pooled.OnDeath();
+        }
     }
 
     public void Update(Enemy enemy)

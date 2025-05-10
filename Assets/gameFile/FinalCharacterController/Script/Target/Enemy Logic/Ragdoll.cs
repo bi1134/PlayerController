@@ -53,6 +53,16 @@ public class Ragdoll : MonoBehaviour
         }
     }
 
+    public void EnableCollider()
+    {
+        foreach (Rigidbody rb in rigidbodies)
+        {
+            Collider col = rb.GetComponent<Collider>();
+            if (col != null)
+                col.enabled = true;
+        }
+    }
+
     public void DisableCollidersDelayed(float delay)
     {
         StartCoroutine(DisableAfterDelay(delay));

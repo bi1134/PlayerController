@@ -27,7 +27,7 @@ public class Chest : MonoBehaviour, IInteractable
     {
         InventoryItemData item = lootTable.GetRandomItem();
 
-        GameObject orb = Instantiate(lootOrbPrefab, itemHolder.position, Quaternion.identity);
+        GameObject orb = ObjectPooler.SpawnFromPool("ItemOrb", itemHolder.position, Quaternion.identity);
         var orbHandler = orb.GetComponent<ItemDropHandler>();
         if (orbHandler != null)
         {

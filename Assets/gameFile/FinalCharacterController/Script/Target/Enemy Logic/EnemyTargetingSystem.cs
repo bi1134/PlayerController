@@ -101,5 +101,8 @@ public class EnemyTargetingSystem : MonoBehaviour
         }
     }
 
-  
+    public void InjectMemory(GameObject target)
+    {
+        memory.RefreshMemory(gameObject, target);
+    }
 }

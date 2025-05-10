@@ -12,9 +12,12 @@ public class EnemyMemory
     }
 
     public GameObject gameObject;
+    public HealthSystem health;
 
     public Vector3 position, direction;
     public float distance, angle, lastSeen, score;
+
+    public bool IsDead => health == null || health.IsDead();
 }
 
 public class EnemySensorMemory 
@@ -41,6 +44,7 @@ public class EnemySensorMemory
     {
         EnemyMemory memory = FetchMemory(target);
         memory.gameObject = target;
+        memory.health ??= target.GetComponent<HealthSystem>();
         memory.position = target.transform.position;
         memory.direction = target.transform.position - enemy.transform.position;
         memory.distance = memory.direction.magnitude;
@@ -72,7 +76,7 @@ public class EnemySensorMemory
                 return true;
 
             var health = m.gameObject.GetComponent<HealthSystem>();
-            return health == null || health.IsDead();
+            return m.IsDead;
         });
     }
 }

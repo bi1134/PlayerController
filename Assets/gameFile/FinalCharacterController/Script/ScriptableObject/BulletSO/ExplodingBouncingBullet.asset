@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletType: 1
   maxBounces: 100
-  maxLifeTime: 3
+  maxLifeTime: 1.5
   bulletDrop: 9
   explosionRadius: 5
   explosionForce: 0.0001

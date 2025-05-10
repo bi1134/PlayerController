@@ -267,20 +267,28 @@ public class ActiveWeapon : MonoBehaviour
     private IEnumerator ActivateWeapon(int index)
     {
         var weapon = GetWeaponIndex(index);
-        if (weapon)
+        if (weapon != null)
         {
-            if (playerActionInput.attackPressed)
+            if (playerActionInput != null && playerActionInput.attackPressed)
             {
+                if (mouseWorldPosition == null)
+                    Debug.LogWarning("Mouse world position is null!");
+
                 weapon.StartFiring(mouseWorldPosition);
             }
+
             string slotNumber = (weapon.inventoryData.ID == inventoryHolder.weaponSlot1.ID) ? "1" : "2";
-            //set holster state to false and play the animation
             rigController.SetBool("isHolster", false);
             rigController.Play("Equip" + weapon.weaponProperties.weaponName + slotNumber);
+
             do
             {
                 yield return new WaitForEndOfFrame();
             } while (rigController.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
+        }
+        else
+        {
+            Debug.LogWarning("Weapon is null in ActivateWeapon()");
         }
     }
 
@@ -455,6 +463,13 @@ public class ActiveWeapon : MonoBehaviour
     private IEnumerator DelayedPickupSpawn(GameObject weaponGO, InventoryItemData itemData)
     {
         yield return Helpers.GetWaitForSecond(2.5f);
+
+        var rb = weaponGO.gameObject.GetComponent<Rigidbody>();
+        if (rb == null) rb = weaponGO.gameObject.AddComponent<Rigidbody>();
+
+        var collider = weaponGO.gameObject.GetComponent<Collider>();
+        if (collider == null) collider = weaponGO.gameObject.AddComponent<BoxCollider>();
+        collider.enabled = false;
 
         // Spawn ItemPickup in the same position
         Vector3 dropPosition = weaponGO.transform.position;

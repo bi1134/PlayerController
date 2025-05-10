@@ -95,7 +95,6 @@ public class PlayerHUD : MonoBehaviour
     private void OnEnable()
     {
         InventoryHolder.OnWeaponInventoryChanged += DisplayWeaponInventory;
-        Debug.Log("Player Canvas ENABLED", gameObject);
     }
 
     private void OnDisable()

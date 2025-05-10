@@ -69,8 +69,32 @@ public static class ObjectPooler
         }
 
         GameObject objectToSpawn = objectPool.Dequeue();
+        if (poolPrefabs[tag].TryGetComponent<UnityEngine.AI.NavMeshAgent>(out _))
+        {
+            if (UnityEngine.AI.NavMesh.SamplePosition(position, out var hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
+            {
+                position = hit.position;
+            }
+            else
+            {
+                Debug.LogWarning("Spawn position not on NavMesh. Skipping spawn.");
+                poolDictionary[tag].Enqueue(objectToSpawn);
+                return null;
+            }
+
+            // Make sure NavMeshAgent is off before moving
+            var agent = objectToSpawn.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null) agent.enabled = false;
+        }
+
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
+
+        if (objectToSpawn.TryGetComponent<UnityEngine.AI.NavMeshAgent>(out var nav))
+        {
+            nav.enabled = true; // Enable agent *after* snapping to navmesh
+        }
+
         objectToSpawn.SetActive(true);
 
         // Call OnObjectSpawn() if the object implements IPooledObject
@@ -97,7 +121,7 @@ public static class ObjectPooler
 
         // Reset Rigidbody
         Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null)
+        if (rb != null && !rb.isKinematic)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -114,6 +138,16 @@ public static class ObjectPooler
         poolDictionary[tag].Enqueue(obj);
     }
 
+    public static bool PoolExists(string tag)
+    {
+        return poolDictionary.ContainsKey(tag);
+    }
+
+    public static int PoolCount(string tag)
+    {
+        if (!poolDictionary.ContainsKey(tag)) return 0;
+        return poolDictionary[tag].Count;
+    }
 
 
     /// <summary>
@@ -121,11 +155,13 @@ public static class ObjectPooler
     /// </summary>
     private static void ExpandPool(string tag)
     {
+
         if (!poolPrefabs.ContainsKey(tag))
         {
             throw new System.Exception($"[ObjectPooler] ERROR: Cannot expand. No prefab found for tag '{tag}'!");
         }
 
+        Debug.Log($"[ObjectPooler] Expanding pool '{tag}' (Current count: {poolDictionary[tag].Count})");
         GameObject obj = Object.Instantiate(poolPrefabs[tag]);
         obj.SetActive(false);
 
