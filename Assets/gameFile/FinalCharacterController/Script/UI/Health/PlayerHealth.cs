@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -8,7 +9,10 @@ public class PlayerHealth : HealthSystem
     private ActiveWeapon weapons;
     private PlayerController player;
     private VolumeProfile postProcessing;
-    //private CameraManager cameraManager;
+    private Vignette vignette;
+
+    [SerializeField] private float maxIntensity = 0.5f;
+    [SerializeField] private float fadeOutTime = 1.5f;
 
     protected override void OnStart()
     {
@@ -16,8 +20,38 @@ public class PlayerHealth : HealthSystem
         weapons = GetComponent<ActiveWeapon>();
         player = GetComponent<PlayerController>();
         postProcessing = GetComponentInChildren<Volume>().profile;
-        //cameraManager = FindFirstObjectByType<CameraManager>();
+
+        postProcessing.TryGet(out vignette);
+        if (vignette != null)
+        {
+            vignette.intensity.value = 0f;
+        }
     }
+
+    protected override void OnDamage(Vector3 direction)
+    {
+        if (!postProcessing.TryGet(out Vignette vignette)) return;
+
+        vignette.intensity.value = maxIntensity;
+        PoolRunner.Instance.RunCoroutine(FadeOutVignette(vignette));
+    }
+
+    private IEnumerator FadeOutVignette(Vignette vignette)
+    {
+        float timer = 0f;
+        float start = vignette.intensity.value;
+
+        while (timer < fadeOutTime)
+        {
+            timer += Time.deltaTime;
+            float t = timer / fadeOutTime;
+            vignette.intensity.value = Mathf.Lerp(start, 0f, t);
+            yield return null;
+        }
+
+        vignette.intensity.value = 0f;
+    }
+
     protected override void OnDeath(Vector3 direction)
     {
         ragdoll.ActivateRagdoll();
@@ -26,22 +60,11 @@ public class PlayerHealth : HealthSystem
         weapons.DropWeapon();
         weapons.DisableAiming();
         player.DisablePlayerLogic();
-        //cameraManager.EnableKillCam();
         GameHandler handler = FindFirstObjectByType<GameHandler>();
         if (handler != null)
         {
             handler.TriggerGameOver();
         }
     }
-    protected override void OnDamage(Vector3 direction)
-    {
-        Vignette vignette;
-        if (postProcessing.TryGet(out vignette))
-        {
-            float percent = 1.0f - (currentHealth / maxHealth);
-            vignette.intensity.value = percent * 0.5f;
-        }
-    }
 
-   
 }

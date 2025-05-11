@@ -11,6 +11,7 @@ public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapAct
     [SerializeField] private float runZoom = 4.5f;
     [SerializeField] private float dashZoom = 5.5f;
     [SerializeField] private float zoomLerpSpeed = 5f;
+    [SerializeField] private float dashLerpSpeed = 10f;
 
     private PlayerState playerState;
 
@@ -53,14 +54,15 @@ public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapAct
     #endregion
 
     #region Update Logic
-    private void Update()
+    private void LateUpdate()
     {
         float targetZoom = idleZoom;
-        var newLerpSpeed = zoomLerpSpeed;
+        float lerpSpeed = zoomLerpSpeed;
 
         if (playerState.currentPlayerDashingState == PlayerDashState.Dashing)
         {
             targetZoom = dashZoom;
+            lerpSpeed = dashLerpSpeed;
         }
         else
         {
@@ -70,7 +72,6 @@ public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapAct
                 case PlayerMovementState.Jumping:
                 case PlayerMovementState.Falling:
                     targetZoom = runZoom;
-                    zoomLerpSpeed = newLerpSpeed * 2;
                     break;
                 case PlayerMovementState.Running:
                 case PlayerMovementState.Idling:
@@ -79,12 +80,12 @@ public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapAct
                     break;
             }
         }
-        thirdPersonFollow.CameraDistance = Mathf.Lerp(thirdPersonFollow.CameraDistance, targetZoom, Time.deltaTime * zoomLerpSpeed);
-        zoomLerpSpeed = newLerpSpeed;
-    }
 
-    private void LateUpdate()
-    {
+        thirdPersonFollow.CameraDistance = Mathf.Lerp(
+            thirdPersonFollow.CameraDistance,
+            targetZoom,
+            Time.deltaTime * lerpSpeed
+        );
     }
 
     #endregion

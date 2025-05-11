@@ -98,7 +98,7 @@ public class HealthSystem : MonoBehaviour
         ApplyHitBlinkEffect(); // Check if this runs
 
         StopAllCoroutines();
-        StartCoroutine(LerpBackToOriginalMaterials());
+        PoolRunner.Instance.RunCoroutine(LerpBackToOriginalMaterials());
     }
 
 

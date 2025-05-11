@@ -46,6 +46,15 @@ public class PlayerController : MonoBehaviour
     [Header("Environmental Details")]
     [SerializeField] private LayerMask groundLayers;
 
+    [Header("Fall Damage Settings")]
+    [SerializeField] private float minFallHeight = 8f;
+    [SerializeField] private float maxFallHeight = 20f;
+    [SerializeField] private float damagePerMeter = 5f;
+    [SerializeField] private float overflowMultiplier = 0.25f; // 25% scaling for overflow damage
+
+    private bool isFalling = false;
+    private bool fallDamageApplied = false;
+
     //get components stuff
     private PlayerLocomotionInput playerLocomotionInput;
     private PlayerState playerState;
@@ -58,6 +67,7 @@ public class PlayerController : MonoBehaviour
     //rotate and jump
     private bool jumpLastFrame = false;
     private bool isRotatingClockwise = false;
+    private float fallStartY = 0f;
     private float verticalVelocity = 0f;
     private float rotatingToTargetTimer = 0f;
     private float antiBump;
@@ -127,18 +137,20 @@ public class PlayerController : MonoBehaviour
         //playerDashing
         if (playerActionInput.dashPressed)
         {
+            isFalling = false;
             desiredMoveSpeed = dashForce;
             speedChangeFactor = dashSpeedChangeFactor;
         }
 
-        //control airborn state
         if (!isGrounded || jumpLastFrame)
         {
             playerStats.TriggerEffects(EffectTrigger.OnJump);
+
             if (characterController.velocity.y > 0f)
             {
                 playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
                 jumpLastFrame = false;
+                isFalling = false;
                 characterController.stepOffset = 0f;
                 desiredMoveSpeed = desiredMoveSpeed < sprintSpeed ? runSpeed : sprintSpeed;
             }
@@ -147,10 +159,43 @@ public class PlayerController : MonoBehaviour
                 playerState.SetPlayerMovementState(PlayerMovementState.Falling);
                 jumpLastFrame = false;
                 characterController.stepOffset = 0f;
+
+                if (!isFalling)
+                {
+                    isFalling = true;
+                    fallDamageApplied = false;
+                    fallStartY = transform.position.y;
+                }
             }
         }
         else
         {
+            if (isFalling && !fallDamageApplied)
+            {
+                float fallDistance = fallStartY - transform.position.y;
+
+                if (fallDistance > minFallHeight)
+                {
+                    float cappedFall = Mathf.Min(fallDistance, maxFallHeight);
+                    float baseDamage = (cappedFall - minFallHeight) * damagePerMeter;
+
+                    float overflow = Mathf.Max(0, fallDistance - maxFallHeight);
+                    float overflowDamage = overflow * damagePerMeter * overflowMultiplier;
+
+                    int totalDamage = Mathf.RoundToInt(baseDamage + overflowDamage);
+
+                    PlayerHealth health = GetComponent<PlayerHealth>();
+                    if (health != null)
+                    {
+                        health.TakeDamage(totalDamage, Vector3.down);
+                        Debug.Log($"Fall damage applied: {totalDamage} (base: {baseDamage}, overflow: {overflowDamage})");
+                    }
+                }
+
+                fallDamageApplied = true;
+                isFalling = false;
+            }
+
             characterController.stepOffset = stepOffset;
         }
 
@@ -250,7 +295,6 @@ public class PlayerController : MonoBehaviour
     {
         // Determine dash direction based on player input
         Vector3 dashDirection = GetCameraDirection();
-
         if (dashDirection == Vector3.zero)
         {
             dashDirection = transform.forward; // Default to forward dash if no input
