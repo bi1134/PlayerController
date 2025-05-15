@@ -37,7 +37,7 @@ public class HealthBarUI : MonoBehaviour
         barImage.fillAmount = e.healthNormalized;
         if (healthText)
         {
-            healthText.text = healthSystem.currentHealth.ToString() + "/" + healthSystem.maxHealth.ToString();
+            healthText.text = healthSystem.currentHealth.ToString() + " / " + healthSystem.maxHealth.ToString();
         }
         if (barImage.fillAmount <= 0)
         {

@@ -110,7 +110,7 @@ public class Enemy : MonoBehaviour
                 health.TakeDamage(enemyStats.baseStats.baseDamage, direction);
 
                 canMeleeAttack = false;
-                StartCoroutine(ResetMeleeCooldown());
+                PoolRunner.Instance.RunCoroutine(ResetMeleeCooldown());
             }
         }
     }
@@ -147,11 +147,14 @@ public class Enemy : MonoBehaviour
         if (canMeleeAttack)
         {
             meleeHitbox.enabled = true;
+            PoolRunner.Instance.RunCoroutine(DisableMeleeHitbox());
         }
     }
 
-    public void DisableMeleeHitbox()
+    public IEnumerator DisableMeleeHitbox()
     {
+        yield return Helpers.GetWaitForSecond(0.1f);
+
         meleeHitbox.enabled = false;
     }
 

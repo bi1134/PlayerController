@@ -28,6 +28,7 @@ public class PlayerStats : MonoBehaviour
         {
             playerHealth.maxHealth = baseStats.maxHealth;
             playerHealth.currentHealth = baseStats.maxHealth; // full heal on start
+            playerHealth.TriggerHealthChanged();
         }
     }
 

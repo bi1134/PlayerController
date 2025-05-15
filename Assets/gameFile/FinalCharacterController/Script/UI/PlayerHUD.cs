@@ -60,7 +60,7 @@ public class PlayerHUD : MonoBehaviour
             timer += Time.deltaTime;
             int minutes = Mathf.FloorToInt(timer / 60);
             int seconds = Mathf.FloorToInt(timer % 60);
-            timerDisplay.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            timerDisplay.text = string.Format("{0:00} : {1:00}", minutes, seconds);
         }
 
         if (playerInput == null || inventoryHolder == null || isGameOver) return;
@@ -111,6 +111,6 @@ public class PlayerHUD : MonoBehaviour
     }
     public void UpdateAmmo(int bulletsLeft, int magazineSize, int bulletsPerTap)
     {
-        ammoDisplay.text = $"{bulletsLeft / bulletsPerTap} / {magazineSize / bulletsPerTap}";
+        ammoDisplay.text = $"{bulletsLeft / bulletsPerTap}  /  {magazineSize / bulletsPerTap}";
     }
 }

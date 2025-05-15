@@ -22,6 +22,8 @@ public class EnemyWeapon : MonoBehaviour
     private float fireCooldown = 0f;
     public float enemyFireRate = 1f; // shots per second
 
+    [SerializeField] private GameObject itemPickupPrefab;
+
     #region Start Up
     private void Start()
     {
@@ -48,7 +50,6 @@ public class EnemyWeapon : MonoBehaviour
                 target = currentTarget.position + weaponIK.targetOffset;
                 target += Random.insideUnitSphere * inaccuracy;
 
-                currentWeapon.StartFiring(target);
                 currentWeapon.UpdateFiring(Time.deltaTime, target, true);
                 fireCooldown = 1f / enemyFireRate;
             }
@@ -172,6 +173,8 @@ public class EnemyWeapon : MonoBehaviour
     {
         if(currentWeapon)
         {
+            InventoryItemData droppedItem = currentWeapon.inventoryData;
+
             currentWeapon.OnReloadStarted -= HandleEnemyReloadStart;
             weaponIK.weight = 0.0f;
             weaponIK.SetWeight(0.0f);
@@ -179,7 +182,39 @@ public class EnemyWeapon : MonoBehaviour
             currentWeapon.transform.SetParent(null);
             currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
             currentWeapon.gameObject.AddComponent<Rigidbody>();
-            currentWeapon = null;
+            PoolRunner.Instance.RunCoroutine(DelayedPickupSpawn(currentWeapon.gameObject, droppedItem));
+        }
+    }
+
+    private IEnumerator DelayedPickupSpawn(GameObject weaponGO, InventoryItemData itemData)
+    {
+        yield return Helpers.GetWaitForSecond(2.5f);
+
+        var rb = weaponGO.gameObject.GetComponent<Rigidbody>();
+        if (rb == null) rb = weaponGO.gameObject.AddComponent<Rigidbody>();
+
+        var collider = weaponGO.gameObject.GetComponent<Collider>();
+        if (collider == null) collider = weaponGO.gameObject.AddComponent<BoxCollider>();
+        collider.enabled = false;
+
+        // Spawn ItemPickup in the same position
+        Vector3 dropPosition = weaponGO.transform.position;
+        Quaternion dropRotation = weaponGO.transform.rotation;
+
+        Destroy(weaponGO); // Clean up weapon
+
+        GameObject pickup = Instantiate(itemPickupPrefab, dropPosition, dropRotation);
+
+        if (pickup == null)
+        {
+            Debug.LogError("ItemPickup prefab not found in Resources!");
+            yield break;
+        }
+
+        var pickupComponent = pickup.GetComponent<ItemPickup>();
+        if (pickupComponent != null)
+        {
+            pickupComponent.SetItemData(itemData);
         }
     }
 

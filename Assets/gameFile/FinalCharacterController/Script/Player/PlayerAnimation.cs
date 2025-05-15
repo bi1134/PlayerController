@@ -27,7 +27,6 @@ public class PlayerAnimation : MonoBehaviour
     private static int rotationMismatchHash = Animator.StringToHash("rotationMismatch");
     
     //player action
-    private static int isAttackingHash = Animator.StringToHash("isAttacking");
     private static int isPlayingActionHash = Animator.StringToHash("isPlayingAction");
     private int[] actionHashes;
     private static int isCombatHash = Animator.StringToHash("isCombat");
@@ -81,7 +80,6 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetBool(isJumpingHash, isJumping);
         animator.SetBool(isFallingHash, isFalling);
         animator.SetBool(isRotatingToTargetHash, playerController.isRotatingToTarget);
-        animator.SetBool(isAttackingHash, playerActionInput.attackAnimation);
         animator.SetBool(isPlayingActionHash, isPlayingAction);
         animator.SetBool(isCombatHash, isInCombat);
         animator.SetBool(isDashingHash, isDashing);

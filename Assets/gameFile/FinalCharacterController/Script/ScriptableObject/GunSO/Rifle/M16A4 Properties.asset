@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a2d97092e3732a40ad0f0651b3e00fc, type: 3}
-  m_Name: Fire Gun
+  m_Name: M16A4 Properties
   m_EditorClassIdentifier: 
   weaponName: 1
-  damage: 10
-  fireRate: 10
+  damage: 28
+  fireRate: 9
   reloadTime: 2
-  magazineSize: 25
-  bulletsPerTap: 1
-  bulletSpeed: 50
-  bulletLifetime: 0
-  spread: 0
-  upwardForce: 0
+  magazineSize: 30
+  bulletsPerTap: 3
+  bulletSpeed: 210
+  bulletLifetime: 3
+  spread: 0.05
+  upwardForce: 0.02

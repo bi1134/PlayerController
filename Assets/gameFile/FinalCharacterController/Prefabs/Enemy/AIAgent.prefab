@@ -2821,7 +2821,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inaccuracy: 0
-  enemyFireRate: 1
+  enemyFireRate: 0.5
+  itemPickupPrefab: {fileID: 7495234975541379242, guid: 907e7cce25bbb934c88982dac595d2b6, type: 3}
 --- !u!114 &356823622682801069
 MonoBehaviour:
   m_ObjectHideFlags: 0

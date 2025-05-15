@@ -10,6 +10,12 @@ public class WeaponProjectile : WeaponBase
     [SerializeField] public ParticleSystem muzzleFlash;
     [SerializeField] private BulletPropertiesSO bulletProperties;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip shootClip;
+    [SerializeField] private AudioClip reloadClip;
+    [SerializeField] private Vector2 pitchRange = new Vector2(0.95f, 1.05f);
+
     //bullet force
     private int bulletsLeft, bulletsShot;
 
@@ -19,6 +25,9 @@ public class WeaponProjectile : WeaponBase
 
     //bools
     public bool readyToShoot = true;
+
+    //floats
+    private float fireCooldown;
 
 
     //graphics
@@ -53,6 +62,10 @@ public class WeaponProjectile : WeaponBase
     private void Update()
     {
         timeBetweenShooting = 1f / weaponProperties.fireRate; //calculate time between shots
+
+
+        if (fireCooldown > 0f)
+            fireCooldown -= Time.deltaTime;
     }
 
     #endregion
@@ -70,31 +83,36 @@ public class WeaponProjectile : WeaponBase
             return;
         }
 
-        if (reloading) return; //if reloading, don't shoot
+        if (reloading) return;
 
-        if (!allowButtonHold && isFiring) return;
+        // NEW: For button hold, use UpdateFiring instead
+        if (allowButtonHold)
+        {
+            isFiring = true;
+            return;
+        }
+
+        // for semi-auto or burst weapons
+        if (!readyToShoot) return;
 
         lastAimPosition = aimPosition;
         isFiring = true;
         readyToShoot = false;
-        bulletsShot = 0; //reset bullets shot
-
+        fireCooldown = timeBetweenShooting;
+        bulletsShot = 0;
         FireProjectileBullet(aimPosition);
-
-        // Set cooldown to allow shooting again
-        if (allowInvoke)
-        {
-            Invoke(nameof(ResetShot), timeBetweenShooting);
-            allowInvoke = false;
-        }
+        Invoke(nameof(ResetShot), timeBetweenShooting);
     }
-
 
     public override void UpdateFiring(float deltaTime, Vector3 aimPosition, bool isShooting)
     {
-        if (reloading || !isFiring || (!allowButtonHold && !isShooting)) return;
+        if (!isFiring || reloading || fireCooldown > 0f || !readyToShoot) return;
 
-        if (!readyToShoot) return;
+        if (!allowButtonHold || !isShooting)
+        {
+            StopFiring();
+            return;
+        }
 
         if (bulletsLeft <= 0)
         {
@@ -104,16 +122,12 @@ public class WeaponProjectile : WeaponBase
         }
 
         lastAimPosition = aimPosition;
-        readyToShoot = false;
         bulletsShot = 0;
+        readyToShoot = false;
 
         FireProjectileBullet(aimPosition);
-
-        if (allowInvoke)
-        {
-            Invoke(nameof(ResetShot), timeBetweenShooting);
-            allowInvoke = false;
-        }
+        fireCooldown = timeBetweenShooting;
+        Invoke(nameof(ResetShot), timeBetweenShooting);
     }
 
     public override void Initialize()
@@ -128,7 +142,6 @@ public class WeaponProjectile : WeaponBase
     private void FireProjectileBullet(Vector3 aimPosition)
     {
         if (bulletSpawnPosition == null || bulletsLeft <= 0) return;
-
         Vector3 directionWithoutSpread = (aimPosition - bulletSpawnPosition.position).normalized;
 
         float x = Random.Range(-weaponProperties.spread, weaponProperties.spread);
@@ -140,6 +153,7 @@ public class WeaponProjectile : WeaponBase
         GameObject bulletObject = ObjectPooler.SpawnFromPool(bulletTag, bulletSpawnPosition.position, Quaternion.LookRotation(directionWithSpread.normalized));
         if (bulletObject != null)
         {
+            PlayShootSound();
             BulletProjectile bullet = bulletObject.GetComponent<BulletProjectile>();
             bullet.settings = bulletProperties;
             bullet.Initialize(
@@ -169,6 +183,20 @@ public class WeaponProjectile : WeaponBase
         }
     }
 
+    private void PlayShootSound()
+    {
+        if (shootClip == null || audioSource == null) return;
+        audioSource.pitch = Random.Range(pitchRange.x, pitchRange.y);
+        audioSource.PlayOneShot(shootClip);
+    }
+
+    private void PlayReloadSound()
+    {
+        if (reloadClip == null || audioSource == null) return;
+        audioSource.pitch = Random.Range(pitchRange.x, pitchRange.y);
+        audioSource.PlayOneShot(reloadClip);
+    }
+
     public void ShootNextBullet()
     {
         FireProjectileBullet(lastAimPosition);
@@ -177,6 +205,7 @@ public class WeaponProjectile : WeaponBase
     public override void StopFiring()
     {
         isFiring = false;
+        readyToShoot = true;
     }
 
     private void ResetShot()
@@ -188,7 +217,7 @@ public class WeaponProjectile : WeaponBase
     public override void Reload()
     {
         if (reloading || (bulletsLeft / weaponProperties.bulletsPerTap) >= (weaponProperties.magazineSize / weaponProperties.bulletsPerTap)) return;
-
+        PlayReloadSound();
         base.Reload();
 
         Invoke(nameof(ReloadFinished), weaponProperties.reloadTime);

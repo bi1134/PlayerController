@@ -377,6 +377,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MeleeAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""abcf3ba2-4644-49ee-aab0-30d074806b5a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -471,11 +480,22 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d2f60a8d-64b1-49f6-837b-2a6c9c020793"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""DropWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c5f57ed4-e179-48e8-923a-87ddc16848be"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MeleeAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -503,6 +523,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerActionMap_Reload = m_PlayerActionMap.FindAction("Reload", throwIfNotFound: true);
         m_PlayerActionMap_Tab = m_PlayerActionMap.FindAction("Tab", throwIfNotFound: true);
         m_PlayerActionMap_DropWeapon = m_PlayerActionMap.FindAction("DropWeapon", throwIfNotFound: true);
+        m_PlayerActionMap_MeleeAttack = m_PlayerActionMap.FindAction("MeleeAttack", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -818,6 +839,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActionMap_Reload;
     private readonly InputAction m_PlayerActionMap_Tab;
     private readonly InputAction m_PlayerActionMap_DropWeapon;
+    private readonly InputAction m_PlayerActionMap_MeleeAttack;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerActionMap".
     /// </summary>
@@ -861,6 +883,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerActionMap/DropWeapon".
         /// </summary>
         public InputAction @DropWeapon => m_Wrapper.m_PlayerActionMap_DropWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActionMap/MeleeAttack".
+        /// </summary>
+        public InputAction @MeleeAttack => m_Wrapper.m_PlayerActionMap_MeleeAttack;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -911,6 +937,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @DropWeapon.started += instance.OnDropWeapon;
             @DropWeapon.performed += instance.OnDropWeapon;
             @DropWeapon.canceled += instance.OnDropWeapon;
+            @MeleeAttack.started += instance.OnMeleeAttack;
+            @MeleeAttack.performed += instance.OnMeleeAttack;
+            @MeleeAttack.canceled += instance.OnMeleeAttack;
         }
 
         /// <summary>
@@ -946,6 +975,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @DropWeapon.started -= instance.OnDropWeapon;
             @DropWeapon.performed -= instance.OnDropWeapon;
             @DropWeapon.canceled -= instance.OnDropWeapon;
+            @MeleeAttack.started -= instance.OnMeleeAttack;
+            @MeleeAttack.performed -= instance.OnMeleeAttack;
+            @MeleeAttack.canceled -= instance.OnMeleeAttack;
         }
 
         /// <summary>
@@ -1093,5 +1125,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDropWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MeleeAttack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMeleeAttack(InputAction.CallbackContext context);
     }
 }

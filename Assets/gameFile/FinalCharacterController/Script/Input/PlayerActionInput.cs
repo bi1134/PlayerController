@@ -21,6 +21,11 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     public float dashDuration = 0.25f;
     private float dashDurationTimer = 0f;
 
+    [Header("Drop Weapon")]
+    private float weaponDropHoldTimer = 0f;
+    [SerializeField] private float dropHoldThreshold = 2f;
+    public bool canDropWeapon { get; private set; } = false;
+
     //aim rig
     private float aimRigWeight;
 
@@ -33,6 +38,7 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
     public bool reloadPressed { get; private set; }
     public bool tabPressed { get; private set; }
     public bool weaponDropPressed { get; private set; }
+    public bool meleeAttackPressed { get; private set; }
     public float weaponButton { get; private set; }
 
     //get component stuff
@@ -84,7 +90,14 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
         OutOfCombatState();
         DashCooldown();
 
-        //aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 20f);
+        if (weaponDropPressed)
+        {
+            weaponDropHoldTimer += Time.deltaTime;
+            if (weaponDropHoldTimer >= dropHoldThreshold)
+            {
+                canDropWeapon = true;
+            }
+        }
     }
 
     private void LateUpdate()
@@ -238,13 +251,27 @@ public class PlayerActionInput : MonoBehaviour, PlayerControls.IPlayerActionMapA
 
     public void OnDropWeapon(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.started)
         {
-            weaponDropPressed = true; // holding
+            weaponDropHoldTimer = 0f;
+            weaponDropPressed = true;
         }
         else if (context.canceled)
         {
-            weaponDropPressed = false; // released
+            weaponDropPressed = false;
+            canDropWeapon = false; // reset when released
+        }
+    }
+
+    public void OnMeleeAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            meleeAttackPressed = true; // holding
+        }
+        else if (context.canceled)
+        {
+            meleeAttackPressed = false; // released
         }
     }
 

@@ -291,6 +291,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MeleeAttack",
+                    "type": "Button",
+                    "id": "abcf3ba2-4644-49ee-aab0-30d074806b5a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -385,11 +394,22 @@
                 {
                     "name": "",
                     "id": "d2f60a8d-64b1-49f6-837b-2a6c9c020793",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/g",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "DropWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c5f57ed4-e179-48e8-923a-87ddc16848be",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MeleeAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

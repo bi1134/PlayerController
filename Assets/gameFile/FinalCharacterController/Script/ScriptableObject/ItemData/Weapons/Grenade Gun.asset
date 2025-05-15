@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
   m_Name: Grenade Gun
   m_EditorClassIdentifier: 
+  rarity: 2
   ID: 4
   ItemType: 2
-  ItemName: test un
-  Description: 'a test gun
+  ItemName: Grenade Launcher
+  Description: 'Gun shoot boom boom
 
 '
   Icon: {fileID: 0}

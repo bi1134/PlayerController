@@ -12,16 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c00dd2a6ed07954db32e1da9910f293, type: 3}
   m_Name: EnemyBaseStats
   m_EditorClassIdentifier: 
-  baseStats:
-  - statName: MaxHealth
-    baseValue: 100
-  - statName: BaseDamage
-    baseValue: 5
-  - statName: ExpDrop
-    baseValue: 20
-  - statName: Level
-    baseValue: 1
-  - statName: HealthScaleRate
-    baseValue: 1
-  - statName: DamageScaleRate
-    baseValue: 1
+  maxHealth: 35
+  baseDamage: 10
+  moveSpeed: 5
+  critChance: 0.1
+  level: 1
+  exp: 0

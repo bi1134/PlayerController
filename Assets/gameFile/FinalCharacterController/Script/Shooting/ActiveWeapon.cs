@@ -1,8 +1,4 @@
-using NUnit.Framework.Interfaces;
 using System.Collections;
-using Unity.Cinemachine;
-using UnityEditor;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -24,6 +20,13 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] private Transform rightGrip;
     [SerializeField] private Animator rigController;
 
+    [Header("Melee")]
+    public bool hasWeaponEquipped;
+    public bool canMeleeAttack = true;
+    public Collider meleeHitbox;
+    private float meleeCooldown = 1f;
+    private float meleeCooldownTimer = 0f;
+
     //references
     private PlayerActionInput playerActionInput;
     private WeaponBase[] equippedWeapon = new WeaponBase[4];
@@ -40,7 +43,7 @@ public class ActiveWeapon : MonoBehaviour
     //holster Weapon
     public bool isHolstered;
     private bool isSwitching = false;
-
+    private bool isDropping = false;
 
     #endregion
 
@@ -59,6 +62,9 @@ public class ActiveWeapon : MonoBehaviour
     {
         HandleAiming();
         HandleWeaponActions();
+
+        if (meleeCooldownTimer > 0f)
+            meleeCooldownTimer -= Time.deltaTime;
     }
     #endregion
 
@@ -66,6 +72,17 @@ public class ActiveWeapon : MonoBehaviour
     private void HandleWeaponActions()
     {
         WeaponBase weapon = GetWeaponIndex(activeWeaponIndex);
+
+        bool wantsMelee =
+        (playerActionInput.meleeAttackPressed && hasWeaponEquipped) ||
+        (playerActionInput.attackPressed && (!hasWeaponEquipped || !isHolstered));
+
+        if (wantsMelee && meleeCooldownTimer <= 0f)
+        {
+            MeleeAttack();
+            meleeCooldownTimer = meleeCooldown;
+            return; // skip other input this frame
+        }
 
         //if having weapon and NOT holstered (Im not putting the !before isholstered because its working mamamia)
         if (weapon && isHolstered)
@@ -83,6 +100,7 @@ public class ActiveWeapon : MonoBehaviour
                 weapon.StopFiring();
             }
         }
+
         if (playerActionInput.holsterPressed)
         {
             ToggleActiveWeapon();
@@ -96,23 +114,17 @@ public class ActiveWeapon : MonoBehaviour
             }
         }
 
-        if (playerActionInput.weaponButton == 1)
+        if (!isDropping && playerActionInput.weaponButton == 1 && inventoryHolder.weaponSlot1 != null)
         {
-            if (inventoryHolder.weaponSlot1)
-            {
-                isHolstered = true;
-                EquipWeaponFromInventory(inventoryHolder.weaponSlot1);
-            }
+            isHolstered = true;
+            EquipWeaponFromInventory(inventoryHolder.weaponSlot1);
         }
-        else if (playerActionInput.weaponButton == 2)
+        else if (!isDropping && playerActionInput.weaponButton == 2 && inventoryHolder.weaponSlot2 != null)
         {
-            if (inventoryHolder.weaponSlot2)
-            {
-                isHolstered = true;
-                EquipWeaponFromInventory(inventoryHolder.weaponSlot2);
-            }
+            isHolstered = true;
+            EquipWeaponFromInventory(inventoryHolder.weaponSlot2);
         }
-        if (playerActionInput.weaponDropPressed)
+        if (playerActionInput.canDropWeapon)
         {
             DropEquippedWeapon();
         }
@@ -136,6 +148,7 @@ public class ActiveWeapon : MonoBehaviour
             {
                 SetActiveWeapon((WeaponSlot)i);
                 equippedWeapon[i].UpdateAmmoUI();
+                hasWeaponEquipped = true;
                 return;
             }
         }
@@ -153,8 +166,8 @@ public class ActiveWeapon : MonoBehaviour
             Debug.LogError("Invalid weapon slot index: " + weaponSlotIndex);
             return;
         }
-
         // Instantiate and equip new weapon
+
         WeaponBase newWeapon = Instantiate(weaponData.Prefab, weaponSlots[weaponSlotIndex]).GetComponent<WeaponBase>();
         equippedWeapon[weaponSlotIndex] = newWeapon;
 
@@ -168,6 +181,42 @@ public class ActiveWeapon : MonoBehaviour
         SetActiveWeapon((WeaponSlot)weaponSlotIndex);
         newWeapon.Initialize();
         SubscribeReloadEvents(newWeapon);
+    }
+
+    private void MeleeAttack()
+    {
+        if (!hasWeaponEquipped)
+        {
+            rigController.SetTrigger("meleeAttack");
+        }
+        else
+        {
+            // Directly play a specific animation clip
+            WeaponBase weapon = GetActiveWeapon();
+            if (weapon != null)
+            {
+                string slotNumber = (weapon.inventoryData.ID == inventoryHolder.weaponSlot1.ID) ? "1" : "2";
+                string animName = "PunchAttackWith" + weapon.weaponProperties.weaponName + slotNumber;
+
+                rigController.Play(animName); 
+            }
+        }
+    }
+
+    public void EnableMeleeHitbox()
+    {
+        if (canMeleeAttack)
+        {
+            meleeHitbox.enabled = true;
+            PoolRunner.Instance.RunCoroutine(DisableMeleeHitbox());
+        }
+    }
+
+    public IEnumerator DisableMeleeHitbox()
+    {
+        yield return Helpers.GetWaitForSecond(0.1f);
+            
+        meleeHitbox.enabled = false;
     }
 
     public void EquipWeapon(WeaponBase newWeapon)
@@ -196,7 +245,7 @@ public class ActiveWeapon : MonoBehaviour
         SetActiveWeapon(newWeapon.weaponSlot);
         weapon.Initialize();
         isHolstered = true;
-
+        hasWeaponEquipped = true;
     }
 
     private void ToggleActiveWeapon()
@@ -253,10 +302,12 @@ public class ActiveWeapon : MonoBehaviour
         if (weapon)
         {
             weapon.CancelAllActions();
-            //set holster state to true and play the animation
             rigController.SetBool("isHolster", true);
+            hasWeaponEquipped = false;
 
-            //wait for holster animation to finish 
+            SpeedUpCurrentAnimation(0.25f); // e.g. compress animation to 0.25s
+            StartCoroutine(WaitAndResetSpeed(0.25f));
+
             do
             {
                 yield return new WaitForEndOfFrame();
@@ -269,22 +320,27 @@ public class ActiveWeapon : MonoBehaviour
         var weapon = GetWeaponIndex(index);
         if (weapon != null)
         {
-            if (playerActionInput != null && playerActionInput.attackPressed)
-            {
-                if (mouseWorldPosition == null)
-                    Debug.LogWarning("Mouse world position is null!");
+            weapon.StopFiring();
 
-                weapon.StartFiring(mouseWorldPosition);
-            }
+            yield return null;
 
-            string slotNumber = (weapon.inventoryData.ID == inventoryHolder.weaponSlot1.ID) ? "1" : "2";
+
+            string slotNumber = "1";
+            if (inventoryHolder.weaponSlot1 != null && weapon.inventoryData.ID == inventoryHolder.weaponSlot1.ID)
+                slotNumber = "1";
+            else if (inventoryHolder.weaponSlot2 != null && weapon.inventoryData.ID == inventoryHolder.weaponSlot2.ID)
+                slotNumber = "2";
+
             rigController.SetBool("isHolster", false);
+            hasWeaponEquipped = true;
+
             rigController.Play("Equip" + weapon.weaponProperties.weaponName + slotNumber);
 
             do
             {
                 yield return new WaitForEndOfFrame();
             } while (rigController.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
+
         }
         else
         {
@@ -310,7 +366,6 @@ public class ActiveWeapon : MonoBehaviour
     {
         rigController.SetTrigger("isReloading");
     }
-
 
     public WeaponBase GetActiveWeapon()
     {
@@ -357,6 +412,7 @@ public class ActiveWeapon : MonoBehaviour
                 }
 
                 equippedWeapon[i] = null;
+                hasWeaponEquipped = false;
             }
         }
 
@@ -406,7 +462,7 @@ public class ActiveWeapon : MonoBehaviour
     {
         if (data == null || data.ItemType != ItemType.Weapon)
             return;
-
+        hasWeaponEquipped = true;
         // Already equipped?
         for (int i = 0; i < equippedWeapon.Length; i++)
         {
@@ -420,12 +476,18 @@ public class ActiveWeapon : MonoBehaviour
 
     public void DropEquippedWeapon()
     {
+        if (isDropping || GetActiveWeapon() == null) return;
+
+        InventoryHolder.OnWeaponInventoryChanged?.Invoke(inventoryHolder.weaponInventory);
+
+        isDropping = true;
+
         WeaponBase currentWeapon = GetActiveWeapon();
         if (currentWeapon == null) return;
 
         int index = activeWeaponIndex;
-        UnsubscribeReloadEvents(currentWeapon);
 
+        UnsubscribeReloadEvents(currentWeapon);
         currentWeapon.CancelAllActions();
         currentWeapon.transform.SetParent(null);
 
@@ -450,14 +512,23 @@ public class ActiveWeapon : MonoBehaviour
         }
 
         equippedWeapon[index] = null;
-
+        isHolstered = false;
         // Play unarmed animation
         rigController.Play("CharacterUnarmed");
+        hasWeaponEquipped = false;
 
         InventoryHolder.OnWeaponInventoryChanged?.Invoke(inventoryHolder.weaponInventory);
+        PoolRunner.Instance.RunCoroutine(DelayedDropReset());
+
 
         // Convert into pickup
         StartCoroutine(DelayedPickupSpawn(currentWeapon.gameObject, droppedItem));
+    }
+
+    private IEnumerator DelayedDropReset()
+    { 
+        yield return Helpers.GetWaitForSecond(0.5f);
+        isDropping = false;
     }
 
     private IEnumerator DelayedPickupSpawn(GameObject weaponGO, InventoryItemData itemData)
@@ -519,6 +590,44 @@ public class ActiveWeapon : MonoBehaviour
     public void DisableAiming()
     {
         canAim = false;
+    }
+
+    private void SpeedUpCurrentAnimation(float targetDuration)
+    {
+        AnimatorStateInfo state = rigController.GetCurrentAnimatorStateInfo(0);
+        AnimationClip clip = GetCurrentAnimationClip(state);
+
+        if (clip != null)
+        {
+            float originalDuration = clip.length;
+            float newSpeed = originalDuration / targetDuration;
+            rigController.speed = newSpeed;
+        }
+        else
+        {
+            Debug.LogWarning("Failed to retrieve current animation clip.");
+        }
+    }
+
+    private IEnumerator WaitAndResetSpeed(float duration)
+    {
+        yield return Helpers.GetWaitForSecond(duration);
+        rigController.speed = 1f; // Reset to normal speed
+    }
+
+    private AnimationClip GetCurrentAnimationClip(AnimatorStateInfo state)
+    {
+        RuntimeAnimatorController controller = rigController.runtimeAnimatorController;
+
+        foreach (var clip in controller.animationClips)
+        {
+            if (state.IsName(clip.name))
+            {
+                return clip;
+            }
+        }
+
+        return null;
     }
     #endregion
 }

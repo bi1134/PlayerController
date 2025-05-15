@@ -6,9 +6,14 @@ public enum ItemType
     Active,
     Weapon
 }
+
+public enum Rarity { Common, Uncommon, Rare, Epic, Legendary }
+
 [CreateAssetMenu(fileName = "InventoryItemData", menuName = "Scriptable Objects/InventoryItemData")]
 public class InventoryItemData : ScriptableObject
 {
+    public Rarity rarity;
+
     public int ID;
     public ItemType ItemType; //determines the type of item
     public string ItemName;

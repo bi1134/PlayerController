@@ -5,12 +5,17 @@ using UnityEngine;
 public class ItemPickup : MonoBehaviour
 {
     public float PickupRadius = 1f;
+    public float pickUpTimer = 10f;
+    public float pickUpMaxTimer = 15f;
 
     public InventoryItemData ItemData;
 
     private SphereCollider itemCollider;
     public Transform outlineMesh;
     public Quaternion PickupRotation = Quaternion.identity;
+
+    private bool isPickedUp = false;
+    private bool isInitialized = false;
 
     private void Awake()
     {
@@ -21,90 +26,99 @@ public class ItemPickup : MonoBehaviour
 
     private void Start()
     {
-        if (ItemData != null && ItemData.Prefab != null && outlineMesh != null)
+    }
+
+    private void Update()
+    {
+        if (isPickedUp) return;
+
+        pickUpTimer -= Time.deltaTime;
+        if(pickUpTimer <= 0)
         {
-            GameObject fullItem = Instantiate(ItemData.Prefab);
-
-            // Find the "Item Mesh" inside the instantiated weapon
-            Transform itemMeshRoot = fullItem.transform.Find("ItemMesh");
-            if (itemMeshRoot == null)
-            {
-                Debug.LogWarning("ItemPickup: 'Item Mesh' not found in weapon prefab.");
-                Destroy(fullItem);
-                return;
-            }
-
-            // Combine all child meshes
-            Mesh combinedMesh = MeshCombiner.CombineMeshes(itemMeshRoot.gameObject);
-            if (combinedMesh == null)
-            {
-                Debug.LogWarning("ItemPickup: Could not combine mesh from 'Item Mesh'");
-                Destroy(fullItem);
-                return;
-            }
-
-            // Get a representative material from the first renderer
-            Material itemMaterial = null;
-            MeshRenderer firstRenderer = itemMeshRoot.GetComponentInChildren<MeshRenderer>();
-            if (firstRenderer != null && firstRenderer.sharedMaterials.Length > 0)
-            {
-                itemMaterial = firstRenderer.sharedMaterials[0];
-            }
-
-            // Apply mesh and materials to the outline object
-            MeshFilter mf = outlineMesh.GetComponent<MeshFilter>();
-            MeshRenderer mr = outlineMesh.GetComponent<MeshRenderer>();
-            if (mf != null) mf.mesh = combinedMesh;
-
-            if (mr != null && itemMaterial != null)
-            {
-                var originalOutlineMat = mr.sharedMaterials.Length > 0 ? mr.sharedMaterials[0] : null;
-                mr.materials = new Material[] { originalOutlineMat, itemMaterial };
-            }
-
-            Destroy(fullItem);
+            pickUpTimer = pickUpMaxTimer;
+            ObjectPooler.ReturnToPool("ItemPickup", gameObject);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-
-        //player pick up
+        if (isPickedUp) return;
+        if (!isInitialized || ItemData == null) return;
         var inventory = other.GetComponent<InventoryHolder>();
-        if (inventory) // if inventory = true
+        if (inventory)
         {
-            if (ItemData == null)
+            if (inventory.PickUpItem(ItemData))
             {
-                Debug.LogError("ItemPickup: itemData is NULL!");
+                isPickedUp = true;
+                ObjectPooler.ReturnToPool("ItemPickup", gameObject);
+                return;
+            }
+        }
+
+        var enemyWeapon = other.GetComponentInChildren<EnemyWeapon>();
+        if (enemyWeapon && !enemyWeapon.HasWeapon() && ItemData.ItemType == ItemType.Weapon)
+        {
+            var health = other.GetComponent<EnemyHealth>();
+            if (health != null && health.IsDead()) return;
+
+            isPickedUp = true;
+            WeaponBase newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponBase>();
+            if (newWeapon == null)
+            {
+                Debug.LogWarning("ItemPickup: Could not instantiate weapon from ItemData.");
                 return;
             }
 
-            bool pickedUp = inventory.PickUpItem(ItemData);
-            if (pickedUp)
-            {
-                ObjectPooler.ReturnToPool("ItemPickup", gameObject);
-            }
-
-        }
-
-        //enemy pick up
-        EnemyWeapon enemyWeapon = other.GetComponentInChildren<EnemyWeapon>();
-       
-        if (enemyWeapon && ItemData.ItemType == ItemType.Weapon)
-        {
-            if (enemyWeapon.HasWeapon()) return;
-
-            WeaponBase newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponBase>();
-
-            // Equip the weapon
             enemyWeapon.Equip(newWeapon);
-
-            ObjectPooler.ReturnToPool("ItemPickup", gameObject); //pool the pick up
+            ObjectPooler.ReturnToPool("ItemPickup", gameObject);
         }
     }
 
     public void SetItemData(InventoryItemData data)
     {
         ItemData = data;
+        isInitialized = true;
+        pickUpTimer = pickUpMaxTimer;
+
+        if (ItemData == null || ItemData.Prefab == null || outlineMesh == null)
+            return;
+
+        GameObject fullItem = Instantiate(ItemData.Prefab);
+
+        Transform itemMeshRoot = fullItem.transform.Find("ItemMesh");
+        if (itemMeshRoot == null)
+        {
+            Debug.LogWarning("ItemPickup: 'Item Mesh' not found in weapon prefab.");
+            Destroy(fullItem);
+            return;
+        }
+
+        Mesh combinedMesh = MeshCombiner.CombineMeshes(itemMeshRoot.gameObject);
+        if (combinedMesh == null)
+        {
+            Debug.LogWarning("ItemPickup: Could not combine mesh from 'Item Mesh'");
+            Destroy(fullItem);
+            return;
+        }
+
+        Material itemMaterial = null;
+        MeshRenderer firstRenderer = itemMeshRoot.GetComponentInChildren<MeshRenderer>();
+        if (firstRenderer != null && firstRenderer.sharedMaterials.Length > 0)
+        {
+            itemMaterial = firstRenderer.sharedMaterials[0];
+        }
+
+        MeshFilter mf = outlineMesh.GetComponent<MeshFilter>();
+        MeshRenderer mr = outlineMesh.GetComponent<MeshRenderer>();
+
+        if (mf != null) mf.mesh = combinedMesh;
+
+        if (mr != null && itemMaterial != null)
+        {
+            var originalOutlineMat = mr.sharedMaterials.Length > 0 ? mr.sharedMaterials[0] : null;
+            mr.materials = new Material[] { originalOutlineMat, itemMaterial };
+        }
+
+        Destroy(fullItem);
     }
 }
