@@ -5,7 +5,8 @@ public class Chest : MonoBehaviour, IInteractable
 {
 
     [SerializeField] private string prompt;
-    [SerializeField] private InteractionPromptUI interactionPromptUI;
+    [SerializeField] private string sidePromptText;
+    [SerializeField] private InteractionPromptPanelUI interactionPromptUI;
     [SerializeField] private GameObject lootOrbPrefab;
 
     [SerializeField] private Transform itemHolder;
@@ -22,6 +23,8 @@ public class Chest : MonoBehaviour, IInteractable
     }
 
     public string interactionPrompt => prompt;
+
+    public string sidePrompt => sidePromptText;
 
     void ShowItem()
     {
@@ -66,9 +69,8 @@ public class Chest : MonoBehaviour, IInteractable
         Debug.Log("Chest opened");
         animator.SetTrigger("Open");
         return true;
-    
     }
-    public InteractionPromptUI GetInteractionPromptUI()
+    public InteractionPromptPanelUI GetInteractionPromptUI()
     {
         return interactionPromptUI;
     }

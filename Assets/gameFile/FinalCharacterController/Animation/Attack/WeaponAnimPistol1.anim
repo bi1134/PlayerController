@@ -127,7 +127,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0, y: -0.071, z: -0.238}
+        value: {x: 0, y: -0.097, z: 0.045}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -137,8 +137,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.016666668
         value: {x: -0.004, y: -0.101, z: -0.186}
-        inSlope: {x: 0, y: -1.8000001, z: 0}
-        outSlope: {x: 0, y: -1.8000001, z: 0}
+        inSlope: {x: 0, y: -0.24000004, z: -7.545}
+        outSlope: {x: 0, y: -0.24000004, z: -7.545}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -1214,7 +1214,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.071
+        value: -0.097
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -1224,8 +1224,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.016666668
         value: -0.101
-        inSlope: -1.8000001
-        outSlope: -1.8000001
+        inSlope: -0.24000004
+        outSlope: -0.24000004
         tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
@@ -1253,7 +1253,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.238
+        value: 0.045
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -1263,8 +1263,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.016666668
         value: -0.186
-        inSlope: 0
-        outSlope: 0
+        inSlope: -7.545
+        outSlope: -7.545
         tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
@@ -2087,7 +2087,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: --------RigLayers--------/WeaponHolder/WeaponPivot
+    path: --------RigLayers--------/WeaponHolder/WeaponPivot/RefRightHandGrip
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2099,7 +2099,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: --------RigLayers--------/WeaponHolder/WeaponPivot
+    path: --------RigLayers--------/WeaponHolder/WeaponPivot/RefRightHandGrip
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2111,7 +2111,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: --------RigLayers--------/WeaponHolder/WeaponPivot
+    path: --------RigLayers--------/WeaponHolder/WeaponPivot/RefRightHandGrip
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2159,7 +2159,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: --------RigLayers--------/WeaponHolder/WeaponPivot/RefRightHandGrip
+    path: --------RigLayers--------/WeaponHolder/WeaponPivot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2171,7 +2171,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: --------RigLayers--------/WeaponHolder/WeaponPivot/RefRightHandGrip
+    path: --------RigLayers--------/WeaponHolder/WeaponPivot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2183,7 +2183,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: --------RigLayers--------/WeaponHolder/WeaponPivot/RefRightHandGrip
+    path: --------RigLayers--------/WeaponHolder/WeaponPivot
     classID: 4
     script: {fileID: 0}
     flags: 0

@@ -1,6 +1,6 @@
 using System;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [Serializable]
 public class HumanBone
@@ -114,6 +114,27 @@ public class WeaponIK : MonoBehaviour
     public void SetWeight(float value)
     {
         targetWeight = Mathf.Clamp01(value);
+    }
+
+    public void LerpToWeight(float target, float duration)
+    {
+        PoolRunner.Instance.RunCoroutine(LerpIKWeight(target, duration));
+    }
+
+    private IEnumerator LerpIKWeight(float target, float duration)
+    {
+        float start = weight;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            SetWeight(Mathf.Lerp(start, target, t));
+            yield return null;
+        }
+
+        SetWeight(target);
     }
     #endregion
 }

@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class CartonBox : MonoBehaviour, IInteractable
 {
-    [SerializeField] private InteractionPromptUI interactionPromptUI;
+    [SerializeField] private InteractionPromptPanelUI interactionPromptUI;
+
     [SerializeField] private GameHandler gameHandler;
     [SerializeField] private string prompt;
+    [SerializeField] private string sidePromptText;
 
     public string interactionPrompt => prompt;
+
+    public string sidePrompt => sidePromptText;
 
     private bool hasStarted = false;
     private float lastInteractTime;
@@ -29,7 +33,7 @@ public class CartonBox : MonoBehaviour, IInteractable
         return !hasStarted;
     }
 
-    public InteractionPromptUI GetInteractionPromptUI()
+    public InteractionPromptPanelUI GetInteractionPromptUI()
     {
         return interactionPromptUI;
     }

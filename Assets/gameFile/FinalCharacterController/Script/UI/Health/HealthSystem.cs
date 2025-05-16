@@ -81,8 +81,12 @@ public class HealthSystem : MonoBehaviour
         return currentHealth / maxHealth;
     }
 
-    public void TakeDamage(float amount, Vector3 direction)
+    public void TakeDamage(float amount, Vector3 direction, GameObject source = null)
     {
+        if (source != null && source.CompareTag("Enemy"))
+        {
+            amount = Mathf.RoundToInt(amount * 0.5f); 
+        }
         currentHealth -= amount;
         TriggerHealthChanged();
 

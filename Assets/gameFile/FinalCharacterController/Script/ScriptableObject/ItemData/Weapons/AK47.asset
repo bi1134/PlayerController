@@ -19,6 +19,6 @@ MonoBehaviour:
   Description: 'Hard-hitting but slow firerate gun
 
 '
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: f6e2fb20bcbf0eb47a30ce49ad12d535, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: d35a8d7fc7d643b469196cad039523dd, type: 3}

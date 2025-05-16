@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
   m_Name: G36C
   m_EditorClassIdentifier: 
+  rarity: 0
   ID: 6
   ItemType: 2
   ItemName: G36C
   Description: Low recoil gun, good for mid-range
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 88be24c23b990f140a4037d8250eb3e5, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: 608ba6230adcdf54489605934f89843f, type: 3}

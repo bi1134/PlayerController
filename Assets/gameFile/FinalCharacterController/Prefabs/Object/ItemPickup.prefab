@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 7651766374493470569}
   - component: {fileID: 3532972509188231598}
   - component: {fileID: 2818738776193661280}
+  - component: {fileID: 5755348481030619576}
   m_Layer: 10
   m_Name: ItemPickup
   m_TagString: Untagged
@@ -221,8 +222,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PickupRadius: 1
+  pickUpTimer: 10
+  pickUpMaxTimer: 10
   ItemData: {fileID: 0}
   outlineMesh: {fileID: 7425717200615639980}
+  PickupRotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!135 &3532972509188231598
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -257,6 +261,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
+--- !u!114 &5755348481030619576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7495234975541379242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00ee1ff5ad089a740b3ccc901aa59246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetRenderers:
+  - {fileID: 1886852680835836388}
+  outlineMaterial: {fileID: 2100000, guid: 3f0b16ff07358a141ae59e34ae98cb3b, type: 2}
 --- !u!1001 &2111886595717616082
 PrefabInstance:
   m_ObjectHideFlags: 0

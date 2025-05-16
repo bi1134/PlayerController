@@ -7,7 +7,7 @@ public class EnemyWeapon : MonoBehaviour
     //Components
     private Animator animator;
     private MeshSockets sockets;
-    private WeaponIK weaponIK;
+    public WeaponIK weaponIK;
 
     private WeaponBase currentWeapon;
     private Transform currentTarget;
@@ -62,10 +62,10 @@ public class EnemyWeapon : MonoBehaviour
     {
         isFiring = enabled;
 
-        if (!currentWeapon)
+        if (!currentWeapon || currentWeapon.reloading)
             return;
 
-        if(enabled)
+        if (enabled)
         {
             currentWeapon.StartFiring(target);
         }
@@ -96,7 +96,7 @@ public class EnemyWeapon : MonoBehaviour
         if (!currentWeapon || weaponActive)
             return;
 
-        StartCoroutine(EquipWeapon());
+        PoolRunner.Instance.RunCoroutine(EquipWeapon());
     }
 
     IEnumerator EquipWeapon()
@@ -130,7 +130,7 @@ public class EnemyWeapon : MonoBehaviour
         };
 
         weaponIK.SetAimTransform(currentWeapon.bulletSpawnPosition);
-        StartCoroutine(LerpIKWeight(1.0f, 0.25f));
+        PoolRunner.Instance.RunCoroutine(LerpIKWeight(1.0f, 0.25f));
         weaponActive = true;
     }
 
@@ -233,7 +233,18 @@ public class EnemyWeapon : MonoBehaviour
 
     private void HandleEnemyReloadStart()
     {
-        animator.SetTrigger("isReloading"); 
+        SetFiring(false); // Stop all firing immediately
+        animator.SetTrigger("isReloading");
+
+        // Optional: delay firing again until animation event or coroutine
+        PoolRunner.Instance.RunCoroutine(RestoreFiringAfterReload());
+    }
+
+    private IEnumerator RestoreFiringAfterReload()
+    {
+        yield return Helpers.GetWaitForSecond(currentWeapon.weaponProperties.reloadTime); // Use actual reload duration
+        if (!currentWeapon.IsAmmoEmpty())
+            SetFiring(true); // Allow back firing only if not empty
     }
 
     #endregion

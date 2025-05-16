@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyChasePlayerState : EnemyState
 {
@@ -13,6 +12,7 @@ public class EnemyChasePlayerState : EnemyState
     public void Enter(Enemy enemy)
     {
         Debug.Log("Entered: chasePlater");
+        enemy.navMeshAgent.speed = enemy.config.chaseTargetSpeed;
     }
 
     public void Update(Enemy enemy)

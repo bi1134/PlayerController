@@ -2,7 +2,7 @@ using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
-public class ItemPickup : MonoBehaviour
+public class ItemPickup : MonoBehaviour, IInteractable
 {
     public float PickupRadius = 1f;
     public float pickUpTimer = 10f;
@@ -16,6 +16,11 @@ public class ItemPickup : MonoBehaviour
 
     private bool isPickedUp = false;
     private bool isInitialized = false;
+
+    public string interactionPrompt => ItemData != null ? $"pick up {ItemData.ItemName}" : "pick up";
+    public bool isInteractable => true;
+
+    public string sidePrompt => throw new System.NotImplementedException();
 
     private void Awake()
     {
@@ -40,6 +45,26 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
+    public bool ShouldDisplayPrompt() => !isPickedUp && isInitialized;
+
+
+    public bool Interact(Interactor interactor)
+    {
+        var inventory = interactor.GetComponent<InventoryHolder>();
+        if (inventory && inventory.PickUpItem(ItemData))
+        {
+            isPickedUp = true;
+            PickupNotificationManager.Instance.EnqueuePickup(ItemData);
+            ObjectPooler.ReturnToPool("ItemPickup", gameObject);
+        }
+        return isPickedUp;
+    }
+
+    public InteractionPromptPanelUI GetInteractionPromptUI()
+    {
+        return null; // If you're using a global prompt UI, return null
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (isPickedUp) return;
@@ -50,6 +75,7 @@ public class ItemPickup : MonoBehaviour
             if (inventory.PickUpItem(ItemData))
             {
                 isPickedUp = true;
+                PickupNotificationManager.Instance.EnqueuePickup(ItemData);
                 ObjectPooler.ReturnToPool("ItemPickup", gameObject);
                 return;
             }
@@ -115,8 +141,10 @@ public class ItemPickup : MonoBehaviour
 
         if (mr != null && itemMaterial != null)
         {
-            var originalOutlineMat = mr.sharedMaterials.Length > 0 ? mr.sharedMaterials[0] : null;
-            mr.materials = new Material[] { originalOutlineMat, itemMaterial };
+            var outlineMat = new Material(mr.sharedMaterials[0]); // duplicate to avoid shared instance overwrite
+            outlineMat.SetColor("_Color", RarityColorManager.Instance.GetColor(ItemData.rarity));
+
+            mr.materials = new Material[] { outlineMat, itemMaterial };
         }
 
         Destroy(fullItem);

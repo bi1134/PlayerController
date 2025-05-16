@@ -345,6 +345,7 @@ GameObject:
   - component: {fileID: 5817180380384664597}
   - component: {fileID: 4805149277016936508}
   - component: {fileID: 277104472426290902}
+  - component: {fileID: 1560691056399075074}
   m_Layer: 11
   m_Name: Box
   m_TagString: Untagged
@@ -458,6 +459,22 @@ MonoBehaviour:
   interactionPromptUI: {fileID: 1877489302326179582}
   gameHandler: {fileID: 2419934518712445884}
   prompt: '[E] to Open'
+  sidePromptText: 
+--- !u!114 &1560691056399075074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7713642352645678546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00ee1ff5ad089a740b3ccc901aa59246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetRenderers:
+  - {fileID: 5817180380384664597}
+  outlineMaterial: {fileID: 2100000, guid: 3f0b16ff07358a141ae59e34ae98cb3b, type: 2}
 --- !u!1 &8565288163862277703
 GameObject:
   m_ObjectHideFlags: 0

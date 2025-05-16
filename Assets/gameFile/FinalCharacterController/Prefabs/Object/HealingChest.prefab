@@ -521,6 +521,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prompt: $300
+  sidePromptText: Chest
   interactionPromptUI: {fileID: 2655368508842669862}
   lootOrbPrefab: {fileID: 3027327681479447507, guid: 79cbce70b7735f1428f1f5ac3830dcff, type: 3}
   itemHolder: {fileID: 6793064016848844470}

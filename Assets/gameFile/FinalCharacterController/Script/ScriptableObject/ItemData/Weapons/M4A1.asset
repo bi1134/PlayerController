@@ -19,6 +19,6 @@ MonoBehaviour:
   Description: 'Balanced and reliable gun
 
 '
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: d020123af54d63643ae697f37032b454, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: 55b40d13d30e76a47ade1ad3317b28b1, type: 3}

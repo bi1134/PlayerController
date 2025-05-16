@@ -9,6 +9,7 @@ public class EnemyConfig : ScriptableObject
     public float findWeaponSpeed = 5.0f;
     public float findTargetSpeed = 5.0f;
     public float chaseTargetSpeed = 3.0f;
+    public float chaseAttackTargetSpeed = 3.0f;
     public float wanderRadius = 20f;
 
     [Header("Enemy Dying")]

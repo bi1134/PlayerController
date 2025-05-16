@@ -19,6 +19,6 @@ MonoBehaviour:
   Description: 'Gun shoot boom boom
 
 '
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 022397b14298e7c40a9457c509fdb2a7, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: c5110558843fc934f9c7ba9ba9036366, type: 3}

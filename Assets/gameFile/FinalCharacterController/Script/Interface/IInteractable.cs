@@ -1,7 +1,8 @@
 public interface IInteractable
 {
     public string interactionPrompt { get; }
+    string sidePrompt { get; }
     public bool Interact(Interactor interactor);
-    InteractionPromptUI GetInteractionPromptUI();
+    InteractionPromptPanelUI GetInteractionPromptUI();
     bool ShouldDisplayPrompt();
 }

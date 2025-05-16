@@ -19,6 +19,6 @@ MonoBehaviour:
   Description: 'High fire rate burst but low damage
 
 '
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: fffc90af2e8b2e245ada01c4fa74f98c, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: 09f354a32fa582d49a249926f41b3d58, type: 3}

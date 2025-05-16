@@ -14,14 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxTime: 2
   maxDistance: 1
-  findWeaponSpeed: 5
-  findTargetSpeed: 5
-  chaseTargetSpeed: 3
+  findWeaponSpeed: 7
+  findTargetSpeed: 6
+  chaseTargetSpeed: 7
+  chaseAttackTargetSpeed: 3
   wanderRadius: 20
   ragdollForce: 10
   maxSightDistance: 5
   meleeRange: 1.62
   gunRange: 10
   weaponLostRange: 20
-  health: 100
-  meleeDamage: 10

@@ -2607,7 +2607,7 @@ GameObject:
   - component: {fileID: 1352830939263470653}
   m_Layer: 7
   m_Name: AIAgent
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2808,6 +2808,7 @@ MonoBehaviour:
   sensor: {fileID: 0}
   targeting: {fileID: 0}
   enemyStats: {fileID: 0}
+  isAttackingMelee: 0
 --- !u!114 &4991232131577574366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2859,9 +2860,9 @@ MonoBehaviour:
   - bone: 7
     weight: 0.2
   - bone: 8
-    weight: 0.5
+    weight: 0
   - bone: 54
-    weight: 1
+    weight: 0
 --- !u!114 &6786716328093949482
 MonoBehaviour:
   m_ObjectHideFlags: 0

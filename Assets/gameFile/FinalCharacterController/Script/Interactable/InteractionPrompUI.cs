@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class InteractionPromptUI : MonoBehaviour
+public class InteractionPromptPanelUI : MonoBehaviour
 {
     [SerializeField] private GameObject uiPanel;
     [SerializeField] private TextMeshProUGUI promptText;

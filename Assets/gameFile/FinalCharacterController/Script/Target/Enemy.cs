@@ -30,9 +30,13 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Animator animator;
     [HideInInspector] public bool isDead = false;
     [HideInInspector] public bool canMeleeAttack = true;
+    [HideInInspector] public bool isInMelee = false;
     [HideInInspector] public EnemySensor sensor;
     [HideInInspector] public EnemyTargetingSystem targeting;
     [HideInInspector] public EnemyStats enemyStats;
+    [HideInInspector] public bool isAttackingMelee;
+
+
 
     #endregion
 
@@ -92,10 +96,25 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void SetAttackTriggerFalse()
+    public void StartMeleeAnimation()
+    {
+        if (weapons.weaponIK != null)
+            weapons.weaponIK.LerpToWeight(0f, 0.2f);
+    }
+
+    public void FinishMeleeAnimation()
     {
         animator.ResetTrigger("isAttacking");
+        stateMachine.ChangeState(EnemyStateID.FindTarget);
+        isInMelee = false;
+        if (weapons.weaponIK != null)
+            weapons.weaponIK.LerpToWeight(0.8f, 0.2f);
+        if (weapons != null && weapons.HasWeapon())
+        {
+            weapons.SetFiring(true);
+        }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {

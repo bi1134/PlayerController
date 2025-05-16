@@ -9,6 +9,7 @@ public class EnemyAI : MonoBehaviour
     private static int inputYHash = Animator.StringToHash("inputY");
     private static int inputMagnitudeHash = Animator.StringToHash("inputMagnitude");
 
+
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -18,7 +19,9 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        animator.SetFloat(inputYHash, navMeshAgent.velocity.y);
+        Vector3 localVelocity = transform.InverseTransformDirection(navMeshAgent.velocity);
+        float forwardSpeed = localVelocity.z;
+        animator.SetFloat(inputYHash, forwardSpeed);
         animator.SetFloat(inputMagnitudeHash, navMeshAgent.velocity.magnitude);
     }
 }

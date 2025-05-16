@@ -546,9 +546,8 @@ public class ActiveWeapon : MonoBehaviour
         Vector3 dropPosition = weaponGO.transform.position;
         Quaternion dropRotation = weaponGO.transform.rotation;
 
-        Destroy(weaponGO); // Clean up weapon
-
-        GameObject pickup = Instantiate(itemPickupPrefab, dropPosition, dropRotation);
+        Destroy(weaponGO);
+        GameObject pickup = ObjectPooler.SpawnFromPool("ItemPickup", dropPosition, dropRotation);
 
         if (pickup == null)
         {

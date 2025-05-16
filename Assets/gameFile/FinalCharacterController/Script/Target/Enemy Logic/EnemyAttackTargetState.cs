@@ -5,8 +5,10 @@ public class EnemyAttackTargetState : EnemyState
     private float pickupCheckTimer = 3f;
     private const float pickupCheckCooldown = 3f;
 
+
     public void Enter(Enemy enemy)
     {
+        Debug.Log("Entered: Attack Target");
         pickupCheckTimer = pickupCheckCooldown;
         enemy.weapons.ActivateWeapon();
         enemy.navMeshAgent.stoppingDistance = enemy.config.chaseTargetSpeed;
@@ -25,13 +27,6 @@ public class EnemyAttackTargetState : EnemyState
 
     public void Update(Enemy enemy)
     {
-        if (!enemy.targeting.HasTarget)
-        {
-            enemy.stateMachine.ChangeState(EnemyStateID.FindTarget);
-            return;
-        }
-
-
         // check if player is dead
         if (!enemy.targeting.HasTarget)
         {
@@ -67,14 +62,25 @@ public class EnemyAttackTargetState : EnemyState
         // if player is within melee range
         if (sqrDistance <= meleeSqrRange)
         {
-            enemy.navMeshAgent.isStopped = true;
-
-            if (enemy.weapons.HasWeapon())
-                UpdateFiring(enemy); // still allow firing if armed and in melee
+            if (enemy.isInMelee)
+                LerpNavSpeed(enemy, enemy.config.chaseAttackTargetSpeed);
+            else
+                LerpNavSpeed(enemy, enemy.config.chaseTargetSpeed);
 
             if (!enemy.animator.GetCurrentAnimatorStateInfo(0).IsTag("Melee"))
+            {
+                enemy.navMeshAgent.isStopped = true;
+                enemy.navMeshAgent.ResetPath(); 
                 enemy.animator.SetTrigger("isAttacking");
 
+                enemy.isInMelee = true;
+                enemy.weapons.SetFiring(false);
+            }
+
+            if (!enemy.isInMelee && enemy.weapons.HasWeapon())
+            {
+                UpdateFiring(enemy);
+            }
             return;
         }
 
@@ -143,6 +149,11 @@ public class EnemyAttackTargetState : EnemyState
         }
 
         return false;
+    }
+
+    private void LerpNavSpeed(Enemy enemy, float targetSpeed, float lerpRate = 5f)
+    {
+        enemy.navMeshAgent.speed = Mathf.Lerp(enemy.navMeshAgent.speed, targetSpeed, Time.deltaTime * lerpRate);
     }
 
 }

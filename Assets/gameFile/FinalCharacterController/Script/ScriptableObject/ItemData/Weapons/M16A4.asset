@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
   m_Name: M16A4
   m_EditorClassIdentifier: 
+  rarity: 0
   ID: 8
   ItemType: 2
   ItemName: M16A4
   Description: Accurate semi-auto burst gun
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: b19c4b31c28f7784b99f67522ba59c05, type: 3}
   MaxStackSize: 1
   Prefab: {fileID: 2217381360920502919, guid: e9cf79f1059a6274aaa7c9d3271310f3, type: 3}
