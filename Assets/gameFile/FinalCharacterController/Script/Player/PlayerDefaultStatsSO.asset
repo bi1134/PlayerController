@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c00dd2a6ed07954db32e1da9910f293, type: 3}
-  m_Name: EnemyBaseStats
+  m_Name: PlayerDefaultStatsSO
   m_EditorClassIdentifier: 
-  maxHealth: 35
+  maxHealth: 100
   baseDamage: 10
   moveSpeed: 5
   critChance: 0.1
   level: 1
-  exp: 20
+  exp: 0

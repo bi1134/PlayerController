@@ -8,6 +8,7 @@ public class EnemyStateMachine
     public Enemy enemy;
     public EnemyStateID currentState;
 
+    private float stateChangeCooldown = 0f;
 
     #endregion
 
@@ -35,15 +36,36 @@ public class EnemyStateMachine
 
     public void ChangeState(EnemyStateID newState)
     {
-        GetEnemyState(currentState).Exit(enemy);
+        bool isForced = newState == EnemyStateID.Death;
+
+        if (!isForced && (stateChangeCooldown > 0f || newState == currentState))
+            return;
+
+        var current = GetEnemyState(currentState);
+        current?.Exit(enemy);
+
         currentState = newState;
-        GetEnemyState(currentState)?.Enter(enemy);
+
+        var next = GetEnemyState(currentState);
+        if (next != null)
+        {
+            Debug.Log($"[StateMachine] Changing to state: {currentState}");
+            next.Enter(enemy);
+            stateChangeCooldown = isForced ? 0f : 0.15f;
+        }
+        else
+        {
+            Debug.LogError($"[StateMachine] ERROR: Tried to enter unregistered state: {currentState}");
+        }
     }
     #endregion
 
     #region Update
     public void Update()
     {
+        if (stateChangeCooldown > 0f)
+            stateChangeCooldown -= Time.deltaTime;
+
         GetEnemyState(currentState)?.Update(enemy);
     }
 

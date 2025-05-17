@@ -51,8 +51,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 1, z: 1}
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0.03287649, y: 1, z: 1.5831249}
 --- !u!1 &16899357166990910
 GameObject:
   m_ObjectHideFlags: 0
@@ -2791,20 +2791,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10763994aeb234349b42f9dc8db23492, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: 412284be2d2d74c479bf3053bcba54f1, type: 2}
-  meleeAttackCooldown: 1.5
+  config: {fileID: 11400000, guid: 970b2255de12f644b9dbe3681a94c04c, type: 2}
+  meleeAttackCooldown: 0.8
   meleeHitbox: {fileID: 1067457593422863874}
   lookRoot: {fileID: 2453352997371671245}
   player: {fileID: 0}
   turnSpeed: 5
   maxAngle: 120
-  initialState: 3
+  initialState: 5
   ragdoll: {fileID: 0}
   playerTransform: {fileID: 0}
   weapons: {fileID: 0}
   animator: {fileID: 0}
   isDead: 0
   canMeleeAttack: 1
+  isInMelee: 0
   sensor: {fileID: 0}
   targeting: {fileID: 0}
   enemyStats: {fileID: 0}
@@ -2821,6 +2822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12f53cc421ada43419bf7adda6041f8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponIK: {fileID: 0}
   inaccuracy: 0
   enemyFireRate: 0.5
   itemPickupPrefab: {fileID: 7495234975541379242, guid: 907e7cce25bbb934c88982dac595d2b6, type: 3}
@@ -2878,7 +2880,7 @@ MonoBehaviour:
   distance: 40
   angle: 102.1
   height: 5.99
-  meshColor: {r: 0.014332486, g: 0.56281036, b: 0.690566, a: 0.75686276}
+  meshColor: {r: 0.6901961, g: 0.01568626, b: 0.39774057, a: 0.75686276}
   scanFrequency: 30
   layers:
     serializedVersion: 2

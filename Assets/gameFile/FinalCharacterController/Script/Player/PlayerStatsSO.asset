@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c00dd2a6ed07954db32e1da9910f293, type: 3}
   m_Name: PlayerStatsSO
   m_EditorClassIdentifier: 
-  baseStats:
-  - statName: PlayerHealth
-    baseValue: 100
-  - statName: PlayerLevel
-    baseValue: 1
-  - statName: PlayerExp
-    baseValue: 0
+  maxHealth: 100
+  baseDamage: 10
+  moveSpeed: 5
+  critChance: 0.1
+  level: 2
+  exp: 80

@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] private Vector3 originalPosition;
     [HideInInspector] private Quaternion originalRotation;
     [HideInInspector] public Animator animator;
-    [HideInInspector] public bool isDead = false;
+    public bool isDead = false;
     [HideInInspector] public bool canMeleeAttack = true;
     [HideInInspector] public bool isInMelee = false;
     [HideInInspector] public EnemySensor sensor;
@@ -36,7 +36,14 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public EnemyStats enemyStats;
     [HideInInspector] public bool isAttackingMelee;
 
-
+    [Header("Enemy type stuff")]
+    public bool IsMeleeOnly => config.enemyType == EnemyType.MeleeOnly;
+    public bool IsRangedOnly => config.enemyType == EnemyType.RangedOnly;
+    public bool IsFlying => config.enemyType == EnemyType.Flying;
+    public bool IsBoss => config.enemyType == EnemyType.Boss;
+    public bool CanUseWeapons => config.canUseWeapons;
+    public bool CanMelee => config.canMelee;
+    public bool UsesIK => config.usesIK;
 
     #endregion
 
@@ -57,14 +64,40 @@ public class Enemy : MonoBehaviour
         {
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
-
         stateMachine = new EnemyStateMachine(this);
-        stateMachine.RegisterState(new EnemyChasePlayerState());
-        stateMachine.RegisterState(new EnemyDeathState());
-        stateMachine.RegisterState(new EnemyIdleState());
-        stateMachine.RegisterState(new EnemyFindWeaponState());
-        stateMachine.RegisterState(new EnemyAttackTargetState());
-        stateMachine.RegisterState(new EnemyFindTargetState());
+
+        switch (config.enemyType)
+        {
+            case EnemyType.MeleeOnly:
+                stateMachine.RegisterState(new EnemyIdleState());
+                stateMachine.RegisterState(new EnemyFindTargetState());
+                stateMachine.RegisterState(new EnemyAttackMeleeState());
+                stateMachine.RegisterState(new EnemyDeathState());
+                break;
+
+            case EnemyType.RangedOnly:
+                stateMachine.RegisterState(new EnemyIdleState());
+                stateMachine.RegisterState(new EnemyFindTargetState());
+                stateMachine.RegisterState(new EnemyFindWeaponState());
+                stateMachine.RegisterState(new EnemyAttackRangedState());
+                stateMachine.RegisterState(new EnemyDeathState());
+                break;
+
+            case EnemyType.Boss:
+                stateMachine.RegisterState(new EnemyIdleState());
+                stateMachine.RegisterState(new EnemyPhaseControllerState());
+                stateMachine.RegisterState(new EnemyAttackTargetState());
+                stateMachine.RegisterState(new EnemyDeathState());
+                break;
+
+            default:
+                stateMachine.RegisterState(new EnemyIdleState());
+                stateMachine.RegisterState(new EnemyFindTargetState());
+                stateMachine.RegisterState(new EnemyFindWeaponState());
+                stateMachine.RegisterState(new EnemyAttackTargetState());
+                stateMachine.RegisterState(new EnemyDeathState());
+                break;
+        }
         stateMachine.ChangeState(initialState);
     }
     #endregion
@@ -105,8 +138,10 @@ public class Enemy : MonoBehaviour
     public void FinishMeleeAnimation()
     {
         animator.ResetTrigger("isAttacking");
-        stateMachine.ChangeState(EnemyStateID.FindTarget);
         isInMelee = false;
+        navMeshAgent.isStopped = false;
+        navMeshAgent.ResetPath();
+        stateMachine.ChangeState(EnemyStateID.FindTarget);
         if (weapons.weaponIK != null)
             weapons.weaponIK.LerpToWeight(0.8f, 0.2f);
         if (weapons != null && weapons.HasWeapon())

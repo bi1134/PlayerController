@@ -8,6 +8,7 @@ public class EnemyStats : MonoBehaviour
     private Dictionary<string, float> currentStats = new();
     private EnemyHealth health;
 
+
     private void Start()
     {
         health = GetComponent<EnemyHealth>();
@@ -32,4 +33,9 @@ public class EnemyStats : MonoBehaviour
             health.currentHealth = baseStats.maxHealth; // full heal on start
         }
     }
+
+    public float CurrentHPPercent =>
+   (health != null && health.maxHealth > 0f)
+       ? health.currentHealth / health.maxHealth
+       : 0f;
 }

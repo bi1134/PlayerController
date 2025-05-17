@@ -85,8 +85,15 @@ public class HealthSystem : MonoBehaviour
     {
         if (source != null && source.CompareTag("Enemy"))
         {
-            amount = Mathf.RoundToInt(amount * 0.5f); 
+            amount = Mathf.RoundToInt(amount * 0.5f);
         }
+
+        if (IsDead())
+        {
+            Debug.LogWarning($"[TakeDamage] Skipped: Already dead ({gameObject.name})");
+            return;
+        }
+
         currentHealth -= amount;
         TriggerHealthChanged();
 
@@ -94,12 +101,13 @@ public class HealthSystem : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            Debug.LogWarning($"[TakeDamage] Triggered Die() on {gameObject.name}");
             currentHealth = 0;
             Die(direction);
         }
 
         blinkTimer = blinkDuration;
-        ApplyHitBlinkEffect(); // Check if this runs
+        ApplyHitBlinkEffect();
 
         StopAllCoroutines();
         PoolRunner.Instance.RunCoroutine(LerpBackToOriginalMaterials());
@@ -126,6 +134,7 @@ public class HealthSystem : MonoBehaviour
 
     private void Die(Vector3 direction)
     {
+        Debug.Log("DIE called. Direction: " + direction);
         OnDeath(direction);
     }
 

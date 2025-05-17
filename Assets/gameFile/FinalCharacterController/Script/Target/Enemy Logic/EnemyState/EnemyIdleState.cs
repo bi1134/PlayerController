@@ -10,7 +10,10 @@ public class EnemyIdleState : EnemyState
 
     public void Enter(Enemy enemy)
     {
-        enemy.weapons.DeactivateWeapon();
+        if (enemy.CanUseWeapons && enemy.weapons != null && enemy.weapons.HasWeapon())
+        {
+            enemy.weapons.DeactivateWeapon();
+        }
         enemy.navMeshAgent.ResetPath();
     }
 

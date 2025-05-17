@@ -36,20 +36,18 @@ public class EnemyWeapon : MonoBehaviour
     #region Update
     private void Update()
     {
-        if (currentWeapon && weaponActive && currentWeapon.IsAmmoEmpty() && !currentWeapon.reloading)
+        if (currentTarget && currentWeapon && weaponActive)
         {
-            currentWeapon.Reload();
+            target = currentTarget.position + weaponIK.targetOffset;
+            target += Random.insideUnitSphere * inaccuracy;
         }
 
-        if(currentTarget && currentWeapon && weaponActive && !currentWeapon.reloading)
+        if (currentWeapon && weaponActive && !currentWeapon.reloading)
         {
             fireCooldown -= Time.deltaTime;
 
             if (isFiring && fireCooldown <= 0f)
             {
-                target = currentTarget.position + weaponIK.targetOffset;
-                target += Random.insideUnitSphere * inaccuracy;
-
                 currentWeapon.UpdateFiring(Time.deltaTime, target, true);
                 fireCooldown = 1f / enemyFireRate;
             }
@@ -171,18 +169,47 @@ public class EnemyWeapon : MonoBehaviour
 
     public void DropWeapon()
     {
-        if(currentWeapon)
+        if (currentWeapon == null)
         {
-            InventoryItemData droppedItem = currentWeapon.inventoryData;
+            return;
+        }
 
-            currentWeapon.OnReloadStarted -= HandleEnemyReloadStart;
-            weaponIK.weight = 0.0f;
-            weaponIK.SetWeight(0.0f);
-            StartCoroutine(LerpIKWeight(0.0f, 0.25f));
-            currentWeapon.transform.SetParent(null);
-            currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
-            currentWeapon.gameObject.AddComponent<Rigidbody>();
-            PoolRunner.Instance.RunCoroutine(DelayedPickupSpawn(currentWeapon.gameObject, droppedItem));
+        Debug.Log($"DropWeapon: Dropping {currentWeapon.name}");
+
+        if (currentWeapon.inventoryData == null)
+            Debug.LogWarning("DropWeapon: inventoryData is NULL");
+
+        if (currentWeapon.gameObject == null)
+            Debug.LogWarning("DropWeapon: weaponGO is NULL");
+
+        var droppedItem = currentWeapon.inventoryData;
+        var weaponGO = currentWeapon.gameObject;
+
+         if (droppedItem == null || weaponGO == null) {
+        Debug.LogWarning("DropWeapon failed: missing data or GO");
+        return;
+    }
+
+        // Unsubscribe and detach BEFORE null
+        currentWeapon.OnReloadStarted -= HandleEnemyReloadStart;
+
+        currentWeapon.transform.SetParent(null);
+        currentWeapon.gameObject.GetComponent<BoxCollider>().enabled = true;
+        currentWeapon.gameObject.AddComponent<Rigidbody>();
+
+        weaponIK.weight = 0.0f;
+        weaponIK.SetWeight(0.0f);
+        StartCoroutine(LerpIKWeight(0.0f, 0.25f));
+
+        currentWeapon = null;
+
+        if (droppedItem != null && weaponGO != null)
+        {
+            PoolRunner.Instance.RunCoroutine(DelayedPickupSpawn(weaponGO, droppedItem));
+        }
+        else
+        {
+            Debug.LogWarning("DropWeapon failed: missing data or GO");
         }
     }
 
@@ -201,21 +228,19 @@ public class EnemyWeapon : MonoBehaviour
         Vector3 dropPosition = weaponGO.transform.position;
         Quaternion dropRotation = weaponGO.transform.rotation;
 
-        Destroy(weaponGO); // Clean up weapon
+        var pickup = Instantiate(itemPickupPrefab, dropPosition, dropRotation);
 
-        GameObject pickup = Instantiate(itemPickupPrefab, dropPosition, dropRotation);
-
-        if (pickup == null)
-        {
-            Debug.LogError("ItemPickup prefab not found in Resources!");
-            yield break;
-        }
-
-        var pickupComponent = pickup.GetComponent<ItemPickup>();
-        if (pickupComponent != null)
+        if (pickup.TryGetComponent<ItemPickup>(out var pickupComponent))
         {
             pickupComponent.SetItemData(itemData);
         }
+        else
+        {
+            Debug.LogError("Pickup prefab missing ItemPickup component!");
+        }
+
+        Destroy(weaponGO);
+
     }
 
     public bool HasWeapon()
@@ -252,7 +277,8 @@ public class EnemyWeapon : MonoBehaviour
     #region Set Target
     public void SetTarget(Transform target)
     {
-        weaponIK.SetTargetTransform(target);
+        if (weaponIK != null)
+            weaponIK.SetTargetTransform(target);
         currentTarget = target;
     }
 

@@ -29,6 +29,8 @@ public class EnemyFindWeaponState : EnemyState
     {
         timer -= Time.deltaTime;
 
+        if (enemy.isDead) return;
+
         //check for weapon insight
         if (!pickUp)
         {

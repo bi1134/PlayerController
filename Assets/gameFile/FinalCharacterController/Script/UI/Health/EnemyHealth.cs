@@ -10,8 +10,14 @@ public class EnemyHealth : HealthSystem
     }
     protected override void OnDeath(Vector3 direction)
     {
-        EnemyDeathState deathState = enemy.stateMachine.GetEnemyState(EnemyStateID.Death) as EnemyDeathState;
-        deathState.direction = direction;
+        if (enemy.isDead) return;
+
+        enemy.isDead = true;
+
+        Debug.Log("dead trigger");
+        var deathState = enemy.stateMachine.GetEnemyState(EnemyStateID.Death) as EnemyDeathState;
+        deathState.SetDeathDirection(direction);
+
         enemy.stateMachine.ChangeState(EnemyStateID.Death);
     }
     protected override void OnDamage(Vector3 direction)

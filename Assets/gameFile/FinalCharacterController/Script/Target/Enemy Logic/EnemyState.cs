@@ -8,6 +8,7 @@ public enum EnemyStateID
     FindWeapon,
     AttackTarget,
     FindTarget,
+    PhaseController,
 }
 
 public interface EnemyState

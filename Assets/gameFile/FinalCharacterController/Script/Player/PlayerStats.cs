@@ -5,6 +5,7 @@ public class PlayerStats : MonoBehaviour
 {
     public BaseStatsSO baseStats;
     public PlayerHealth playerHealth;
+    public BaseStatsSO playerDefaultStats;
 
     private Dictionary<StatType, float> currentStats = new();
 
@@ -19,6 +20,12 @@ public class PlayerStats : MonoBehaviour
     private void Awake()
     {
         inventoryHolder = GetComponent<InventoryHolder>();
+        baseStats.maxHealth = playerDefaultStats.maxHealth;
+        baseStats.baseDamage = playerDefaultStats.baseDamage;
+        baseStats.moveSpeed = playerDefaultStats.moveSpeed;
+        baseStats.critChance = playerDefaultStats.critChance;
+        baseStats.level = playerDefaultStats.level;
+        baseStats.exp = playerDefaultStats.exp;
     }
 
     private void Start()
@@ -50,6 +57,30 @@ public class PlayerStats : MonoBehaviour
 
             playerHealth.TriggerHealthChanged();
         }
+    }
+
+    public void OnLevelUp(int newLevel, int lastLevel)
+    {
+        int levelDelta = newLevel - lastLevel;
+        if (levelDelta <= 0) return;
+
+        float healthBonus = levelDelta * 10f;
+        float damageBonus = levelDelta * 2f;
+        float critBonus = levelDelta * 0.01f;
+
+        ModifyStat(StatType.MaxHealth, healthBonus);
+        ModifyStat(StatType.BonusDamage, damageBonus);
+        ModifyStat(StatType.CritChance, critBonus);
+
+        if (playerHealth != null)
+        {
+            playerHealth.currentHealth = playerHealth.maxHealth;
+            playerHealth.TriggerHealthChanged();
+        }
+
+        lastLevel = newLevel;
+
+        Debug.Log($"[PlayerStats] Level Up! New level {newLevel}. Stats scaled for +{levelDelta} levels.");
     }
 
     public float GetStat(StatType statName)

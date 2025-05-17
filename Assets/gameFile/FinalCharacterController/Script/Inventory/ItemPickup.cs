@@ -20,7 +20,7 @@ public class ItemPickup : MonoBehaviour, IInteractable
     public string interactionPrompt => ItemData != null ? $"pick up {ItemData.ItemName}" : "pick up";
     public bool isInteractable => true;
 
-    public string sidePrompt => throw new System.NotImplementedException();
+    public string sidePrompt => null;
 
     private void Awake()
     {
@@ -81,12 +81,12 @@ public class ItemPickup : MonoBehaviour, IInteractable
             }
         }
 
+        var enemy = other.GetComponent<Enemy>();
         var enemyWeapon = other.GetComponentInChildren<EnemyWeapon>();
-        if (enemyWeapon && !enemyWeapon.HasWeapon() && ItemData.ItemType == ItemType.Weapon)
+        if (enemyWeapon && !enemyWeapon.HasWeapon() && ItemData.ItemType == ItemType.Weapon && enemy.config.canUseWeapons)
         {
             var health = other.GetComponent<EnemyHealth>();
             if (health != null && health.IsDead()) return;
-
             isPickedUp = true;
             WeaponBase newWeapon = Instantiate(ItemData.Prefab).GetComponent<WeaponBase>();
             if (newWeapon == null)
@@ -94,7 +94,7 @@ public class ItemPickup : MonoBehaviour, IInteractable
                 Debug.LogWarning("ItemPickup: Could not instantiate weapon from ItemData.");
                 return;
             }
-
+            newWeapon.inventoryData = ItemData;
             enemyWeapon.Equip(newWeapon);
             ObjectPooler.ReturnToPool("ItemPickup", gameObject);
         }
@@ -102,6 +102,12 @@ public class ItemPickup : MonoBehaviour, IInteractable
 
     public void SetItemData(InventoryItemData data)
     {
+        if (data == null)
+        {
+            Debug.LogWarning("SetItemData called with NULL data!");
+            return;
+        }
+
         ItemData = data;
         isInitialized = true;
         pickUpTimer = pickUpMaxTimer;

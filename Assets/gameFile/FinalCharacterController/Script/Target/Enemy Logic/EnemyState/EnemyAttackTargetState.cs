@@ -27,6 +27,8 @@ public class EnemyAttackTargetState : EnemyState
 
     public void Update(Enemy enemy)
     {
+        if (enemy.isDead) return;
+
         // check if player is dead
         if (!enemy.targeting.HasTarget)
         {

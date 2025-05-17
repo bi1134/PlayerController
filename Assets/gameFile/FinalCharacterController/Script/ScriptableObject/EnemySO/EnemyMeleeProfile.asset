@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c00dd2a6ed07954db32e1da9910f293, type: 3}
-  m_Name: EnemyBaseStats
+  m_Script: {fileID: 11500000, guid: 79b289dea797ac6448fc429de99c07e4, type: 3}
+  m_Name: EnemyMeleeProfile
   m_EditorClassIdentifier: 
-  maxHealth: 35
-  baseDamage: 10
-  moveSpeed: 5
-  critChance: 0.1
-  level: 1
-  exp: 20
+  canDash: 0
+  canSummonMinions: 0
+  dashSpeed: 0
+  dashCooldown: 0
+  enragesAtHalfHP: 0
