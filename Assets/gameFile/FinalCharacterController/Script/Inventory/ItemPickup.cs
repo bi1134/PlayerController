@@ -13,6 +13,7 @@ public class ItemPickup : MonoBehaviour, IInteractable
     private SphereCollider itemCollider;
     public Transform outlineMesh;
     public Quaternion PickupRotation = Quaternion.identity;
+    private AudioSource audioSource;
 
     private bool isPickedUp = false;
     private bool isInitialized = false;
@@ -27,10 +28,15 @@ public class ItemPickup : MonoBehaviour, IInteractable
         itemCollider = GetComponent<SphereCollider>();
         itemCollider.isTrigger = true;
         itemCollider.radius = PickupRadius;
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
     {
+        if (!audioSource) return;
+        float randomPitch = Random.Range(1f, 1.2f);
+        audioSource.pitch = randomPitch;
+        audioSource.Play();
     }
 
     private void Update()

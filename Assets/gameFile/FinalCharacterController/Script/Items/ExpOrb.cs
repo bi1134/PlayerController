@@ -4,75 +4,66 @@ public class ExpOrb : MonoBehaviour
 {
     public int experienceAmount = 5;
 
-    [Header("Orb Settings")]
-    public float moveSpeed = 10f;
-    public float pickupRange = 1.5f;
+    [Header("Orb Movement")]
+    public float minSpeed = 7f;
+    public float maxSpeed = 11f;
+    public float pickupRange = 1.2f;
     public float hoverTime = 0.3f;
-    public float hoverHeight = 1f;
+    public float hoverHeight = 1.5f;
 
-    private static Transform cachedPlayerTransform;
-
-    private bool isCollected = false;
+    private static Transform cachedPlayer;
+    private Vector3 velocity = Vector3.zero;
+    private bool isFollowing = false;
     private float hoverTimer;
-    private Vector3 hoverOffset;
 
     private void OnEnable()
     {
-        isCollected = false;
+        velocity = Vector3.zero;
         hoverTimer = hoverTime;
-        hoverOffset = new Vector3(
-            Random.Range(-0.5f, 0.5f),
-            Random.Range(hoverHeight, hoverHeight + 1f),
-            Random.Range(-0.5f, 0.5f)
-        );
+        isFollowing = false;
 
-        // Optional: turn off rigidbody physics if any
-        if (TryGetComponent(out Rigidbody rb))
+        if (cachedPlayer == null)
         {
-            rb.isKinematic = true;
-            rb.useGravity = false;
-        }
-
-        // Cache player only once (static)
-        if (cachedPlayerTransform == null)
-        {
-            var playerObj = GameObject.FindGameObjectWithTag("Player");
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
-                cachedPlayerTransform = playerObj.transform;
+                cachedPlayer = playerObj.transform;
         }
     }
 
     private void Update()
     {
-        if (!isCollected)
+        if (cachedPlayer == null) return;
+
+        if (!isFollowing)
         {
             hoverTimer -= Time.deltaTime;
-
-            transform.position = Vector3.Lerp(
-                transform.position,
-                transform.position + hoverOffset,
-                Time.deltaTime * 2f
+            Vector3 hoverOffset = new Vector3(
+                0f,
+                Mathf.Sin(Time.time * 6f) * 0.1f,
+                0f
             );
+            transform.position += hoverOffset;
 
-            if (hoverTimer <= 0f && cachedPlayerTransform != null)
-            {
-                isCollected = true;
-            }
+            if (hoverTimer <= 0f)
+                isFollowing = true;
         }
         else
         {
-            if (cachedPlayerTransform == null) return;
+            Vector3 targetPos = cachedPlayer.position + Vector3.up * 1.5f;
+            float distance = Vector3.Distance(transform.position, targetPos);
 
-            Vector3 chestTarget = cachedPlayerTransform.position + Vector3.up * 1.5f;
-            transform.position = Vector3.MoveTowards(
+            // Smooth damp speed gets faster as orb gets closer
+            float smoothTime = Mathf.Lerp(1f / maxSpeed, 1f / minSpeed, distance / 10f); // near = fast
+            transform.position = Vector3.SmoothDamp(
                 transform.position,
-                chestTarget,
-                moveSpeed * Time.deltaTime
+                targetPos,
+                ref velocity,
+                smoothTime
             );
 
-            if ((transform.position - chestTarget).sqrMagnitude <= pickupRange * pickupRange)
+            if (distance <= pickupRange)
             {
-                if (cachedPlayerTransform.TryGetComponent(out PlayerLevel playerLevel))
+                if (cachedPlayer.TryGetComponent(out PlayerLevel playerLevel))
                 {
                     playerLevel.AddExperience(experienceAmount);
                 }

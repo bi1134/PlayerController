@@ -58,7 +58,7 @@ Material:
     - _ShadowStep: 0.3
     m_Colors:
     - _Color: {r: 0.4113207, g: 0.4113207, b: 0.4113207, a: 1}
-    - _MainColor: {r: 0.7207546, g: 0.7207546, b: 0.7207546, a: 0}
+    - _MainColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 0}
     - _ShadowColor: {r: 0.122641504, g: 0.113616936, b: 0.113616936, a: 0}
     - _ShadowPatternColor: {r: 0.4792453, g: 0.4792453, b: 0.4792453, a: 0}
     - _ShadowTextureTiling: {r: 1, g: 1, b: 0, a: 0}

@@ -140,7 +140,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BottomGradColour: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Diffuse_Color: {r: 0.49803922, g: 0.25957265, b: 0.21960786, a: 0}
+    - _Diffuse_Color: {r: 0.21509439, g: 0.16662812, b: 0.15868284, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColour: {r: 0, g: 0, b: 0, a: 0}
     - _Fresnel_Color: {r: 0.078497685, g: 0.16850688, b: 0.2830189, a: 0}

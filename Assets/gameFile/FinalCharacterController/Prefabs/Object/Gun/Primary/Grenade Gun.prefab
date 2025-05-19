@@ -95,7 +95,7 @@ MonoBehaviour:
   audioSource: {fileID: -5394795880260058844}
   shootClip: {fileID: 8300000, guid: 79a6ccb489f59da4dafce2f857222214, type: 3}
   reloadClip: {fileID: 8300000, guid: f363414b407a90c4abc5e709429d464f, type: 3}
-  pitchRange: {x: 0.5, y: 1.05}
+  pitchRange: {x: 0.8, y: 0.9}
   timeBetweenShooting: 0.1
   timeBetweenShots: 0
   allowButtonHold: 0

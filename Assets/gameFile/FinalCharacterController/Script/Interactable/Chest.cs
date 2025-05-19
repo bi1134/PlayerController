@@ -12,7 +12,7 @@ public class Chest : MonoBehaviour, IInteractable
     [SerializeField] private Transform itemHolder;
     [SerializeField] private LootableSO lootTable;
 
-
+    private AudioSource audioSource;
     private Animator animator;
     public bool hasOpened;
 
@@ -20,6 +20,7 @@ public class Chest : MonoBehaviour, IInteractable
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public string interactionPrompt => prompt;
@@ -68,6 +69,8 @@ public class Chest : MonoBehaviour, IInteractable
         hasOpened = true;
         Debug.Log("Chest opened");
         animator.SetTrigger("Open");
+        audioSource.pitch = Random.Range(1f, 1.2f);
+        audioSource.Play();
         return true;
     }
     public InteractionPromptPanelUI GetInteractionPromptUI()

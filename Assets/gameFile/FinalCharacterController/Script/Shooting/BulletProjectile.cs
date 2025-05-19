@@ -55,7 +55,7 @@ public class BulletProjectile : MonoBehaviour
             switch (settings.bulletType)
             {
                 case BulletType.Normal:
-                    trailBase = new Color(1f, 0f, 0f); // red
+                    trailBase = new Color(1f, 0.7f, 0f); // yellow
                     trailEmission = new Color(191f / 255f, 102f / 255f, 0f) * 3.416924f;
                     break;
                 case BulletType.Explosive:
