@@ -7,8 +7,10 @@ public enum EnemyStateID
     Idle,
     FindWeapon,
     AttackTarget,
+    AttackMelee,
     FindTarget,
     PhaseController,
+    BossTeleport,
 }
 
 public interface EnemyState

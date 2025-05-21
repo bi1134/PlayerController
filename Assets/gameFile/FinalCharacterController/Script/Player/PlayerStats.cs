@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -6,6 +7,7 @@ public class PlayerStats : MonoBehaviour
     public BaseStatsSO baseStats;
     public PlayerHealth playerHealth;
     public BaseStatsSO playerDefaultStats;
+    public TextMeshProUGUI moneyCount;
 
     private Dictionary<StatType, float> currentStats = new();
 
@@ -26,6 +28,7 @@ public class PlayerStats : MonoBehaviour
         baseStats.critChance = playerDefaultStats.critChance;
         baseStats.level = playerDefaultStats.level;
         baseStats.exp = playerDefaultStats.exp;
+        baseStats.money = playerDefaultStats.money;
     }
 
     private void Start()
@@ -57,6 +60,13 @@ public class PlayerStats : MonoBehaviour
 
             playerHealth.TriggerHealthChanged();
         }
+    }
+
+    public void AddMoney(int amount)
+    {
+        baseStats.money += amount;
+        Debug.Log("Money: " + baseStats.money);
+        moneyCount.text = baseStats.money.ToString();
     }
 
     public void OnLevelUp(int newLevel, int lastLevel)

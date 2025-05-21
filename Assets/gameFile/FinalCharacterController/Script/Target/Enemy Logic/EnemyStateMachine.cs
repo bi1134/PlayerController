@@ -33,7 +33,6 @@ public class EnemyStateMachine
         return states[index]; //return state to that pecific index
     }
 
-
     public void ChangeState(EnemyStateID newState)
     {
         bool isForced = newState == EnemyStateID.Death;

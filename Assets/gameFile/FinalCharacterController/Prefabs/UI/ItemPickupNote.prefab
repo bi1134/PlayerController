@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6311981222222189583}
   - component: {fileID: 3771735975439442124}
   - component: {fileID: 8497153795882338454}
+  - component: {fileID: 1912389169616500017}
+  - component: {fileID: 4267146609395975726}
   m_Layer: 5
   m_Name: ItemPickupNote
   m_TagString: Untagged
@@ -29,7 +31,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 4.9916673, y: 1.1750401, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1880224943403369041}
   - {fileID: 5412724481665058755}
@@ -95,7 +97,41 @@ MonoBehaviour:
   descriptionText: {fileID: 1653606115524319204}
   icon: {fileID: 1359635741222542336}
   DisplayDuration: 8
-  animator: {fileID: 0}
+  animator: {fileID: 4267146609395975726}
+--- !u!225 &1912389169616500017
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2766581788199515760}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!95 &4267146609395975726
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2766581788199515760}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 32ee0a34ba55c364eb49dba052d13253, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5251357260711750052
 GameObject:
   m_ObjectHideFlags: 0

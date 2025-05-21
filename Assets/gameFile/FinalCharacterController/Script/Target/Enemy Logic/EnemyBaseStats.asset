@@ -18,3 +18,4 @@ MonoBehaviour:
   critChance: 0.1
   level: 1
   exp: 20
+  money: 5

@@ -14,6 +14,7 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] public PlayerHUD hud;
     [SerializeField] private GameObject itemPickupPrefab;
+    [SerializeField] private GameObject bulletDisplay;
 
     [Header("Rigs")]
     [SerializeField] private Transform leftGrip;
@@ -302,6 +303,7 @@ public class ActiveWeapon : MonoBehaviour
         if (weapon)
         {
             weapon.CancelAllActions();
+            bulletDisplay.SetActive(false);
             rigController.SetBool("isHolster", true);
             hasWeaponEquipped = false;
 
@@ -330,7 +332,8 @@ public class ActiveWeapon : MonoBehaviour
                 slotNumber = "1";
             else if (inventoryHolder.weaponSlot2 != null && weapon.inventoryData.ID == inventoryHolder.weaponSlot2.ID)
                 slotNumber = "2";
-
+            if (!bulletDisplay.activeSelf)
+                bulletDisplay.SetActive(true);
             rigController.SetBool("isHolster", false);
             hasWeaponEquipped = true;
 

@@ -34,6 +34,12 @@ public class EnemyStats : MonoBehaviour
         }
     }
 
+    public float GetHealthPercent()
+    {
+        if (health == null || health.maxHealth <= 0f) return 0f;
+        return health.currentHealth / health.maxHealth;
+    }
+
     public float CurrentHPPercent =>
    (health != null && health.maxHealth > 0f)
        ? health.currentHealth / health.maxHealth

@@ -15,6 +15,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private float turnSpeed = 5f;
     [SerializeField] private float maxAngle = 120f; // prevent rotating completely backward
+    [SerializeField] public Transform firePoint;
+    [SerializeField] GameObject tpPreview;
     public EnemyStateID initialState;
 
 
@@ -35,6 +37,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public EnemyTargetingSystem targeting;
     [HideInInspector] public EnemyStats enemyStats;
     [HideInInspector] public bool isAttackingMelee;
+    [HideInInspector] public float teleportCooldownTimer = 0f;
 
     [Header("Enemy type stuff")]
     public bool IsMeleeOnly => config.enemyType == EnemyType.MeleeOnly;
@@ -85,8 +88,10 @@ public class Enemy : MonoBehaviour
 
             case EnemyType.Boss:
                 stateMachine.RegisterState(new EnemyIdleState());
-                stateMachine.RegisterState(new EnemyPhaseControllerState());
-                stateMachine.RegisterState(new EnemyAttackTargetState());
+                stateMachine.RegisterState(new EnemyFindTargetState());
+                stateMachine.RegisterState(new BossTeleportState());
+                stateMachine.RegisterState(new EnemyAttackTargetState()); // ranged
+                stateMachine.RegisterState(new EnemyAttackMeleeState());  // melee
                 stateMachine.RegisterState(new EnemyDeathState());
                 break;
 
@@ -141,15 +146,37 @@ public class Enemy : MonoBehaviour
         isInMelee = false;
         navMeshAgent.isStopped = false;
         navMeshAgent.ResetPath();
-        stateMachine.ChangeState(EnemyStateID.FindTarget);
         if (weapons.weaponIK != null)
             weapons.weaponIK.LerpToWeight(0.8f, 0.2f);
         if (weapons != null && weapons.HasWeapon())
         {
             weapons.SetFiring(true);
         }
+        if (IsBoss)
+            return;
+        stateMachine.ChangeState(EnemyStateID.FindTarget);
     }
 
+    public void ShowTpPreview(Vector3 targetPos, float range)
+    {
+        if (tpPreview == null) return;
+
+        Vector3 start = transform.position;
+        Vector3 direction = (targetPos - start).normalized;
+        Vector3 midpoint = start + direction * (range * 0.5f);
+
+        tpPreview.transform.position = midpoint;
+        tpPreview.transform.rotation = Quaternion.LookRotation(direction);
+        tpPreview.transform.localScale = new Vector3(0.25f, 1f, range); // slim width, long length
+
+        tpPreview.SetActive(true);
+    }
+
+    public void HideTpPreview()
+    {
+        if (tpPreview != null)
+            tpPreview.SetActive(false);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -166,6 +193,25 @@ public class Enemy : MonoBehaviour
                 canMeleeAttack = false;
                 PoolRunner.Instance.RunCoroutine(ResetMeleeCooldown());
             }
+        }
+    }
+
+    public void ShootProjectile(GameObject bulletPrefab, float speed, float spread = 0f)
+    {
+        if (!bulletPrefab || !firePoint) return;
+
+        Quaternion spreadRot = Quaternion.Euler(0, UnityEngine.Random.Range(-spread, spread), 0);
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation * spreadRot);
+
+        if (bullet.TryGetComponent<Rigidbody>(out var rb))
+        {
+            rb.linearVelocity = firePoint.forward * speed;
+        }
+
+        // assign shooter so it doesn't hit self and can apply damage
+        if (bullet.TryGetComponent<BulletProjectile>(out var projectile))
+        {
+            projectile.SetShooter(this.gameObject); // or add direct Enemy shooter logic
         }
     }
 

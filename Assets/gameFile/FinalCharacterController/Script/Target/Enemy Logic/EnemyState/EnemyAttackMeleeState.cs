@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyAttackMeleeState : EnemyState
 {
-    public EnemyStateID GetID() => EnemyStateID.AttackTarget;
+    public EnemyStateID GetID() => EnemyStateID.AttackMelee;
 
     public void Enter(Enemy enemy)
     {
@@ -32,10 +32,23 @@ public class EnemyAttackMeleeState : EnemyState
 
         if (distance > enemy.config.meleeRange)
         {
+            // Consider teleporting
+            enemy.teleportCooldownTimer -= Time.deltaTime;
+            if (BossUtility.ShouldTeleport(enemy))
+            {
+                enemy.teleportCooldownTimer = enemy.config.behaviorProfile.dashCooldown;
+                enemy.stateMachine.ChangeState(EnemyStateID.BossTeleport);
+                return;
+            }
+
+            // Regular chase
             enemy.isInMelee = false;
-            enemy.navMeshAgent.isStopped = false;
-            enemy.navMeshAgent.stoppingDistance = 0f;
-            enemy.navMeshAgent.destination = target.position;
+            if (enemy.navMeshAgent.enabled && enemy.navMeshAgent.isOnNavMesh)
+            {
+                enemy.navMeshAgent.stoppingDistance = 0f;
+                enemy.navMeshAgent.isStopped = false;
+                enemy.navMeshAgent.SetDestination(target.position);
+            }
             return;
         }
 

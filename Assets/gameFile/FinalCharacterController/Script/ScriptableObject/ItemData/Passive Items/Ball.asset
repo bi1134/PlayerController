@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d4040f2ffb839498226b91296c7a89, type: 3}
   m_Name: Ball
   m_EditorClassIdentifier: 
+  rarity: 0
   ID: 1
   ItemType: 0
   ItemName: Ball

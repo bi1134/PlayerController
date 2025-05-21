@@ -128,7 +128,7 @@ public class WeaponRaycast : WeaponBase
             // Check if the hit object has a HitBox component
             if (hit.transform.TryGetComponent(out HitBox hitBox))
             {
-                hitBox.TakeDamage(this, aimDir); //apply damage
+                hitBox.TakeDamage(weaponProperties.damage, aimDir); //apply damage
             }
 
             if (hit.rigidbody != null)

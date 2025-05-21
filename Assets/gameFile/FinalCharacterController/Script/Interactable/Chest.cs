@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class Chest : MonoBehaviour, IInteractable
 {
-
-    [SerializeField] private string prompt;
     [SerializeField] private string sidePromptText;
+    [SerializeField] private int moneyCost = 50;
     [SerializeField] private InteractionPromptPanelUI interactionPromptUI;
     [SerializeField] private GameObject lootOrbPrefab;
 
@@ -23,7 +22,7 @@ public class Chest : MonoBehaviour, IInteractable
         audioSource = GetComponent<AudioSource>();
     }
 
-    public string interactionPrompt => prompt;
+    public string interactionPrompt => hasOpened ? "" : $"${moneyCost}";
 
     public string sidePrompt => sidePromptText;
 
@@ -65,21 +64,44 @@ public class Chest : MonoBehaviour, IInteractable
         {
             return false;
         }
-        ShowItem();
+
+        PlayerStats stats = interactor.GetComponent<PlayerStats>();
+
+        if (stats == null)
+        {
+            Debug.LogWarning("No PlayerStats found on interactor.");
+            return false;
+        }
+
+        if (stats.baseStats.money < moneyCost)
+        {
+            Debug.Log("Not enough money to open chest.");
+            // Optional: Add UI popup feedback here
+            return false;
+        }
+
+        stats.baseStats.money -= moneyCost;
+        stats.moneyCount.text = stats.baseStats.money.ToString();
+
         hasOpened = true;
-        Debug.Log("Chest opened");
-        animator.SetTrigger("Open");
-        audioSource.pitch = Random.Range(1f, 1.2f);
-        audioSource.Play();
+        OpenChest();
         return true;
     }
-    public InteractionPromptPanelUI GetInteractionPromptUI()
+
+    private void OpenChest()
     {
-        return interactionPromptUI;
+        ShowItem();
+        animator.SetTrigger("Open");
+
+        if (audioSource)
+        {
+            audioSource.pitch = Random.Range(1f, 1.2f);
+            audioSource.Play();
+        }
+
+        Debug.Log("Chest opened!");
     }
 
-    public bool ShouldDisplayPrompt()
-    {
-        return !hasOpened;
-    }
+    public InteractionPromptPanelUI GetInteractionPromptUI() => interactionPromptUI;
+    public bool ShouldDisplayPrompt() => !hasOpened;
 }

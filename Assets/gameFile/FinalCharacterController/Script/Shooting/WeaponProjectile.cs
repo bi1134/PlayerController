@@ -162,7 +162,7 @@ public class WeaponProjectile : WeaponBase
             weaponProperties.upwardForce,
             weaponProperties.bulletLifetime
             );
-            bullet.SetShooter(this);
+            bullet.SetShooter(this.gameObject);
         }
 
         if (recoil)

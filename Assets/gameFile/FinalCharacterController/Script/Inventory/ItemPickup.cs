@@ -1,4 +1,4 @@
-using NUnit.Framework.Interfaces;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -14,6 +14,8 @@ public class ItemPickup : MonoBehaviour, IInteractable
     public Transform outlineMesh;
     public Quaternion PickupRotation = Quaternion.identity;
     private AudioSource audioSource;
+    private MeshRenderer meshRenderer;
+    private Collider pickupCollider;
 
     private bool isPickedUp = false;
     private bool isInitialized = false;
@@ -28,15 +30,25 @@ public class ItemPickup : MonoBehaviour, IInteractable
         itemCollider = GetComponent<SphereCollider>();
         itemCollider.isTrigger = true;
         itemCollider.radius = PickupRadius;
+
         audioSource = GetComponent<AudioSource>();
+        meshRenderer = outlineMesh?.GetComponent<MeshRenderer>();
+        pickupCollider = GetComponent<Collider>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        if (!audioSource) return;
-        float randomPitch = Random.Range(1f, 1.2f);
-        audioSource.pitch = randomPitch;
-        audioSource.Play();
+        isPickedUp = false;
+        isInitialized = false;
+        pickUpTimer = pickUpMaxTimer;
+
+        if (audioSource != null && audioSource.clip != null)
+        {
+            audioSource.pitch = Random.Range(1f, 1.2f);
+            audioSource.Play(); // or: audioSource.PlayOneShot(audioSource.clip);
+        }
+        if (meshRenderer) meshRenderer.enabled = true;
+        if (pickupCollider) pickupCollider.enabled = true;
     }
 
     private void Update()
@@ -44,10 +56,11 @@ public class ItemPickup : MonoBehaviour, IInteractable
         if (isPickedUp) return;
 
         pickUpTimer -= Time.deltaTime;
-        if(pickUpTimer <= 0)
+        if (pickUpTimer <= 0)
         {
             pickUpTimer = pickUpMaxTimer;
-            ObjectPooler.ReturnToPool("ItemPickup", gameObject);
+            HideVisuals();
+            PoolRunner.Instance.RunCoroutine(DelayedReturnToPool(audioSource.clip.length));
         }
     }
 
@@ -61,7 +74,8 @@ public class ItemPickup : MonoBehaviour, IInteractable
         {
             isPickedUp = true;
             PickupNotificationManager.Instance.EnqueuePickup(ItemData);
-            ObjectPooler.ReturnToPool("ItemPickup", gameObject);
+            HideVisuals();
+            PoolRunner.Instance.RunCoroutine(DelayedReturnToPool(audioSource.clip.length));
         }
         return isPickedUp;
     }
@@ -82,7 +96,8 @@ public class ItemPickup : MonoBehaviour, IInteractable
             {
                 isPickedUp = true;
                 PickupNotificationManager.Instance.EnqueuePickup(ItemData);
-                ObjectPooler.ReturnToPool("ItemPickup", gameObject);
+                HideVisuals();
+                PoolRunner.Instance.RunCoroutine(DelayedReturnToPool(audioSource.clip.length));
                 return;
             }
         }
@@ -102,8 +117,15 @@ public class ItemPickup : MonoBehaviour, IInteractable
             }
             newWeapon.inventoryData = ItemData;
             enemyWeapon.Equip(newWeapon);
-            ObjectPooler.ReturnToPool("ItemPickup", gameObject);
+            HideVisuals();
+            PoolRunner.Instance.RunCoroutine(DelayedReturnToPool(audioSource.clip.length));
         }
+    }
+
+    private IEnumerator DelayedReturnToPool(float delay)
+    {
+        yield return Helpers.GetWaitForSecond(delay);
+        ObjectPooler.ReturnToPool("ItemPickup", gameObject);
     }
 
     public void SetItemData(InventoryItemData data)
@@ -160,5 +182,11 @@ public class ItemPickup : MonoBehaviour, IInteractable
         }
 
         Destroy(fullItem);
+    }
+
+    private void HideVisuals()
+    {
+        if (meshRenderer) meshRenderer.enabled = false;
+        if (pickupCollider) pickupCollider.enabled = false;
     }
 }

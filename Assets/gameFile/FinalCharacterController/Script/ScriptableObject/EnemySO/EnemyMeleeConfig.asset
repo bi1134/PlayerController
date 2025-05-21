@@ -18,14 +18,14 @@ MonoBehaviour:
   canMelee: 1
   usesIK: 0
   findWeaponSpeed: 6
-  findTargetSpeed: 4
+  findTargetSpeed: 5.2
   chaseTargetSpeed: 6
   chaseAttackTargetSpeed: 3
-  meleeRange: 1.8
+  meleeRange: 1.5
   gunRange: 10
   weaponLostRange: 20
   maxSightDistance: 5
-  wanderRadius: 20
+  wanderRadius: 10
   ragdollForce: 10
   maxTime: 2
   maxDistance: 1

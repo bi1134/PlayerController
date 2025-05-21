@@ -8,7 +8,6 @@ public class EnemyAttackTargetState : EnemyState
 
     public void Enter(Enemy enemy)
     {
-        Debug.Log("Entered: Attack Target");
         pickupCheckTimer = pickupCheckCooldown;
         enemy.weapons.ActivateWeapon();
         enemy.navMeshAgent.stoppingDistance = enemy.config.chaseTargetSpeed;

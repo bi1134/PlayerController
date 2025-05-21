@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletProjectile : MonoBehaviour
@@ -6,12 +7,12 @@ public class BulletProjectile : MonoBehaviour
     [SerializeField] public GameObject tracer;
     public BulletPropertiesSO settings;
 
-    private WeaponProjectile shooter;
     private int bounceRemaining;
     public bool isActive;
     private Rigidbody rb;
     private GameObject shooterGameObject;
     private HealthSystem shooterHealth;
+    private float baseDamage;
 
     private void OnEnable()
     {
@@ -131,7 +132,7 @@ public class BulletProjectile : MonoBehaviour
                 damageMultiplier = 0.3f; // 30% damage to teammates
             }
 
-            target.TakeDamage(shooter, rb.linearVelocity.normalized, damageMultiplier);
+            target.TakeDamage(baseDamage, rb.linearVelocity.normalized, damageMultiplier);
 
             if (settings.bulletType == BulletType.Explosive)
             {
@@ -194,7 +195,7 @@ public class BulletProjectile : MonoBehaviour
                     continue;
 
                 Vector3 direction = (enemy.transform.position - point).normalized;
-                target.TakeDamage(shooter, direction);
+                target.TakeDamage(baseDamage, direction);
             }
 
             if (enemy.TryGetComponent<Rigidbody>(out var enemyRb))
@@ -244,21 +245,48 @@ public class BulletProjectile : MonoBehaviour
         return 0.05f;
     }
 
-    public void SetShooter(WeaponProjectile shooter)
+    public void SetShooter(GameObject shooter)
     {
-        this.shooter = shooter;
-        shooterGameObject = shooter.gameObject;
-
+        shooterGameObject = shooter;
         shooterHealth = shooter.GetComponentInParent<HealthSystem>();
+        baseDamage = 10f;
 
-        Collider[] bulletColliders = GetComponentsInChildren<Collider>();
-        Collider[] shooterColliders = shooter.GetComponentsInChildren<Collider>();
-
-        foreach (var bulletCol in bulletColliders)
+        if (shooter.TryGetComponent<WeaponProjectile>(out var weapon))
         {
-            foreach (var shooterCol in shooterColliders)
+            baseDamage = weapon.weaponProperties.damage;
+        }
+        else if (shooter.TryGetComponent<Enemy>(out var enemy))
+        {
+            baseDamage = enemy.enemyStats.baseStats.baseDamage;
+        }
+
+        // skip self-collision only if bulletDrop is 0
+        if (settings.bulletDrop == 0f)
+        {
+            Collider[] bulletColliders = GetComponentsInChildren<Collider>(true);
+
+            // gather all colliders from entire hierarchy of the shooter, including inactive ones
+            List<Collider> shooterColliders = new List<Collider>();
+
+            // include all colliders from all child objects
+            shooterColliders.AddRange(shooter.GetComponentsInChildren<Collider>(true));
+
+            // include CharacterController collider if present
+            CharacterController cc = shooter.GetComponent<CharacterController>();
+            if (cc != null)
             {
-                Physics.IgnoreCollision(bulletCol, shooterCol);
+                Collider controllerCol = cc.GetComponent<Collider>();
+                if (controllerCol != null)
+                    shooterColliders.Add(controllerCol);
+            }
+
+            foreach (var bulletCol in bulletColliders)
+            {
+                foreach (var shooterCol in shooterColliders)
+                {
+                    if (bulletCol != null && shooterCol != null)
+                        Physics.IgnoreCollision(bulletCol, shooterCol, true);
+                }
             }
         }
     }

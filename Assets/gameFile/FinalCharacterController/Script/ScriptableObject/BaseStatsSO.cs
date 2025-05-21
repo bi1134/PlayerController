@@ -10,4 +10,5 @@ public class BaseStatsSO : ScriptableObject
     public float critChance = 0.1f;
     public int level = 1;
     public float exp = 0;
+    public int money = 0;
 }

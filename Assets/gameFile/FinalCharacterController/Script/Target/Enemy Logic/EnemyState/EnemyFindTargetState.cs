@@ -8,7 +8,6 @@ public class EnemyFindTargetState : EnemyState
 
     public void Enter(Enemy enemy)
     {
-        Debug.Log("Entered: FindTarget");
         enemy.navMeshAgent.speed = enemy.config.findTargetSpeed;
         pickupCheckTimer = pickupCheckCooldown;
         currentPickupTarget = null;
@@ -28,20 +27,42 @@ public class EnemyFindTargetState : EnemyState
     {
         if (enemy.isDead) return;
 
-        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
-      
-        //see player? attack (if can melee)
-        if (distanceToPlayer <= enemy.config.gunRange && enemy.CanMelee)
+        // === Melee Logic ===
+        if (enemy.CanMelee && enemy.targeting.HasTarget)
+        {
+            float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
+
+            if (distanceToPlayer <= enemy.config.meleeRange)
+            {
+                enemy.stateMachine.ChangeState(EnemyStateID.AttackMelee);
+                return;
+            }
+            else
+            {
+                if (enemy.navMeshAgent.enabled && enemy.navMeshAgent.isOnNavMesh)
+                {
+                    enemy.navMeshAgent.SetDestination(enemy.playerTransform.position);
+                }
+                return;
+            }
+        }
+
+        // === Ranged Logic ===
+        if (enemy.CanUseWeapons && enemy.weapons.HasWeapon() && enemy.targeting.HasTarget)
         {
             enemy.stateMachine.ChangeState(EnemyStateID.AttackTarget);
             return;
         }
 
-        // if has weapon + sees player? attack
-        if (enemy.weapons.HasWeapon() && enemy.targeting.HasTarget)
+        enemy.teleportCooldownTimer -= Time.deltaTime;
+        if (enemy.teleportCooldownTimer <= 0f)
         {
-            enemy.stateMachine.ChangeState(EnemyStateID.AttackTarget);
-            return;
+            if (BossUtility.ShouldTeleport(enemy))
+            {
+                enemy.teleportCooldownTimer = enemy.config.behaviorProfile.dashCooldown;
+                enemy.stateMachine.ChangeState(EnemyStateID.BossTeleport);
+                return;
+            }
         }
 
         //bravery (override the coward flee if the weapon is in range)
@@ -76,7 +97,6 @@ public class EnemyFindTargetState : EnemyState
                 }
             }
 
-
             // No weapon found, fallback coward or default wandering
             if (enemy.IsRangedOnly)
                 WanderNearPlayer(enemy);
@@ -93,14 +113,23 @@ public class EnemyFindTargetState : EnemyState
             DefaultWandering(enemy);
     }
 
-     private void DefaultWandering(Enemy enemy)
+    private bool ShouldTeleport(Enemy enemy)
+    {
+        float distance = Vector3.Distance(enemy.transform.position, enemy.playerTransform.position);
+        return distance > 5f && enemy.canMeleeAttack; // or use cooldown, time alive, etc
+    }
+
+    private void DefaultWandering(Enemy enemy)
     {
         if (!enemy.navMeshAgent.hasPath || enemy.navMeshAgent.remainingDistance < 1f)
         {
             Vector3 randomOffset = Random.insideUnitSphere * enemy.config.wanderRadius;
             randomOffset.y = 0;
             Vector3 wanderTarget = enemy.playerTransform.position + randomOffset;
-            enemy.navMeshAgent.destination = wanderTarget;
+            if (enemy.navMeshAgent.enabled && enemy.navMeshAgent.isOnNavMesh)
+            {
+                enemy.navMeshAgent.SetDestination(wanderTarget);
+            }
         }
     }
 

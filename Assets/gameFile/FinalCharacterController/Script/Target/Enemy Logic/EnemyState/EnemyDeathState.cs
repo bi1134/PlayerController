@@ -29,7 +29,8 @@ public class EnemyDeathState : EnemyState
         force.y = 1;
         enemy.ragdoll.ApplyForce(force * enemy.config.ragdollForce);
 
-        DropExperienceOrb(enemy);
+        DropExperience(enemy);
+        DropMoney(enemy);
 
         enemy.ragdoll.DisableCollidersDelayed(5.0f);
         enemy.GetComponent<EnemyAI>().enabled = false;
@@ -43,17 +44,47 @@ public class EnemyDeathState : EnemyState
         pooled?.OnDeath();
     }
 
-    private void DropExperienceOrb(Enemy enemy)
+    private void DropExperience(Enemy enemy)
     {
-        GameObject orb = ObjectPooler.SpawnFromPool("ExpOrb", enemy.transform.position, Quaternion.identity);
-        ExpOrb expOrb = orb.GetComponent<ExpOrb>();
-        if (expOrb != null)
+        int totalExp = Mathf.RoundToInt(enemy.enemyStats.baseStats.exp);
+        int maxExpOrbs = 6;
+        int orbsToSpawn = Mathf.Min(maxExpOrbs, totalExp);
+
+        for (int i = 0; i < orbsToSpawn; i++)
         {
-            expOrb.experienceAmount = Mathf.RoundToInt(enemy.enemyStats.baseStats.exp); // From BaseStatsSO
+            int amount = totalExp / orbsToSpawn;
+            GameObject orb = ObjectPooler.SpawnFromPool("ExpOrb", enemy.transform.position, Quaternion.identity);
+
+            if (orb.TryGetComponent(out ExpOrb expOrb))
+            {
+                expOrb.experienceAmount = amount;
+
+                // randomize scale and offset
+                orb.transform.localScale = Vector3.one * Random.Range(0.15f, 0.25f);
+                orb.transform.position += Random.insideUnitSphere * 1.5f;
+            }
         }
-        else
+    }
+
+    private void DropMoney(Enemy enemy)
+    {
+        int totalMoney = enemy.enemyStats.baseStats.money;
+        int maxCoins = 8;
+        int coinsToSpawn = Mathf.Min(maxCoins, totalMoney);
+
+        for (int i = 0; i < coinsToSpawn; i++)
         {
-            Debug.LogWarning("No pooled ExpOrb available!");
+            int amount = totalMoney / coinsToSpawn;
+            GameObject coin = ObjectPooler.SpawnFromPool("Money", enemy.transform.position, Quaternion.identity);
+
+            if (coin.TryGetComponent(out MoneyItem money))
+            {
+                money.moneyAmount = amount;
+
+                // randomize scale and offset
+                float scale = Random.Range(0.04f, 0.1f);
+                coin.transform.localScale = new Vector3(scale, scale * 0.5f, scale);
+            }
         }
     }
 
