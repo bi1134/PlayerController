@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f77e05ea6de4a47b1c5884842b29eb, type: 3}
   m_Name: EnemyBossConfig
   m_EditorClassIdentifier: 
+  poolTag: Boss
   enemyType: 6
   behaviorProfile: {fileID: 11400000, guid: 3fcfa635684546c4c9371ac122526c86, type: 2}
   canUseWeapons: 0

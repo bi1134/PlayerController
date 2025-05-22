@@ -16,6 +16,7 @@ public enum EnemyType
 public class EnemyConfig : ScriptableObject
 {
     [Header("General Settings")]
+    public string poolTag; 
     public EnemyType enemyType = EnemyType.Default;
     public EnemyBehaviorProfile behaviorProfile;
 

@@ -1,12 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine;
+using System.Collections;
 
 public class EnemyManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class EnemySpawnEntry
+    {
+        public EnemyConfig config;
+        public string poolTag;
+    }
+
     public Transform[] spawnPoints;
-    public GameObject enemyPrefab;
+    public List<EnemySpawnEntry> enemySpawnEntries;
 
     public int maxEnemies = 10;
     public float spawnCooldown = 3f;
@@ -31,16 +38,6 @@ public class EnemyManager : MonoBehaviour
     {
         EnemyCorpseTracker.MaxAllowedCorpses = maxCorpses;
         yield return Helpers.GetWaitForSecond(0.1f);
-
-
-        if (ObjectPooler.PoolExists("Enemy"))
-        {
-            SpawnNewEnemy();
-        }
-        else
-        {
-            Debug.LogError("Enemy pool not initialized yet!");
-        }
     }
 
     private void Update()
@@ -53,19 +50,27 @@ public class EnemyManager : MonoBehaviour
             cooldownTimer = spawnCooldown;
         }
 
-        // Cleanup destroyed enemies
         aliveEnemies.RemoveAll(enemy => enemy == null || !enemy.activeInHierarchy);
     }
 
     void SpawnNewEnemy()
     {
+        if (enemySpawnEntries == null || enemySpawnEntries.Count == 0) return;
+
         Vector3 spawnPos = spawnPoints[Random.Range(0, spawnPoints.Length)].position;
 
-        // Sample NavMesh to find closest valid point
         if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            GameObject newEnemy = ObjectPooler.SpawnFromPool("Enemy", hit.position, Quaternion.identity);
+            EnemySpawnEntry entry = enemySpawnEntries[Random.Range(0, enemySpawnEntries.Count)];
+
+            GameObject newEnemy = ObjectPooler.SpawnFromPool(entry.poolTag, hit.position, Quaternion.identity);
             aliveEnemies.Add(newEnemy);
+
+            if (newEnemy.TryGetComponent(out Enemy enemy))
+            {
+                enemy.config = entry.config;
+                // Optional: reinit state machine if needed
+            }
         }
         else
         {

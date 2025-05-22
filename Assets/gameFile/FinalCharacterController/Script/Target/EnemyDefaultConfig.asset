@@ -12,15 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f77e05ea6de4a47b1c5884842b29eb, type: 3}
   m_Name: EnemyDefaultConfig
   m_EditorClassIdentifier: 
-  maxTime: 2
-  maxDistance: 1
+  poolTag: Enemy
+  enemyType: 0
+  behaviorProfile: {fileID: 0}
+  canUseWeapons: 1
+  canMelee: 1
+  usesIK: 1
   findWeaponSpeed: 7
   findTargetSpeed: 6
   chaseTargetSpeed: 7
   chaseAttackTargetSpeed: 3
-  wanderRadius: 20
-  ragdollForce: 10
-  maxSightDistance: 5
   meleeRange: 1.62
   gunRange: 10
   weaponLostRange: 20
+  maxSightDistance: 5
+  wanderRadius: 20
+  ragdollForce: 10
+  maxTime: 2
+  maxDistance: 1

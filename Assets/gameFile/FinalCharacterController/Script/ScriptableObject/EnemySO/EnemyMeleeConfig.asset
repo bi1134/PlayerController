@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f77e05ea6de4a47b1c5884842b29eb, type: 3}
   m_Name: EnemyMeleeConfig
   m_EditorClassIdentifier: 
+  poolTag: Golem
   enemyType: 1
   behaviorProfile: {fileID: 0}
   canUseWeapons: 0
